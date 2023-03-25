@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  value: 1
+  note: MyText
+  option: one
+  decision: one
+  created_by: one
+  team: one
+
+two:
+  value: 1
+  note: MyText
+  option: two
+  decision: two
+  created_by: two
+  team: two

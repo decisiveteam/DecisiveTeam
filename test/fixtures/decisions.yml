@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  context: MyText
+  question: MyText
+  status: MyString
+  deadline: 2023-03-25 23:15:29
+  created_by: one
+  decision_log: one
+  team: one
+  external_ids: 
+
+two:
+  context: MyText
+  question: MyText
+  status: MyString
+  deadline: 2023-03-25 23:15:29
+  created_by: two
+  decision_log: two
+  team: two
+  external_ids: 

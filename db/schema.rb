@@ -10,7 +10,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_25_205117) do
+ActiveRecord::Schema.define(version: 2023_03_25_231549) do
+
+  create_table "approvals", force: :cascade do |t|
+    t.integer "value"
+    t.text "note"
+    t.integer "option_id", null: false
+    t.integer "decision_id", null: false
+    t.integer "created_by_id", null: false
+    t.integer "team_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_by_id"], name: "index_approvals_on_created_by_id"
+    t.index ["decision_id"], name: "index_approvals_on_decision_id"
+    t.index ["option_id"], name: "index_approvals_on_option_id"
+    t.index ["team_id"], name: "index_approvals_on_team_id"
+  end
+
+  create_table "decision_logs", force: :cascade do |t|
+    t.string "title"
+    t.integer "team_id", null: false
+    t.json "external_ids"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["team_id"], name: "index_decision_logs_on_team_id"
+  end
+
+  create_table "decisions", force: :cascade do |t|
+    t.text "context"
+    t.text "question"
+    t.string "status"
+    t.datetime "deadline", precision: 6
+    t.integer "created_by_id", null: false
+    t.integer "decision_log_id", null: false
+    t.integer "team_id", null: false
+    t.json "external_ids"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_by_id"], name: "index_decisions_on_created_by_id"
+    t.index ["decision_log_id"], name: "index_decisions_on_decision_log_id"
+    t.index ["team_id"], name: "index_decisions_on_team_id"
+  end
 
   create_table "oauth_access_grants", force: :cascade do |t|
     t.integer "resource_owner_id", null: false
@@ -56,6 +96,39 @@ ActiveRecord::Schema.define(version: 2023_03_25_205117) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
+  create_table "options", force: :cascade do |t|
+    t.text "title"
+    t.text "description"
+    t.integer "created_by_id", null: false
+    t.integer "decision_id", null: false
+    t.integer "team_id", null: false
+    t.json "external_ids"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_by_id"], name: "index_options_on_created_by_id"
+    t.index ["decision_id"], name: "index_options_on_decision_id"
+    t.index ["team_id"], name: "index_options_on_team_id"
+  end
+
+  create_table "team_members", force: :cascade do |t|
+    t.string "name"
+    t.string "status"
+    t.integer "team_id", null: false
+    t.integer "user_id", null: false
+    t.json "external_ids"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["team_id"], name: "index_team_members_on_team_id"
+    t.index ["user_id"], name: "index_team_members_on_user_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.string "handle"
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -68,7 +141,20 @@ ActiveRecord::Schema.define(version: 2023_03_25_205117) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "approvals", "created_bies"
+  add_foreign_key "approvals", "decisions"
+  add_foreign_key "approvals", "options"
+  add_foreign_key "approvals", "teams"
+  add_foreign_key "decision_logs", "teams"
+  add_foreign_key "decisions", "created_bies"
+  add_foreign_key "decisions", "decision_logs"
+  add_foreign_key "decisions", "teams"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_applications", "users", column: "owner_id"
+  add_foreign_key "options", "created_bies"
+  add_foreign_key "options", "decisions"
+  add_foreign_key "options", "teams"
+  add_foreign_key "team_members", "teams"
+  add_foreign_key "team_members", "users"
 end

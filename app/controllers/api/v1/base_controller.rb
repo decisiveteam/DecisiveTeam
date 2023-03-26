@@ -2,6 +2,7 @@ class Api::V1::BaseController < ApplicationController
   protect_from_forgery with: :null_session
   before_action -> { doorkeeper_authorize! :read }, only: [:index, :show]
   before_action -> { doorkeeper_authorize! :write }, only: [:create, :update, :destroy]
+  before_action -> { doorkeeper_authorize! }, except: [:index, :show, :create, :update, :destroy]
 
   def current_user
     @current_user ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
@@ -17,6 +18,7 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def current_scope
+    # TODO Add OAuth token scopes, in addition to current_user accessibility
     @current_scope ||= current_resource_model.accessible_by(current_user)
   end
 
@@ -29,11 +31,15 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def current_decision
-    Decision.accessible_by(current_user).find_by(
-      id: params[:decision_id],
-      team_id: current_team.id,
-      decision_log_id: current_decision_log.id
-    ) if params[:decision_id].present?
+    return @current_decision if defined?(@current_decision)
+    if params[:decision_id].present?
+      @current_decision = Decision.accessible_by(current_user)
+      @current_decision = @current_decision.where(team_id: current_team.id) unless current_team.nil?
+      @current_decision = @current_decision.find_by(id: params[:decision_id])
+    else
+      @current_decision = nil
+    end
+    @current_decision
   end
 
 end

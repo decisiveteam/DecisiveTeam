@@ -5,4 +5,8 @@ class Team < ApplicationRecord
   has_many :decisions
   has_many :options
   has_many :approvals
+
+  def self.accessible_by(user)
+    self.where(id: user.teams)
+  end
 end

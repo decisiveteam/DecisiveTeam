@@ -5,8 +5,17 @@ module Api::V1
     end
 
     def create
-      # decision =
-      render json: params[:decision].to_json
+      decision = Decision.create!(
+        team: current_team,
+        decision_log: current_decision_log,
+        created_by: current_user,
+        context: params[:context],
+        question: params[:question],
+        status: params[:status],
+        deadline: params[:deadline],
+        external_ids: params[:external_ids],
+      )
+      render json: decision
     end
   end
 end

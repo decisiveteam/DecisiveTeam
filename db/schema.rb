@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_25_231549) do
+ActiveRecord::Schema.define(version: 2023_03_26_165801) do
 
   create_table "approvals", force: :cascade do |t|
     t.integer "value"
@@ -141,18 +141,15 @@ ActiveRecord::Schema.define(version: 2023_03_25_231549) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "approvals", "created_bies"
   add_foreign_key "approvals", "decisions"
   add_foreign_key "approvals", "options"
   add_foreign_key "approvals", "teams"
   add_foreign_key "decision_logs", "teams"
-  add_foreign_key "decisions", "created_bies"
   add_foreign_key "decisions", "decision_logs"
   add_foreign_key "decisions", "teams"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_applications", "users", column: "owner_id"
-  add_foreign_key "options", "created_bies"
   add_foreign_key "options", "decisions"
   add_foreign_key "options", "teams"
   add_foreign_key "team_members", "teams"

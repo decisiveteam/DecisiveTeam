@@ -3,6 +3,7 @@ module Api::V1
     before_action :doorkeeper_authorize!
     
     def index
+      # decisions = Decisions.where()
       render json: { message: 'Hello, world!' }
     end
 

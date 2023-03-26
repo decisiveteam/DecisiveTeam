@@ -5,7 +5,13 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :decisions
+      resources :decision_logs do
+        resources :decisions do
+          resources :options do
+            resources :approvals
+          end
+        end
+      end
     end
   end
   # Defines the root path route ("/")

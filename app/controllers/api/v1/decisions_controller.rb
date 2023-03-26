@@ -1,10 +1,7 @@
 module Api::V1
   class DecisionsController < BaseController
-    before_action :doorkeeper_authorize!
-    
     def index
-      # decisions = Decisions.where()
-      render json: { message: 'Hello, world!' }
+      render json: current_scope.all
     end
 
     def create

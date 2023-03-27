@@ -1,13 +1,5 @@
 module Api::V1
   class DecisionLogsController < BaseController    
-    def index
-      render json: current_scope
-    end
-
-    def show
-      render json: current_scope.find(params[:id])
-    end
-
     def create
       decision_log = DecisionLog.create!(
         team_id: current_team.id,

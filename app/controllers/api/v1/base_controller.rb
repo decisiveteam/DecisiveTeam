@@ -19,13 +19,31 @@ class Api::V1::BaseController < ApplicationController
 
   def current_scope
     # TODO Add OAuth token scopes, in addition to current_user accessibility
-    @current_scope ||= current_resource_model.accessible_by(current_user)
+    return @current_scope if defined?(@current_scope)
+    @current_scope = current_resource_model.accessible_by(current_user)
+    if params[:team_id].present? && current_resource_model.has_attribute?(:team_id)
+      @current_scope = @current_scope.where(team_id: params[:team_id])
+    end
+    if params[:decision_log_id].present? && current_resource_model.has_attribute?(:decision_log_id)
+      @current_scope = @current_scope.where(decision_log_id: params[:decision_log_id])
+    end
+    if params[:decision_id].present? && current_resource_model.has_attribute?(:decision_id)
+      @current_scope = @current_scope.where(decision_id: params[:decision_id])
+    end
+    if params[:option_id].present? && current_resource_model.has_attribute?(:option_id)
+      @current_scope = @current_scope.where(option_id: params[:option_id])
+    end
+    @current_scope
+  end
+
+  def current_resource
+    @current_resource ||= current_scope.find(params[:id])
   end
 
   def current_decision_log
     return @current_decision_log if defined?(@current_decision_log)
     @current_decision_log = DecisionLog.accessible_by(current_user)
-    @current_decision_log = @current_decision_log.where(team_id: current_team.id) unless current_team.nil?
+    @current_decision_log = @current_decision_log.where(team: current_team) unless current_team.nil?
     @current_decision_log = @current_decision_log.find_by(id: params[:decision_log_id]) if params[:decision_log_id].present?
     @current_decision_log
   end
@@ -34,12 +52,33 @@ class Api::V1::BaseController < ApplicationController
     return @current_decision if defined?(@current_decision)
     if params[:decision_id].present?
       @current_decision = Decision.accessible_by(current_user)
-      @current_decision = @current_decision.where(team_id: current_team.id) unless current_team.nil?
+      @current_decision = @current_decision.where(team: current_team) unless current_team.nil?
       @current_decision = @current_decision.find_by(id: params[:decision_id])
     else
       @current_decision = nil
     end
     @current_decision
+  end
+
+  def current_option
+    return @current_option if defined?(@current_option)
+    if params[:option_id].present?
+      @current_option = Option.accessible_by(current_user)
+      @current_option = @current_option.where(team: current_team) unless current_team.nil?
+      @current_option = @current_option.where(decision: current_decision) unless current_decision.nil?
+      @current_option = @current_option.find_by(id: params[:option_id])
+    else
+      @current_option = nil
+    end
+    @current_option
+  end
+
+  def index
+    render json: current_scope
+  end
+
+  def show
+    render json: current_resource
   end
 
 end

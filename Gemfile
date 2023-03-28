@@ -75,3 +75,4 @@ end
 
 gem 'doorkeeper'
 gem 'devise'
+gem 'rswag'

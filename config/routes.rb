@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       resources :teams do
         resources :decision_logs do
           resources :decisions do
+            get :results, to: 'results#index'
             resources :options do
               resources :approvals
             end

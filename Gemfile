@@ -75,4 +75,5 @@ end
 
 gem 'doorkeeper'
 gem 'devise'
+gem 'rspec'
 gem 'rswag'

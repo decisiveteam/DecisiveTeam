@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_28_030056) do
+ActiveRecord::Schema.define(version: 2023_03_29_005723) do
 
   create_table "approvals", force: :cascade do |t|
     t.integer "value"
@@ -141,6 +141,22 @@ ActiveRecord::Schema.define(version: 2023_03_28_030056) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "webhooks", force: :cascade do |t|
+    t.string "url"
+    t.string "secret"
+    t.string "event"
+    t.integer "team_id", null: false
+    t.integer "decision_log_id"
+    t.integer "decision_id"
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_by_id"], name: "index_webhooks_on_created_by_id"
+    t.index ["decision_id"], name: "index_webhooks_on_decision_id"
+    t.index ["decision_log_id"], name: "index_webhooks_on_decision_log_id"
+    t.index ["team_id"], name: "index_webhooks_on_team_id"
+  end
+
   add_foreign_key "approvals", "decisions"
   add_foreign_key "approvals", "options"
   add_foreign_key "approvals", "teams"
@@ -154,4 +170,8 @@ ActiveRecord::Schema.define(version: 2023_03_28_030056) do
   add_foreign_key "options", "teams"
   add_foreign_key "team_members", "teams"
   add_foreign_key "team_members", "users"
+  add_foreign_key "webhooks", "decision_logs"
+  add_foreign_key "webhooks", "decisions"
+  add_foreign_key "webhooks", "teams"
+  add_foreign_key "webhooks", "users", column: "created_by_id"
 end

@@ -4,8 +4,9 @@ require 'uri'
 class SendWebhookJob < ApplicationJob
   queue_as :default
 
-  def perform(webhook_url, payload)
-    uri = URI.parse(webhook_url)
+  def perform(webhook_id, payload)
+    webhook = Webhook.find(webhook_id)
+    uri = URI.parse(webhook.url)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true if uri.scheme == 'https'
 

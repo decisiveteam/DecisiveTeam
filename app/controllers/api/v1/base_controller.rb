@@ -42,18 +42,22 @@ class Api::V1::BaseController < ApplicationController
 
   def current_decision_log
     return @current_decision_log if defined?(@current_decision_log)
-    @current_decision_log = DecisionLog.accessible_by(current_user)
-    @current_decision_log = @current_decision_log.where(team: current_team) unless current_team.nil?
-    @current_decision_log = @current_decision_log.find_by(id: params[:decision_log_id]) if params[:decision_log_id].present?
+    if params[:decision_log_id].present?
+      dl = DecisionLog.accessible_by(current_user)
+      dl = dl.where(team: current_team) unless current_team.nil?
+      @current_decision_log = dl.find_by(id: params[:decision_log_id])
+    else
+      @current_decision_log = nil
+    end
     @current_decision_log
   end
 
   def current_decision
     return @current_decision if defined?(@current_decision)
     if params[:decision_id].present?
-      @current_decision = Decision.accessible_by(current_user)
-      @current_decision = @current_decision.where(team: current_team) unless current_team.nil?
-      @current_decision = @current_decision.find_by(id: params[:decision_id])
+      d = Decision.accessible_by(current_user)
+      d = d.where(team: current_team) unless current_team.nil?
+      @current_decision = d.find_by(id: params[:decision_id])
     else
       @current_decision = nil
     end

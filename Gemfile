@@ -73,7 +73,10 @@ group :test do
   gem "webdrivers"
 end
 
+group :development, :test do
+  gem 'rspec-rails', '~> 5.0'
+end
+
 gem 'doorkeeper'
 gem 'devise'
-gem 'rspec'
 gem 'rswag'

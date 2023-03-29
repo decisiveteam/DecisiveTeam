@@ -67,10 +67,10 @@ class Api::V1::BaseController < ApplicationController
   def current_option
     return @current_option if defined?(@current_option)
     if params[:option_id].present?
-      @current_option = Option.accessible_by(current_user)
-      @current_option = @current_option.where(team: current_team) unless current_team.nil?
-      @current_option = @current_option.where(decision: current_decision) unless current_decision.nil?
-      @current_option = @current_option.find_by(id: params[:option_id])
+      o = Option.accessible_by(current_user)
+      o = o.where(team: current_team) unless current_team.nil?
+      o = o.where(decision: current_decision) unless current_decision.nil?
+      @current_option = o.find_by(id: params[:option_id])
     else
       @current_option = nil
     end

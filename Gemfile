@@ -74,9 +74,12 @@ group :test do
 end
 
 group :development, :test do
-  gem 'rspec-rails', '~> 5.0'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
 end
 
 gem 'doorkeeper'
 gem 'devise'
 gem 'rswag'
+

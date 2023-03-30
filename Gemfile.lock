@@ -99,6 +99,13 @@ GEM
     doorkeeper (5.6.5)
       railties (>= 5)
     erubi (1.10.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (3.1.1)
+      i18n (>= 1.8.11, < 2)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.8.11)
@@ -194,14 +201,14 @@ GEM
     rspec-mocks (3.12.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-rails (5.1.2)
-      actionpack (>= 5.2)
-      activesupport (>= 5.2)
-      railties (>= 5.2)
-      rspec-core (~> 3.10)
-      rspec-expectations (~> 3.10)
-      rspec-mocks (~> 3.10)
-      rspec-support (~> 3.10)
+    rspec-rails (6.0.1)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      railties (>= 6.1)
+      rspec-core (~> 3.11)
+      rspec-expectations (~> 3.11)
+      rspec-mocks (~> 3.11)
+      rspec-support (~> 3.11)
     rspec-support (3.12.0)
     rswag (2.8.0)
       rswag-api (= 2.8.0)
@@ -269,12 +276,14 @@ DEPENDENCIES
   debug
   devise
   doorkeeper
+  factory_bot_rails
+  faker
   importmap-rails
   jbuilder
   nokogiri
   puma (~> 5.0)
   rails (~> 7.0.1)
-  rspec-rails (~> 5.0)
+  rspec-rails
   rswag
   selenium-webdriver
   sprockets-rails

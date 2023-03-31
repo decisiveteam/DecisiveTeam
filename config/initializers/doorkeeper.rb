@@ -20,6 +20,7 @@ Doorkeeper.configure do
     # Example implementation:
 
     if current_user
+      # TODO Revisit this logic once user roles are implemented.
       # head :forbidden unless current_user.admin?
       true
     else

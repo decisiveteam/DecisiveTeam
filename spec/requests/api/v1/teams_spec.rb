@@ -30,11 +30,7 @@ RSpec.describe 'api/v1/teams', type: :request do
       description 'Fetches all teams for the authenticated user'
       operationId 'listTeams'
 
-      parameter name: 'Authorization',
-                in: :header,
-                type: :string,
-                required: true,
-                description: 'OAuth2 access token'
+      security [{'OAuth2' => ['read']}]
 
       response(200, 'successful') do
         description 'List of teams'

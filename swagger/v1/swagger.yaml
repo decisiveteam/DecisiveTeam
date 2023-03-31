@@ -1,12 +1,19 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
+  title: Decisive Team API V1
   version: v1
 paths:
   "/api/v1/teams":
     get:
       summary: list teams
+      tags:
+      - Teams
+      description: List of teams
+      operationId: listTeams
+      security:
+      - OAuth2:
+        - read
       responses:
         '200':
           description: successful
@@ -14,4 +21,15 @@ servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.example.com
+      default: decisiveteam.danallison1.repl.co
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://decisiveteam.danallison1.repl.co/oauth/authorize
+          tokenUrl: https://decisiveteam.danallison1.repl.co/oauth/token
+          scopes:
+            read: Read access
+            write: Write access

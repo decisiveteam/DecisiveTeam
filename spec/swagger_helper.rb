@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+host = 'decisiveteam.danallison1.repl.co'
+
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
@@ -18,7 +20,7 @@ RSpec.configure do |config|
     'v1/swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
+        title: 'Decisive Team API V1',
         version: 'v1'
       },
       paths: {},
@@ -27,11 +29,28 @@ RSpec.configure do |config|
           url: 'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'app.decisive.team'
+              default: host
             }
           }
         }
-      ]
+      ],
+      components: {
+        securitySchemes: {
+          OAuth2: {
+            type: 'oauth2',
+            flows: {
+              authorizationCode: {
+                authorizationUrl: "https://#{host}/oauth/authorize",
+                tokenUrl: "https://#{host}/oauth/token",
+                scopes: {
+                  read: 'Read access',
+                  write: 'Write access'
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 

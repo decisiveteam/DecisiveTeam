@@ -1,0 +1,16 @@
+<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.11/src/ace.js"></script>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<!-- Create the Ace Editor div -->
+<div id="editor" style="margin: 0; padding: 0; height: 100vh; width: 100vw;"></div>
+<script>
+  // Initialize the Ace Editor
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.session.setMode("ace/mode/yaml");
+  editor.setValue("<%= @message %>")
+</script>

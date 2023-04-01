@@ -17,6 +17,18 @@ paths:
       responses:
         '200':
           description: successful
+    post:
+      summary: create team
+      tags:
+      - Teams
+      description: Create a new team
+      operationId: createTeam
+      security:
+      - OAuth2:
+        - write
+      responses:
+        '200':
+          description: successful
 servers:
 - url: https://{defaultHost}
   variables:
@@ -31,5 +43,5 @@ components:
           authorizationUrl: https://decisiveteam.danallison1.repl.co/oauth/authorize
           tokenUrl: https://decisiveteam.danallison1.repl.co/oauth/token
           scopes:
-            read: Read access
-            write: Write access
+            read: Read access to all data
+            write: Write access to all data

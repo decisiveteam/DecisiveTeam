@@ -17,4 +17,8 @@ class User < ApplicationRecord
 
   has_many :team_members
   has_many :teams, through: :team_members
+
+  def granted_oauth_applications
+    Doorkeeper::Application.where(id: self.access_grants.pluck(:oauth_application_id))
+  end
 end

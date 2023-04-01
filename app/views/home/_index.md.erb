@@ -1,0 +1,19 @@
+# Home
+<% if @current_user %>
+Logged in as <%= @current_user.email %> | [Log out](/logout)
+
+## Teams
+Navigate to team pages to view and make decisions.
+<% @current_user.teams.each do |team| %>* [<%= team.name %>](/path/to/team/<%= team.id %>)
+<% end %>* [Start a new team](/new/team/path)
+
+## Settings
+* [Manage OAuth authorized apps](/oauth/authorized_applications)
+* [Manage account](/account)
+
+## Help
+* [FAQ](/help/faq)
+* [Users Guide](/help/users-guide)
+* [API Docs](/api-docs)
+<% else %>Log in at /users/sign_in
+<% end %>

@@ -1,0 +1,15 @@
+# <%= @current_team.name %> > <%= @current_decision_log.title %>
+Logged in as <%= @current_user.email %> | [Log out](/logout)
+
+## Decisions
+<% @current_decision_log.decisions.each do |d| %>* [<%= d.question %>](/teams/<%= @current_team.id %>/decision_logs/<%= @current_decision_log.id %>/decisions/<%= d.id %>)
+<% end %>
+
+## Settings
+* [Manage OAuth authorized apps](/oauth/authorized_applications)
+* [Manage account](/account)
+
+## Help
+* [FAQ](/help/faq)
+* [Users Guide](/help/users-guide)
+* [API Docs](/api-docs)

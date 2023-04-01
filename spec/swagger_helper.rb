@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# TODO Change this to pull from app-level config
 host = 'decisiveteam.danallison1.repl.co'
 
 RSpec.configure do |config|
@@ -43,8 +44,8 @@ RSpec.configure do |config|
                 authorizationUrl: "https://#{host}/oauth/authorize",
                 tokenUrl: "https://#{host}/oauth/token",
                 scopes: {
-                  read: 'Read access',
-                  write: 'Write access'
+                  read: 'Read access to all data',
+                  write: 'Write access to all data'
                 }
               }
             }

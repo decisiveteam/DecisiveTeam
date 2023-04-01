@@ -6,11 +6,11 @@
   }
 </style>
 <!-- Create the Ace Editor div -->
-<div id="editor" style="margin: 0; padding: 0; height: 100vh; width: 100vw;"></div>
+<div id="editor" style="margin: 0; padding: 0; height: 100vh; width: 100vw;"><%= render partial: "home/#{@partial}", formats: :md %></div>
 <script>
   // Initialize the Ace Editor
   var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/monokai");
-  editor.session.setMode("ace/mode/yaml");
-  editor.setValue("<%= @message %>")
+  // editor.setTheme("ace/theme/twilight");
+  editor.session.setMode("ace/mode/markdown");
+  //editor.setValue("")
 </script>

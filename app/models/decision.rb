@@ -4,6 +4,8 @@ class Decision < ApplicationRecord
   belongs_to :decision_log
   belongs_to :team
 
+  has_many :options
+
   def results
     DecisionResult.where(decision_id: self.id)
   end

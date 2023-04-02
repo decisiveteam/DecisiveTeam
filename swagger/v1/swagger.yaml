@@ -6,7 +6,7 @@ info:
 paths:
   "/api/v1/teams":
     get:
-      summary: list teams
+      summary: List teams for current user
       tags:
       - Teams
       description: List of teams
@@ -18,7 +18,7 @@ paths:
         '200':
           description: successful
     post:
-      summary: create team
+      summary: Create new team
       tags:
       - Teams
       description: Create a new team
@@ -26,6 +26,26 @@ paths:
       security:
       - OAuth2:
         - write
+      responses:
+        '200':
+          description: successful
+  "/api/v1/teams/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show team
+      tags:
+      - Teams
+      description: List of teams
+      operationId: getTeam
+      security:
+      - OAuth2:
+        - read
       responses:
         '200':
           description: successful

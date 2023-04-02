@@ -7,11 +7,14 @@ class Webhook < ApplicationRecord
   def self.queue_jobs_for(resource, event)
     # Assuming all resources are scoped to team
     s = self.where(team: resource.team)
-    if resource.class == DecisionLog
+    case resource.class
+    when TeamMember
+      # noop
+    when DecisionLog
       s = s.where(decision_log: [resource, nil])
-    elsif resource.class == Decision
+    when Decision
       s = s.where(decision_log: [resource.decision_log, nil], decision: [resource, nil])
-    else
+    when Option, Approval
       s = s.where(decision_log: [resource.decision_log, nil], decision: [resource.decision, nil])
     end
     # TODO check event

@@ -4,6 +4,8 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/teams', type: :request do
   let(:user) { FactoryBot.create(:user) }
+  let!(:team) { FactoryBot.create(:team) }
+  let!(:team_member) { FactoryBot.create(:team_member, user: user, team: team) }
   let(:application) { Doorkeeper::Application.create!(
     name: "Test app",
     redirect_uri: "https://decisive.team",
@@ -25,7 +27,7 @@ RSpec.describe 'api/v1/teams', type: :request do
 
   path '/api/v1/teams' do
 
-    get('list teams') do
+    get('List teams for current user') do
       tags 'Teams'
       description 'Fetches all teams for the authenticated user'
       operationId 'listTeams'
@@ -48,7 +50,7 @@ RSpec.describe 'api/v1/teams', type: :request do
       end
     end
 
-    post('create team') do
+    post('Create new team') do
       tags 'Teams'
       description 'Creates a new team for the authenticated user'
       operationId 'createTeam'
@@ -71,72 +73,62 @@ RSpec.describe 'api/v1/teams', type: :request do
     end
 
   end
+
+  path '/api/v1/teams/{id}' do
+    parameter name: 'id', in: :path, type: :string, description: 'id'
+
+    get('show team') do
+      tags 'Teams'
+      description 'Fetches team by ID for the authenticated user'
+      operationId 'getTeam'
+      security [{'OAuth2' => ['read']}]
+
+      response(200, 'successful') do
+        description 'List of teams'
+        schema type: :array do
+          items do
+            key :'$ref', :Team
+          end
+        end
+
+        before do
+          get "/api/v1/teams/#{team.id}", params: {}, headers: headers
+        end
+        it 'returns 200 with the expected team' do
+          expect(response.code).to eq("200")
+          expect(response.body).to eq(team.to_json)
+        end
+      end
+    end
+
+    # put('update team') do
+    #   response(200, 'successful') do
+    #     let(:id) { '123' }
+
+    #     after do |example|
+    #       example.metadata[:response][:content] = {
+    #         'application/json' => {
+    #           example: JSON.parse(response.body, symbolize_names: true)
+    #         }
+    #       }
+    #     end
+    #     run_test!
+    #   end
+    # end
+
+    # delete('delete team') do
+    #   response(200, 'successful') do
+    #     let(:id) { '123' }
+
+    #     after do |example|
+    #       example.metadata[:response][:content] = {
+    #         'application/json' => {
+    #           example: JSON.parse(response.body, symbolize_names: true)
+    #         }
+    #       }
+    #     end
+    #     run_test!
+    #   end
+    # end
+  end
 end
-
-#   end
-
-#   path '/api/v1/teams/{id}' do
-#     # You'll want to customize the parameter types...
-#     parameter name: 'id', in: :path, type: :string, description: 'id'
-
-#     get('show team') do
-#       response(200, 'successful') do
-#         let(:id) { '123' }
-
-#         after do |example|
-#           example.metadata[:response][:content] = {
-#             'application/json' => {
-#               example: JSON.parse(response.body, symbolize_names: true)
-#             }
-#           }
-#         end
-#         run_test!
-#       end
-#     end
-
-#     patch('update team') do
-#       response(200, 'successful') do
-#         let(:id) { '123' }
-
-#         after do |example|
-#           example.metadata[:response][:content] = {
-#             'application/json' => {
-#               example: JSON.parse(response.body, symbolize_names: true)
-#             }
-#           }
-#         end
-#         run_test!
-#       end
-#     end
-
-#     put('update team') do
-#       response(200, 'successful') do
-#         let(:id) { '123' }
-
-#         after do |example|
-#           example.metadata[:response][:content] = {
-#             'application/json' => {
-#               example: JSON.parse(response.body, symbolize_names: true)
-#             }
-#           }
-#         end
-#         run_test!
-#       end
-#     end
-
-#     delete('delete team') do
-#       response(200, 'successful') do
-#         let(:id) { '123' }
-
-#         after do |example|
-#           example.metadata[:response][:content] = {
-#             'application/json' => {
-#               example: JSON.parse(response.body, symbolize_names: true)
-#             }
-#           }
-#         end
-#         run_test!
-#       end
-#     end
-#   end
-# end

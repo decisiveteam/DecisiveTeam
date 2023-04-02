@@ -1,13 +1,14 @@
 # Decision <%= @current_decision.id %>
 Logged in as <%= @current_user.email %> | [Log out](/logout)
 
-## Context
+## <%= @current_decision.title %>
+### Context
 <%= @current_decision.context %>
 
-## Question
+### Question
 <%= @current_decision.question %>
 
-## Options
+### Options
 Type "x" in the square brackets of the options you approve.
 <% @current_decision.options.each do |opt| %>* [ ] <%= opt.title %>
 <% end %>* [ ] [type new option here]

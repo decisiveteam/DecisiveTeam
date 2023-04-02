@@ -98,6 +98,13 @@ RSpec.describe 'api/v1/teams', type: :request do
           expect(response.code).to eq("200")
           expect(response.body).to eq(team.to_json)
         end
+        after do |example|
+          example.metadata[:response][:content] = {
+            'application/json' => {
+              example: JSON.parse(response.body, symbolize_names: true)
+            }
+          }
+        end
       end
     end
 

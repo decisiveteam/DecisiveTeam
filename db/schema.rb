@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_29_005723) do
+ActiveRecord::Schema.define(version: 2023_04_02_225200) do
 
   create_table "approvals", force: :cascade do |t|
     t.integer "value"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2023_03_29_005723) do
     t.json "external_ids"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "title"
     t.index ["created_by_id"], name: "index_decisions_on_created_by_id"
     t.index ["decision_log_id"], name: "index_decisions_on_decision_log_id"
     t.index ["team_id"], name: "index_decisions_on_team_id"

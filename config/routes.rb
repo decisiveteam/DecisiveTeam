@@ -27,4 +27,10 @@ Rails.application.routes.draw do
   get '/teams/:team_id' => 'home#team'
   get '/teams/:team_id/decision_logs/:decision_log_id' => 'home#decision_log'
   get '/teams/:team_id/decision_logs/:decision_log_id/decisions/:decision_id' => 'home#decision'
+
+  if Rails.env.development?
+    namespace :dev do
+      resources :decisions
+    end
+  end
 end

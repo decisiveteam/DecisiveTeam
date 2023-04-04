@@ -4,6 +4,8 @@ class Option < ApplicationRecord
   belongs_to :decision
   belongs_to :team
 
+  has_many :approvals
+
   def decision_log
     self.decision.decision_log
   end

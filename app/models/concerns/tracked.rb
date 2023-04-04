@@ -16,7 +16,7 @@ module Tracked
 
   def track_changes
     # TODO, actually track changes
-    Webhook.queue_jobs_for(self, { event: "#{self.class.name.underscore}:created", data: saved_changes })
+    Webhook.queue_jobs_for(self, { event: "#{self.class.name.underscore}:updated", data: saved_changes })
   end
 
   def track_deletion

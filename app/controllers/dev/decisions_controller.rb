@@ -31,7 +31,6 @@ module Dev
         raise "Invalid Request"
         # decision = Decision.create!(
         #   team_id: 1,
-        #   decision_log_id: 1,
         #   created_by: current_user,
         #   context: params[:context],
         #   question: params[:question],

@@ -9,14 +9,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :teams do
         resources :webhooks, only: [:index, :create, :destroy]
-        resources :decision_logs do
+        resources :decisions do
           resources :webhooks, only: [:index, :create, :destroy]
-          resources :decisions do
-            resources :webhooks, only: [:index, :create, :destroy]
-            get :results, to: 'results#index'
-            resources :options do
-              resources :approvals
-            end
+          get :results, to: 'results#index'
+          resources :options do
+            resources :approvals
           end
         end
       end
@@ -25,8 +22,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root 'home#index'
   get '/teams/:team_id' => 'home#team'
-  get '/teams/:team_id/decision_logs/:decision_log_id' => 'home#decision_log'
-  get '/teams/:team_id/decision_logs/:decision_log_id/decisions/:decision_id' => 'home#decision'
+  get '/teams/:team_id/decisions/:decision_id' => 'home#decision'
 
   if Rails.env.development?
     namespace :dev do

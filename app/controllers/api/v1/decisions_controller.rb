@@ -3,7 +3,6 @@ module Api::V1
     def create
       decision = Decision.create!(
         team: current_team,
-        decision_log: current_decision_log,
         created_by: current_user,
         context: params[:context],
         question: params[:question],

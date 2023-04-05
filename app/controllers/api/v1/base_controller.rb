@@ -24,9 +24,6 @@ class Api::V1::BaseController < ApplicationController
     if params[:team_id].present? && current_resource_model.has_attribute?(:team_id)
       @current_scope = @current_scope.where(team_id: params[:team_id])
     end
-    if params[:decision_log_id].present? && current_resource_model.has_attribute?(:decision_log_id)
-      @current_scope = @current_scope.where(decision_log_id: params[:decision_log_id])
-    end
     if params[:decision_id].present? && current_resource_model.has_attribute?(:decision_id)
       @current_scope = @current_scope.where(decision_id: params[:decision_id])
     end
@@ -38,18 +35,6 @@ class Api::V1::BaseController < ApplicationController
 
   def current_resource
     @current_resource ||= current_scope.find(params[:id])
-  end
-
-  def current_decision_log
-    return @current_decision_log if defined?(@current_decision_log)
-    if params[:decision_log_id].present?
-      dl = DecisionLog.accessible_by(current_user)
-      dl = dl.where(team: current_team) unless current_team.nil?
-      @current_decision_log = dl.find_by(id: params[:decision_log_id])
-    else
-      @current_decision_log = nil
-    end
-    @current_decision_log
   end
 
   def current_decision

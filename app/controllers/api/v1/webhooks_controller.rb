@@ -3,7 +3,6 @@ module Api::V1
     def create
       webhook = Webhook.create!(
         team: current_team,
-        decision_log: current_decision_log,
         decision: current_decision,
         created_by: current_user,
         url: params[:url],

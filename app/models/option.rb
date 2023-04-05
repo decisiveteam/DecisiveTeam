@@ -6,7 +6,4 @@ class Option < ApplicationRecord
 
   has_many :approvals
 
-  def decision_log
-    self.decision.decision_log
-  end
 end

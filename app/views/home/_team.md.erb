@@ -5,10 +5,6 @@ Logged in as <%= @current_user.email %> | [Log out](/logout)
 <% @current_team.team_members.each do |tm| %>* <%= tm.user.email %>
 <% end %>
 
-## Decision Logs
-<% @current_team.decision_logs.each do |dl| %>* [<%= dl.title %>](/teams/<%= @current_team.id %>/decision_logs/<%= dl.id %>)
-<% end %>* [Create a new decision log](/decision_logs/new)
-
 ## Admin
 * [Invite new team members](/invite/path)
   

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_02_225200) do
+ActiveRecord::Schema.define(version: 2023_04_05_011057) do
 
   create_table "approvals", force: :cascade do |t|
     t.integer "value"
@@ -27,29 +27,18 @@ ActiveRecord::Schema.define(version: 2023_04_02_225200) do
     t.index ["team_id"], name: "index_approvals_on_team_id"
   end
 
-  create_table "decision_logs", force: :cascade do |t|
-    t.string "title"
-    t.integer "team_id", null: false
-    t.json "external_ids"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["team_id"], name: "index_decision_logs_on_team_id"
-  end
-
   create_table "decisions", force: :cascade do |t|
     t.text "context"
     t.text "question"
     t.string "status"
     t.datetime "deadline", precision: 6
     t.integer "created_by_id", null: false
-    t.integer "decision_log_id", null: false
     t.integer "team_id", null: false
     t.json "external_ids"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "title"
     t.index ["created_by_id"], name: "index_decisions_on_created_by_id"
-    t.index ["decision_log_id"], name: "index_decisions_on_decision_log_id"
     t.index ["team_id"], name: "index_decisions_on_team_id"
   end
 
@@ -147,22 +136,18 @@ ActiveRecord::Schema.define(version: 2023_04_02_225200) do
     t.string "secret"
     t.string "event"
     t.integer "team_id", null: false
-    t.integer "decision_log_id"
     t.integer "decision_id"
     t.integer "created_by_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["created_by_id"], name: "index_webhooks_on_created_by_id"
     t.index ["decision_id"], name: "index_webhooks_on_decision_id"
-    t.index ["decision_log_id"], name: "index_webhooks_on_decision_log_id"
     t.index ["team_id"], name: "index_webhooks_on_team_id"
   end
 
   add_foreign_key "approvals", "decisions"
   add_foreign_key "approvals", "options"
   add_foreign_key "approvals", "teams"
-  add_foreign_key "decision_logs", "teams"
-  add_foreign_key "decisions", "decision_logs"
   add_foreign_key "decisions", "teams"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
@@ -171,7 +156,6 @@ ActiveRecord::Schema.define(version: 2023_04_02_225200) do
   add_foreign_key "options", "teams"
   add_foreign_key "team_members", "teams"
   add_foreign_key "team_members", "users"
-  add_foreign_key "webhooks", "decision_logs"
   add_foreign_key "webhooks", "decisions"
   add_foreign_key "webhooks", "teams"
   add_foreign_key "webhooks", "users", column: "created_by_id"

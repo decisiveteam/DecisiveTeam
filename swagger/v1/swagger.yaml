@@ -59,8 +59,7 @@ components:
     OAuth2:
       type: oauth2
       flows:
-        authorizationCode:
-          authorizationUrl: https://decisiveteam.danallison1.repl.co/oauth/authorize
+        clientCredentials:
           tokenUrl: https://decisiveteam.danallison1.repl.co/oauth/token
           scopes:
             read: Read access to all data

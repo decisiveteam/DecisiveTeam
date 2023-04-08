@@ -22,5 +22,7 @@ module RailsRuby3
     config.action_dispatch.default_headers = {
       'X-Frame-Options' => 'ALLOWFROM replit.com'
     }
+
+    config.active_record.schema_format = :sql
   end
 end

@@ -8,4 +8,12 @@ class Decision < ApplicationRecord
   def results
     DecisionResult.where(decision_id: self.id)
   end
+
+  def path
+    "/teams/#{self.team_id}/decisions/#{self.id}"
+  end
+
+  def reference_count
+    0 # TODO
+  end
 end

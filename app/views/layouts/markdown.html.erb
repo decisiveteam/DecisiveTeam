@@ -12,8 +12,11 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-
   <body>
-    <%= yield %>
+    <a href="/"><img src="/icon.svg" alt="decisive team" style="height:40px;"/></a>
+<pre><% if @current_user %><%= @current_user.email %> | <%= link_to 'Log out', destroy_user_session_path, data: { controller: 'logout', action: 'click->logout#logout' } %><% else %><a href="/login">Log in</a><% end %>
+
+<%= yield %>
+</pre>
   </body>
 </html>

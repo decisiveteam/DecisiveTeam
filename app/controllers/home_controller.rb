@@ -1,18 +1,22 @@
 class HomeController < ApplicationController
   before_action :set_current_resources
+  layout 'markdown'
 
   def index
-    @partial = 'index'
+  end
+
+  def teams
+    @teams = Team.accessible_by(current_user)
   end
 
   def team
-    @partial = 'team'
-    render 'index'
+    @team = @current_team
   end
 
   def decision
-    @partial = 'decision'
-    render 'index'
+  end
+
+  def decision_results
   end
 
   def set_current_resources

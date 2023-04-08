@@ -40,8 +40,7 @@ RSpec.configure do |config|
           OAuth2: {
             type: 'oauth2',
             flows: {
-              authorizationCode: {
-                authorizationUrl: "https://#{host}/oauth/authorize",
+              clientCredentials: {
                 tokenUrl: "https://#{host}/oauth/token",
                 scopes: {
                   read: 'Read access to all data',

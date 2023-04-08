@@ -13,3 +13,12 @@
  *= require_tree .
  *= require_self
  */
+
+pre {
+  width: 90vw;
+  white-space: pre-wrap;
+}
+
+.markdown-checkbox {
+  cursor: pointer;
+}

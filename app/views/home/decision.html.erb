@@ -1,0 +1,19 @@
+<span data-controller="decision"><strong># Decision <%= @current_decision.id %></strong>
+
+<strong>## Question: <%= @current_decision.question %></strong>
+Context: <%= @current_decision.context %>
+
+<strong>## Options</strong>
+Check all options you approve.
+
+<span data-decision-target="list"><% @current_decision.options.each do |option| %><% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %><span class="option-item" data-id="<%= option.id %>">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[<%= approval.value == 1 ? 'x' : ' ' %>]</span> <%= option.title %></span>
+<% end %>
+</span>
+- [ ] <form style="display:inline;" data-action="submit->decision#add"><input type="text" data-decision-target="input"  data-decision-id="<%= @current_decision.id %>" placeholder="Add an option"><button type="submit">Add</button>
+</form>
+</span>
+<strong>## Results</strong>
+<a href="<%= "#{@current_decision.path}/results" %>">view results</a>
+
+<strong>## References</strong>
+This decision is referenced in <%= @current_decision.reference_count %> other decision<%= @current_decision.reference_count == 1 ? '' : 's' %>.

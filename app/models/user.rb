@@ -21,4 +21,8 @@ class User < ApplicationRecord
   def granted_oauth_applications
     Doorkeeper::Application.where(id: self.access_grants.pluck(:oauth_application_id))
   end
+
+  def can_admin_oauth_applications?
+    true # TODO make this conditional in a way that makes sense
+  end
 end

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#000" viewBox="0 -420 340 310">
+  <g id="container">
+    <!-- <rect x="0" y="-420" width="340" height="310" stroke-width="4pt"/> -->
+    <g transform="scale(0.5) translate(110, -330)">
+      <g fill="#000" stroke-linejoin="round" stroke-width="4pt">
+        <circle r="100"/>
+        <circle cx="461.9" r="100"/>
+        <circle cx="230.9" cy="-400" r="100"/>
+      </g>
+      <path stroke-linejoin="round" stroke-width="0" d="M0 0h462L231-400z" fill="#fff"/>
+      <g transform="scale(0.5) translate(230, -115)">
+        <path stroke-linejoin="round" stroke-width="0" d="M0 0h462L231-400z" fill="#000"/>
+      </g>
+      <g fill="#fff" stroke-linejoin="round" stroke-width="0">
+        <circle cx="230.9" cy="-125" r="50"/>
+      </g>
+    </g>
+  </g>
+</svg>

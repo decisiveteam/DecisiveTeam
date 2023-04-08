@@ -8,4 +8,8 @@ class Team < ApplicationRecord
   def self.accessible_by(user)
     self.where(id: user.teams)
   end
+
+  def path
+    "/teams/#{self.id}"
+  end
 end

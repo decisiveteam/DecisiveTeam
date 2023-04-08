@@ -8,9 +8,10 @@ module Dev
     
     def create
       if params[:title]
+        decision = Decision.accessible_by(current_user).find(params[:decision_id])
         option = Option.create!(
-          team_id: 1,
-          decision_id: 1,
+          team_id: decision.team_id,
+          decision_id: decision.id,
           created_by: current_user,
           title: params[:title],
         )

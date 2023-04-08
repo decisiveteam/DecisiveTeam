@@ -2,8 +2,11 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   use_doorkeeper
-  devise_for :users
-  resources :oauth_applications, except: [:show]
+  devise_for :users, path: '', path_names: {
+    sign_in: 'login',
+    sign_out: 'logout',
+    sign_up: 'signup'
+  }
 
   namespace :api do
     namespace :v1 do
@@ -21,8 +24,10 @@ Rails.application.routes.draw do
   end
   # Defines the root path route ("/")
   root 'home#index'
+  get '/teams' => 'home#teams'
   get '/teams/:team_id' => 'home#team'
   get '/teams/:team_id/decisions/:decision_id' => 'home#decision'
+  get '/teams/:team_id/decisions/:decision_id/results' => 'home#decision_results'
 
   if Rails.env.development?
     namespace :dev do

@@ -1,4 +1,8 @@
 <span data-controller="decision"><strong># Decision <%= @current_decision.id %></strong>
+<a href="<%= @current_decision.path %>">reference link</a>
+Created at: <%= @current_decision.created_at %>
+Created by: <%= @current_decision.created_by.email %>
+Status: <%= @current_decision.status || '[none]' %>
 
 <strong>## Question: <%= @current_decision.question %></strong>
 Context: <%= @current_decision.context %>
@@ -7,13 +11,16 @@ Context: <%= @current_decision.context %>
 Check all options you approve.
 
 <span data-decision-target="list"><% @current_decision.options.each do |option| %><% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %><span class="option-item" data-id="<%= option.id %>">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[<%= approval.value == 1 ? 'x' : ' ' %>]</span> <%= option.title %></span>
-<% end %>
-</span>
+<% end %></span>
 - [ ] <form style="display:inline;" data-action="submit->decision#add"><input type="text" data-decision-target="input"  data-decision-id="<%= @current_decision.id %>" placeholder="Add an option"><button type="submit">Add</button>
 </form>
-</span>
 <strong>## Results</strong>
-<a href="<%= "#{@current_decision.path}/results" %>">view results</a>
+<a data-action="click->decision#toggleResults" href="#">Show results</a><span id="results" style="display:none;">
+<%= render 'results' %>
+</span>
 
-<strong>## References</strong>
-This decision is referenced in <%= @current_decision.reference_count %> other decision<%= @current_decision.reference_count == 1 ? '' : 's' %>.
+<strong>## Referenced By (<%= @current_decision.reference_count %>)</strong>
+<% if @current_decision.reference_count == 0 %>References will show up here when other decisions link back to this one using <a href="<%= @current_decision.path %>">this link</a>.<% else %>The following decisions reference this decision.
+<% @current_decision.referenced_by.each do |ref| %>* <a href="<%= ref.path %>"><%= ref.question %></a>
+<% end %><% end %>
+</span>

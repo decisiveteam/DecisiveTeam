@@ -1,4 +1,5 @@
 <strong># <%= @current_team.name %></strong>
+<a href="<%= @current_team.path %>/new_decision">New decision</a>
 
 <strong>## Team Members (<%= @current_team.team_members.count %>)</strong>
 <% @current_team.team_members.limit(10).each do |tm| %>* <%= tm.user.email %>

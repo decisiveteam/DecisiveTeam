@@ -60,5 +60,20 @@ export default class extends Controller {
       body: JSON.stringify({ option_id: optionId, value: approved }),
     });
   }
+
+  toggleResults(event) {
+    event.preventDefault();
+    const text = event.target.textContent;
+    const table = document.getElementById('results');
+    if (text == 'Show results') {
+      table.style.display = 'inline';
+      event.target.textContent = 'Hide results';
+    } else if (text == 'Hide results') {
+      table.style.display = 'none';
+      event.target.textContent = 'Show results';
+    } else {
+      throw new Error(`Unexpected text value "${text}"`);
+    }
+  }
   
 }

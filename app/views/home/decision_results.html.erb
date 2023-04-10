@@ -5,7 +5,4 @@ Context: <%= @current_decision.context %>
 
 <strong>## Results</strong>
 
-| Approvals | Option               |
-| --------- | -------------------- |
-<% @current_decision.results.each do |result| %>| <%= "#{result.approved_yes || 0}".rjust(9, ' ') %> | <%= result.option_title.slice(0, 20).ljust(20, ' ') %> |</span>
-<% end %>
+<%= render 'results' %>

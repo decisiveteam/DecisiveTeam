@@ -1,0 +1,6 @@
+<% if current_user %><strong># Teams</strong>
+
+<% @teams.each do |team| %>
+* <a href="<%= team.path %>"><%= team.name %></a>
+<% end %>
+<% end %>

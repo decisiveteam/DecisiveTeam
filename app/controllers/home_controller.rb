@@ -3,6 +3,9 @@ class HomeController < ApplicationController
   layout 'markdown'
 
   def index
+    if current_user
+      @teams = Team.accessible_by(current_user)
+    end
   end
 
   def teams
@@ -11,6 +14,9 @@ class HomeController < ApplicationController
 
   def team
     @team = @current_team
+  end
+
+  def new_decision
   end
 
   def decision

@@ -14,6 +14,9 @@ export default class extends Controller {
       this.createOption(input)
         .then((option) => {
           this.listTarget.insertAdjacentHTML("beforeend", this.optionItem(option));
+          const countDisplay = document.getElementById('decision-count-display');
+          const count = +countDisplay.textContent;
+          countDisplay.textContent = '' + (count + 1);
           this.inputTarget.value = "";
         })
         .catch((error) => {

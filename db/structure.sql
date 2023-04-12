@@ -92,13 +92,17 @@ CREATE VIEW decision_results AS
         GROUP BY o.decision_id, o.id
         ORDER BY approved_yes DESC
 /* decision_results(decision_id,option_id,option_title,approved_yes,approved_no,approval_count) */;
-CREATE TABLE IF NOT EXISTS "references" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "referencer_team_id" integer, "referencer_decision_id" integer, "referencer_type" varchar NOT NULL, "referencer_id" integer NOT NULL, "referencer_attribute" varchar, "referenced_team_id" integer, "referenced_decision_id" integer, "referenced_type" varchar NOT NULL, "referenced_id" integer NOT NULL, "created_by_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_27728a1a5d"
-FOREIGN KEY ("created_by_id")
-  REFERENCES "users" ("id")
+CREATE TABLE IF NOT EXISTS "tags" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "description" text, "team_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_e39f546aa9"
+FOREIGN KEY ("team_id")
+  REFERENCES "teams" ("id")
 );
-CREATE INDEX "index_references_on_referencer" ON "references" ("referencer_type", "referencer_id");
-CREATE INDEX "index_references_on_referenced" ON "references" ("referenced_type", "referenced_id");
-CREATE INDEX "index_references_on_created_by_id" ON "references" ("created_by_id");
+CREATE INDEX "index_tags_on_team_id" ON "tags" ("team_id");
+CREATE TABLE IF NOT EXISTS "taggings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "tag_id" integer NOT NULL, "taggable_type" varchar NOT NULL, "taggable_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9fcd2e236b"
+FOREIGN KEY ("tag_id")
+  REFERENCES "tags" ("id")
+);
+CREATE INDEX "index_taggings_on_tag_id" ON "taggings" ("tag_id");
+CREATE INDEX "index_taggings_on_taggable" ON "taggings" ("taggable_type", "taggable_id");
 INSERT INTO "schema_migrations" (version) VALUES
 ('20230325020222'),
 ('20230325020226'),
@@ -116,6 +120,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230405011057'),
 ('20230406011007'),
 ('20230408031436'),
-('20230410022105');
+('20230411232043'),
+('20230411232223');
 
 

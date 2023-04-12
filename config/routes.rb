@@ -28,7 +28,6 @@ Rails.application.routes.draw do
   get '/teams/:team_id' => 'home#team'
   get '/teams/:team_id/new_decision' => 'home#new_decision'
   get '/teams/:team_id/decisions/:decision_id' => 'home#decision'
-  get '/teams/:team_id/decisions/:decision_id/results' => 'home#decision_results'
 
   if Rails.env.development?
     namespace :dev do

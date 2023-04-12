@@ -4,11 +4,10 @@ module Api::V1
       decision = Decision.create!(
         team: current_team,
         created_by: current_user,
-        context: params[:context],
         question: params[:question],
         status: params[:status],
         deadline: params[:deadline],
-        external_ids: params[:external_ids],
+        other_attributes: {} # TODO
       )
       
       render json: decision

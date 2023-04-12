@@ -7,7 +7,7 @@ module Api::V1
         created_by: current_user,
         title: params[:title],
         description: params[:description],
-        external_ids: params[:external_ids],
+        other_attributes: {} # TODO
       )
       render json: option
     end
@@ -17,7 +17,7 @@ module Api::V1
       option = current_resource
       option.title = params[:title] if params[:title].present?
       option.description = params[:description] if params[:description].present?
-      option.external_ids = params[:external_ids] if params[:external_ids].present?
+      # option.other_attributes # TODO
       option.save!
       render json: option
     end

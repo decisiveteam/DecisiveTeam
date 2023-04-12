@@ -39,7 +39,8 @@ class Decision < ApplicationRecord
   end
 
   def extract_tags
-    self.context.scan(Tag.pattern).flatten
+    [] # TODO
+    # self.context.scan(Tag.pattern).flatten
   end
 
   def update_tags

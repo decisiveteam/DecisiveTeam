@@ -22,9 +22,6 @@ class HomeController < ApplicationController
   def decision
   end
 
-  def decision_results
-  end
-
   def set_current_resources
     @current_user = current_user
     @current_team = @current_user.teams.find(params[:team_id]) if params[:team_id]

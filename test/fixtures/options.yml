@@ -6,7 +6,7 @@ one:
   created_by: one
   decision: one
   team: one
-  external_ids: 
+  other_attributes: 
 
 two:
   title: MyText
@@ -14,4 +14,4 @@ two:
   created_by: two
   decision: two
   team: two
-  external_ids: 
+  other_attributes: 

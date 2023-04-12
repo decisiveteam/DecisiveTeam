@@ -26,15 +26,6 @@ FOREIGN KEY ("owner_id")
 CREATE UNIQUE INDEX "index_oauth_applications_on_uid" ON "oauth_applications" ("uid");
 CREATE INDEX "index_oauth_applications_on_owner_id" ON "oauth_applications" ("owner_id");
 CREATE TABLE IF NOT EXISTS "teams" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "handle" varchar, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
-CREATE TABLE IF NOT EXISTS "team_members" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "status" varchar, "team_id" integer NOT NULL, "user_id" integer NOT NULL, "external_ids" json, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_194b5b076d"
-FOREIGN KEY ("team_id")
-  REFERENCES "teams" ("id")
-, CONSTRAINT "fk_rails_9ec2d5e75e"
-FOREIGN KEY ("user_id")
-  REFERENCES "users" ("id")
-);
-CREATE INDEX "index_team_members_on_team_id" ON "team_members" ("team_id");
-CREATE INDEX "index_team_members_on_user_id" ON "team_members" ("user_id");
 CREATE TABLE IF NOT EXISTS "approvals" ("id" integer NOT NULL PRIMARY KEY, "value" integer DEFAULT NULL, "note" text DEFAULT NULL, "option_id" integer NOT NULL, "decision_id" integer NOT NULL, "created_by_id" integer NOT NULL, "team_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_d0108bdf1a"
 FOREIGN KEY ("team_id")
   REFERENCES "teams" ("id")
@@ -49,22 +40,6 @@ CREATE INDEX "index_approvals_on_option_id" ON "approvals" ("option_id");
 CREATE INDEX "index_approvals_on_decision_id" ON "approvals" ("decision_id");
 CREATE INDEX "index_approvals_on_created_by_id" ON "approvals" ("created_by_id");
 CREATE INDEX "index_approvals_on_team_id" ON "approvals" ("team_id");
-CREATE TABLE IF NOT EXISTS "options" ("id" integer NOT NULL PRIMARY KEY, "title" text DEFAULT NULL, "description" text DEFAULT NULL, "created_by_id" integer NOT NULL, "decision_id" integer NOT NULL, "team_id" integer NOT NULL, "external_ids" json DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9c86b231af"
-FOREIGN KEY ("team_id")
-  REFERENCES "teams" ("id")
-, CONSTRAINT "fk_rails_df3bc80da2"
-FOREIGN KEY ("decision_id")
-  REFERENCES "decisions" ("id")
-);
-CREATE INDEX "index_options_on_created_by_id" ON "options" ("created_by_id");
-CREATE INDEX "index_options_on_decision_id" ON "options" ("decision_id");
-CREATE INDEX "index_options_on_team_id" ON "options" ("team_id");
-CREATE TABLE IF NOT EXISTS "decisions" ("id" integer NOT NULL PRIMARY KEY, "context" text DEFAULT NULL, "question" text DEFAULT NULL, "status" varchar DEFAULT NULL, "deadline" datetime(6) DEFAULT NULL, "created_by_id" integer NOT NULL, "team_id" integer NOT NULL, "external_ids" json DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "title" varchar DEFAULT NULL, CONSTRAINT "fk_rails_453a12fd18"
-FOREIGN KEY ("team_id")
-  REFERENCES "teams" ("id")
-);
-CREATE INDEX "index_decisions_on_created_by_id" ON "decisions" ("created_by_id");
-CREATE INDEX "index_decisions_on_team_id" ON "decisions" ("team_id");
 CREATE TABLE IF NOT EXISTS "webhooks" ("id" integer NOT NULL PRIMARY KEY, "url" varchar DEFAULT NULL, "secret" varchar DEFAULT NULL, "event" varchar DEFAULT NULL, "team_id" integer NOT NULL, "decision_id" integer DEFAULT NULL, "created_by_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c37817a11f"
 FOREIGN KEY ("team_id")
   REFERENCES "teams" ("id")
@@ -103,6 +78,31 @@ FOREIGN KEY ("tag_id")
 );
 CREATE INDEX "index_taggings_on_tag_id" ON "taggings" ("tag_id");
 CREATE INDEX "index_taggings_on_taggable" ON "taggings" ("taggable_type", "taggable_id");
+CREATE TABLE IF NOT EXISTS "team_members" ("id" integer NOT NULL PRIMARY KEY, "name" varchar DEFAULT NULL, "status" varchar DEFAULT NULL, "team_id" integer NOT NULL, "user_id" integer NOT NULL, "other_attributes" json DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9ec2d5e75e"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_194b5b076d"
+FOREIGN KEY ("team_id")
+  REFERENCES "teams" ("id")
+);
+CREATE INDEX "index_team_members_on_team_id" ON "team_members" ("team_id");
+CREATE INDEX "index_team_members_on_user_id" ON "team_members" ("user_id");
+CREATE TABLE IF NOT EXISTS "options" ("id" integer NOT NULL PRIMARY KEY, "title" text DEFAULT NULL, "description" text DEFAULT NULL, "created_by_id" integer NOT NULL, "decision_id" integer NOT NULL, "team_id" integer NOT NULL, "other_attributes" json DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_df3bc80da2"
+FOREIGN KEY ("decision_id")
+  REFERENCES "decisions" ("id")
+, CONSTRAINT "fk_rails_9c86b231af"
+FOREIGN KEY ("team_id")
+  REFERENCES "teams" ("id")
+);
+CREATE INDEX "index_options_on_created_by_id" ON "options" ("created_by_id");
+CREATE INDEX "index_options_on_decision_id" ON "options" ("decision_id");
+CREATE INDEX "index_options_on_team_id" ON "options" ("team_id");
+CREATE TABLE IF NOT EXISTS "decisions" ("id" integer NOT NULL PRIMARY KEY, "question" text DEFAULT NULL, "status" varchar DEFAULT NULL, "deadline" datetime(6) DEFAULT NULL, "created_by_id" integer NOT NULL, "team_id" integer NOT NULL, "other_attributes" json DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_453a12fd18"
+FOREIGN KEY ("team_id")
+  REFERENCES "teams" ("id")
+);
+CREATE INDEX "index_decisions_on_created_by_id" ON "decisions" ("created_by_id");
+CREATE INDEX "index_decisions_on_team_id" ON "decisions" ("team_id");
 INSERT INTO "schema_migrations" (version) VALUES
 ('20230325020222'),
 ('20230325020226'),
@@ -121,6 +121,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230406011007'),
 ('20230408031436'),
 ('20230411232043'),
-('20230411232223');
+('20230411232223'),
+('20230412040616'),
+('20230412041938');
 
 

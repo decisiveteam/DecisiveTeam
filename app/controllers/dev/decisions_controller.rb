@@ -30,16 +30,6 @@ module Dev
         render json: approval
       else
         raise "Invalid Request"
-        # decision = Decision.create!(
-        #   team_id: 1,
-        #   created_by: current_user,
-        #   context: params[:context],
-        #   question: params[:question],
-        #   status: params[:status],
-        #   deadline: params[:deadline],
-        #   external_ids: params[:external_ids],
-        # )
-        # render json: decision
       end
     end
   end

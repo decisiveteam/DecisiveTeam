@@ -5,11 +5,11 @@ one:
   status: MyString
   team: one
   user: one
-  external_ids: 
+  other_attributes: 
 
 two:
   name: MyString
   status: MyString
   team: two
   user: two
-  external_ids: 
+  other_attributes: 

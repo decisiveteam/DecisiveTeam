@@ -1,5 +1,6 @@
 { pkgs }: {
 	deps = [
+        pkgs.postgresql
         pkgs.rubyPackages_3_0.rspec-core
         pkgs.nano
         pkgs.ruby_3_0

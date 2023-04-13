@@ -3,6 +3,8 @@ Reference tag: <a href="<%= @current_decision.path %>">#<%= @current_decision.re
 Created at: <%= @current_decision.created_at %>
 Created by: <%= @current_decision.created_by.email %>
 Status: <%= @current_decision.status || '[none]' %>
+<% (@current_decision.other_attributes || {}).each do |key, val| %><%= key %>: <%= val %>
+<% end %>
 
 <strong>## Options (<span id="decision-count-display"><%= @current_decision.options.count %></span>)</strong>
 Check all options you approve.

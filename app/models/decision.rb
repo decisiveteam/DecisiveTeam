@@ -39,13 +39,28 @@ class Decision < ApplicationRecord
   end
 
   def extract_tags
-    [] # TODO
-    # self.context.scan(Tag.pattern).flatten
+    all_tags = []
+    self.other_attributes.map do |key, val|
+      tags = val.scan(Tag.pattern).flatten
+      unless tags.empty?
+        all_tags << { key: key, tags: tags }
+      end
+    end
+    all_tags
   end
 
   def update_tags
-    self.tags = extract_tags.map do |tag|
-      Tag.find_or_create_by(name: tag, team_id: self.team_id)
-    end
+    self.taggings = extract_tags.map do |key_and_tags|
+      key = key_and_tags[:key]
+      tags = key_and_tags[:tags]
+      tags.map do |tag|
+        tag_record = Tag.find_or_create_by(name: tag, team_id: self.team_id)
+        Tagging.find_or_create_by(
+          tag: tag_record,
+          taggable: self,
+          key: key
+        )
+      end
+    end.flatten
   end
 end

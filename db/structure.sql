@@ -72,7 +72,7 @@ FOREIGN KEY ("team_id")
   REFERENCES "teams" ("id")
 );
 CREATE INDEX "index_tags_on_team_id" ON "tags" ("team_id");
-CREATE TABLE IF NOT EXISTS "taggings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "tag_id" integer NOT NULL, "taggable_type" varchar NOT NULL, "taggable_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9fcd2e236b"
+CREATE TABLE IF NOT EXISTS "taggings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "tag_id" integer NOT NULL, "taggable_type" varchar NOT NULL, "taggable_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "key" varchar, CONSTRAINT "fk_rails_9fcd2e236b"
 FOREIGN KEY ("tag_id")
   REFERENCES "tags" ("id")
 );
@@ -123,6 +123,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230411232043'),
 ('20230411232223'),
 ('20230412040616'),
-('20230412041938');
+('20230412041938'),
+('20230412044504');
 
 

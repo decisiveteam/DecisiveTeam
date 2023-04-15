@@ -1,11 +1,33 @@
 class Api::V1::BaseController < ApplicationController
-  protect_from_forgery with: :null_session
-  before_action -> { doorkeeper_authorize! :read }, only: [:index, :show]
-  before_action -> { doorkeeper_authorize! :write }, only: [:create, :update, :destroy]
-  before_action -> { doorkeeper_authorize! }, except: [:index, :show, :create, :update, :destroy]
+  skip_before_action :verify_authenticity_token
+  before_action :doorkeeper_authorize!, if: :doorkeeper_token_present?
+  before_action :authenticate_user!, unless: :doorkeeper_token_present?
+
+  def index
+    render json: current_scope
+  end
+
+  def show
+    render json: current_resource
+  end
+
+  private
+
+  def authenticate_user_or_doorkeeper!
+    return if doorkeeper_token_present? || user_signed_in?
+    render json: { error: 'Access Denied', status: :unauthorized }, status: :unauthorized
+  end
+
+  def doorkeeper_token_present?
+    doorkeeper_token.present?
+  end
 
   def current_user
-    @current_user ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+    if doorkeeper_token_present?
+      @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+    else
+      @current_user ||= super
+    end
   end
 
   def current_team
@@ -61,13 +83,4 @@ class Api::V1::BaseController < ApplicationController
     end
     @current_option
   end
-
-  def index
-    render json: current_scope
-  end
-
-  def show
-    render json: current_resource
-  end
-
 end

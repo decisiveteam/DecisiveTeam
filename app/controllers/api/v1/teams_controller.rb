@@ -5,6 +5,11 @@ module Api::V1
         handle: params[:handle],
         name: params[:name],
       )
+      # Make sure the user retains access to this team.
+      TeamMember.create!(
+        team: team,
+        user: current_user
+      )
       render json: team
     end
   end

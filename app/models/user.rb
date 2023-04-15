@@ -11,9 +11,10 @@ class User < ApplicationRecord
            foreign_key: :resource_owner_id,
            dependent: :delete_all
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  # :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable#,
+        #  :confirmable, :lockable
 
   has_many :team_members
   has_many :teams, through: :team_members
@@ -23,6 +24,6 @@ class User < ApplicationRecord
   end
 
   def can_admin_oauth_applications?
-    true # TODO make this conditional in a way that makes sense
+    is_admin?
   end
 end

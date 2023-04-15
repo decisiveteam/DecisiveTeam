@@ -1,4 +1,10 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+  authenticate :user, lambda { |u| u.is_admin? } do
+    mount Sidekiq::Web => '/sidekiq'
+    # TODO Add more admin routes here
+  end
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   use_doorkeeper
@@ -24,6 +30,7 @@ Rails.application.routes.draw do
   end
   # Defines the root path route ("/")
   root 'home#index'
+  get '/new_team' => 'home#new_team'
   get '/teams' => 'home#teams'
   get '/teams/:team_id' => 'home#team'
   get '/teams/:team_id/new_decision' => 'home#new_decision'

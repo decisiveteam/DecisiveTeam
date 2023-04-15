@@ -12,6 +12,18 @@ services:
       - db
     environment:
       - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379/0
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379/0
   db:
     image: postgres:13
     volumes:
@@ -20,6 +32,11 @@ services:
       - POSTGRES_USER=decisiveteam
       - POSTGRES_PASSWORD=decisiveteam
       - POSTGRES_DB=decisive_team_development
+  redis:
+    image: redis:6.2-alpine
+    volumes:
+      - redis_data:/data
 
 volumes:
   pg_data:
+  redis_data:

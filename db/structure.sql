@@ -421,7 +421,8 @@ CREATE TABLE public.users (
     unlock_token character varying,
     locked_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    is_admin boolean
 );
 
 
@@ -1095,6 +1096,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230411232223'),
 ('20230412040616'),
 ('20230412041938'),
-('20230412044504');
+('20230412044504'),
+('20230415035625');
 
 

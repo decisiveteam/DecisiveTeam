@@ -53,14 +53,14 @@ servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: decisiveteam.danallison1.repl.co
+      default: localhost:3000
 components:
   securitySchemes:
     OAuth2:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: https://decisiveteam.danallison1.repl.co/oauth/token
+          tokenUrl: https://localhost:3000/oauth/token
           scopes:
             read: Read access to all data
             write: Write access to all data

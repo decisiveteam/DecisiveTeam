@@ -12,6 +12,7 @@ services:
       - db
     environment:
       - RAILS_ENV=development
+      - HOSTNAME=localhost:3000
       - REDIS_URL=redis://redis:6379/0
   sidekiq:
     build: .
@@ -23,6 +24,7 @@ services:
       - redis
     environment:
       - RAILS_ENV=development
+      - HOSTNAME=localhost:3000
       - REDIS_URL=redis://redis:6379/0
   db:
     image: postgres:13

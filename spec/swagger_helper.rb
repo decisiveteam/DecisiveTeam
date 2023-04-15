@@ -2,8 +2,7 @@
 
 require 'rails_helper'
 
-# TODO Change this to pull from app-level config
-host = 'decisiveteam.danallison1.repl.co'
+host = ENV['HOSTNAME']
 
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated

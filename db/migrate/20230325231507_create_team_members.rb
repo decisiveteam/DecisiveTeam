@@ -5,7 +5,7 @@ class CreateTeamMembers < ActiveRecord::Migration[7.0]
       t.string :status
       t.references :team, null: false, foreign_key: true
       t.references :user, null: false, foreign_key: true
-      t.json :external_ids
+      t.jsonb :external_ids
 
       t.timestamps
     end

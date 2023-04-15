@@ -149,9 +149,14 @@ GEM
       net-protocol
       timeout
     nio4r (2.5.8)
+    nokogiri (1.13.1-aarch64-linux)
+      racc (~> 1.4)
+    nokogiri (1.13.1-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.13.1-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    pg (1.4.6)
     public_suffix (4.0.6)
     puma (5.6.0)
       nio4r (~> 2.0)
@@ -236,7 +241,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.6.2-x86_64-linux)
     stimulus-rails (1.0.2)
       railties (>= 6.0.0)
     strscan (3.0.1)
@@ -268,6 +272,8 @@ GEM
     zeitwerk (2.5.3)
 
 PLATFORMS
+  aarch64-linux
+  arm64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -281,13 +287,13 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   nokogiri
+  pg
   puma (~> 5.0)
   rails (~> 7.0.1)
   rspec-rails
   rswag
   selenium-webdriver
   sprockets-rails
-  sqlite3 (~> 1.4)
   stimulus-rails
   turbo-rails
   tzinfo-data
@@ -298,4 +304,4 @@ RUBY VERSION
    ruby 3.0.3p157
 
 BUNDLED WITH
-   2.2.32
+   2.4.10

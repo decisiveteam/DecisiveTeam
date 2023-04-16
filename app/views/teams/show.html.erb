@@ -1,0 +1,10 @@
+<strong># <%= @team.name %></strong>
+<a href="<%= @team.path %>/new_decision">New decision</a>
+
+<strong>## Team Members (<%= @team.team_members.count %>)</strong>
+<% @team.team_members.limit(10).each do |tm| %>* <%= tm.user.email %>
+<% end %>* <a href="<%= @team.path %>/invite">Invite new team members</a>
+
+<strong>## Decisions (<%= @team.decisions.count %>)</strong>
+<% @team.decisions.order(id: :desc).limit(10).each do |d| %>* <a href="<%= d.path %>"><%= d.question %></a>
+<% end %>* 

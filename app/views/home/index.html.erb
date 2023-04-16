@@ -3,4 +3,6 @@
 <% @teams.each do |team| %>
 * <a href="<%= team.path %>"><%= team.name %></a>
 <% end %>
+* <a href="<%= new_team_path %>">Start a new team</a>
+* <a href="">Join an existing team</a>
 <% end %>

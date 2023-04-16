@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["input", "list"];
 
   optionItem(option) {
-    return `<span class="option-item" data-id="${option.id}">- <span class="markdown-checkbox">[${option.value == 1 ? 'x' : ' '}]</span> ${option.title}</span>`;
+    return `<span class="option-item" data-option-id="${option.id}">- <span class="markdown-checkbox">[${option.value == 1 ? 'x' : ' '}]</span> ${option.title}</span>`;
   }
 
   add(event) {
@@ -30,14 +30,15 @@ export default class extends Controller {
   }
 
   async createOption(title) {
+    const teamId = this.inputTarget.dataset.teamId;
     const decisionId = this.inputTarget.dataset.decisionId;
-    const response = await fetch("/dev/decisions", {
+    const response = await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ title, decision_id: decisionId }),
+      body: JSON.stringify({ title }),
     });
 
     if (!response.ok) {
@@ -48,19 +49,21 @@ export default class extends Controller {
   }
 
   async toggleApproved(event) {
+    const teamId = this.inputTarget.dataset.teamId;
+    const decisionId = this.inputTarget.dataset.decisionId;
     const checkbox = event.target;
     const optionItem = checkbox.closest(".option-item");
-    const optionId = optionItem.dataset.id;
+    const optionId = optionItem.dataset.optionId;
     const approved = checkbox.textContent == '[x]' ? false : true;
     checkbox.textContent = approved ? '[x]' : '[ ]'
   
-    await fetch(`/dev/decisions`, {
+    await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ option_id: optionId, value: approved }),
+      body: JSON.stringify({ value: approved }),
     });
   }
 

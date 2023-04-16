@@ -1,5 +1,5 @@
 class Api::V1::BaseController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  skip_before_action :verify_authenticity_token, if: :doorkeeper_token_present?
   before_action :doorkeeper_authorize!, if: :doorkeeper_token_present?
   before_action :authenticate_user!, unless: :doorkeeper_token_present?
 
@@ -13,20 +13,16 @@ class Api::V1::BaseController < ApplicationController
 
   private
 
-  def authenticate_user_or_doorkeeper!
-    return if doorkeeper_token_present? || user_signed_in?
-    render json: { error: 'Access Denied', status: :unauthorized }, status: :unauthorized
-  end
-
   def doorkeeper_token_present?
     doorkeeper_token.present?
   end
 
   def current_user
+    return @current_user if defined?(@current_user)
     if doorkeeper_token_present?
-      @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+      @current_user = User.find(doorkeeper_token.resource_owner_id)
     else
-      @current_user ||= super
+      @current_user = super
     end
   end
 

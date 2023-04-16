@@ -8,20 +8,6 @@ class HomeController < ApplicationController
     end
   end
 
-  def teams
-    @teams = Team.accessible_by(current_user)
-  end
-
-  def team
-    @team = @current_team
-  end
-
-  def new_decision
-  end
-
-  def decision
-  end
-
   def set_current_resources
     @current_user = current_user
     @current_team = @current_user.teams.find(params[:team_id]) if params[:team_id]

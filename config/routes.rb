@@ -30,15 +30,10 @@ Rails.application.routes.draw do
   end
   # Defines the root path route ("/")
   root 'home#index'
-  get '/new_team' => 'home#new_team'
-  get '/teams' => 'home#teams'
-  get '/teams/:team_id' => 'home#team'
-  get '/teams/:team_id/new_decision' => 'home#new_decision'
-  get '/teams/:team_id/decisions/:decision_id' => 'home#decision'
 
-  if Rails.env.development?
-    namespace :dev do
-      resources :decisions
-    end
+  get '/new_team' => 'teams#new'
+  resources :teams, only: [:create, :index, :show] do
+    get '/new_decision' => 'decisions#new'
+    resources :decisions, only: [:create, :show]
   end
 end

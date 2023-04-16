@@ -68,4 +68,6 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
+  # Add Docker container IP subnet to the list of allowed networks
+  config.web_console.allowed_ips = ['127.0.0.0/8', '::1', '172.16.0.0/12']
 end

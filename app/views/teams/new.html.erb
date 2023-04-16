@@ -1,0 +1,16 @@
+<h1>New Team</h1>
+
+<%= form_with(model: @team) do |form| %>
+
+<div>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
+</div>
+
+<div>
+  <%= form.label :handle %>
+  <%= form.text_field :handle %>
+</div>
+
+<%= form.submit 'Create' %>
+<% end %>

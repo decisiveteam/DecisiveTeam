@@ -959,13 +959,13 @@ CREATE OR REPLACE VIEW public.decision_results AS
  SELECT o.decision_id,
     o.id AS option_id,
     o.title AS option_title,
-    sum(a.value) AS approved_yes,
-    (count(a.value) - sum(a.value)) AS approved_no,
+    COALESCE(sum(a.value), (0)::bigint) AS approved_yes,
+    (count(a.value) - COALESCE(sum(a.value), (0)::bigint)) AS approved_no,
     count(a.value) AS approval_count
    FROM (public.options o
      LEFT JOIN public.approvals a ON ((a.option_id = o.id)))
   GROUP BY o.decision_id, o.id
-  ORDER BY (sum(a.value)) DESC;
+  ORDER BY COALESCE(sum(a.value), (0)::bigint) DESC;
 
 
 --
@@ -1149,6 +1149,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412044504'),
 ('20230415035625'),
 ('20230416032716'),
-('20230416044353');
+('20230416044353'),
+('20230416224308');
 
 

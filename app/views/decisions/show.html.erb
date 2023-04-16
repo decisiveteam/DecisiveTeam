@@ -1,5 +1,5 @@
-<span data-controller="decision"><strong># <%= @decision.question %></strong>
-Reference tag: <a href="<%= @decision.path %>">#<%= @decision.reference_tag %></a>
+<span data-controller="decision"><strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > <%= @decision.question %></strong>
+Reference tag: #<%= @decision.reference_tag %>
 Created at: <%= @decision.created_at %>
 Created by: <%= @decision.created_by.email %>
 Status: <%= @decision.status || '[none]' %>
@@ -12,8 +12,6 @@ Check all options you approve.
 <span data-decision-target="list"><% @decision.options.each do |option| %><% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %><span class="option-item" data-option-id="<%= option.id %>">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[<%= approval.value == 1 ? 'x' : ' ' %>]</span> <%= option.title %></span>
 <% end %></span>- [ ] <form style="display:inline;" data-action="submit->decision#add"><input type="text" data-decision-target="input"  data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>" placeholder="Add an option"><button type="submit">Add</button>
 </form>
-<strong>## Results</strong>
-<a data-action="click->decision#toggleResults" href="#">Show results</a><span id="results" style="display:none;">
 <%= render 'results' %>
 </span>
 

@@ -1,6 +1,5 @@
 class DecisionsController < ApplicationController
   layout 'markdown'
-  before_action :set_current_team # Decision paths should always be scoped by team
 
   def new
     @decision = Decision.new(team: @current_team, created_by: current_user)
@@ -30,11 +29,13 @@ class DecisionsController < ApplicationController
     @decision = Decision.accessible_by(current_user).find_by(team_id: params[:team_id], number: params[:number])
   end
 
-  private
-
-  def set_current_team
-    @current_team = Team.accessible_by(current_user).find(params[:team_id])
+  def results_partial
+    show
+    @show_results = true
+    render partial: 'results'
   end
+
+  private
 
   def decision_params
     params.require(:decision).permit(:question, :other_attributes)

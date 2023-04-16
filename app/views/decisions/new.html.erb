@@ -1,4 +1,4 @@
-<strong># New Decision</strong>
+<strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > New Decision</strong>
 <%= form_with(model: [@current_team, @decision]) do |form| %>
 <span><%= form.label :question %>
 <%= form.text_field :question %></span> 

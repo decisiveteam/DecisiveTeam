@@ -36,5 +36,6 @@ Rails.application.routes.draw do
     get '/new_decision' => 'decisions#new'
     resources :decisions, only: [:create]
     get '/decisions/:number' => 'decisions#show'
+    get '/decisions/:number/results.html' => 'decisions#results_partial'
   end
 end

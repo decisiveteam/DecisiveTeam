@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["input", "list"];
 
   optionItem(option) {
-    return `<span class="option-item" data-option-id="${option.id}">- <span class="markdown-checkbox">[${option.value == 1 ? 'x' : ' '}]</span> ${option.title}</span>`;
+    return `<span class="option-item" data-option-id="${option.id}">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[${option.value == 1 ? 'x' : ' '}]</span> ${option.title}</span>\n`;
   }
 
   add(event) {

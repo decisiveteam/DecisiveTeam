@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get '/new_team' => 'teams#new'
   resources :teams, only: [:create, :index, :show] do
     get '/new_decision' => 'decisions#new'
-    resources :decisions, only: [:create, :show]
+    resources :decisions, only: [:create]
+    get '/decisions/:number' => 'decisions#show'
   end
 end

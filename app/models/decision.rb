@@ -6,6 +6,7 @@ class Decision < ApplicationRecord
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
 
+  before_save :set_number
   after_save :update_tags
 
   def results
@@ -13,12 +14,7 @@ class Decision < ApplicationRecord
   end
 
   def path
-    "/teams/#{self.team_id}/decisions/#{self.id}"
-  end
-
-  def number
-    # TODO Add this as a generated column
-    Decision.where(team: self.team).where('created_at < ?', self.created_at).count + 1
+    "/teams/#{self.team_id}/decisions/#{self.number}"
   end
 
   def reference_tag
@@ -36,6 +32,11 @@ class Decision < ApplicationRecord
 
   def reference_count
     referenced_by.count
+  end
+
+  def set_number
+    return unless number.nil?
+    self.number = 1 + (Decision.where(team_id: self.team_id).pluck('max(number)')[0] || 0)
   end
 
   def extract_tags

@@ -88,7 +88,8 @@ CREATE TABLE public.decisions (
     team_id bigint NOT NULL,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    number integer
 );
 
 
@@ -699,6 +700,13 @@ CREATE INDEX index_approvals_on_option_id ON public.approvals USING btree (optio
 
 
 --
+-- Name: index_approvals_on_option_id_and_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_approvals_on_option_id_and_created_by_id ON public.approvals USING btree (option_id, created_by_id);
+
+
+--
 -- Name: index_approvals_on_team_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -717,6 +725,13 @@ CREATE INDEX index_decisions_on_created_by_id ON public.decisions USING btree (c
 --
 
 CREATE INDEX index_decisions_on_team_id ON public.decisions USING btree (team_id);
+
+
+--
+-- Name: index_decisions_on_team_id_and_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_decisions_on_team_id_and_number ON public.decisions USING btree (team_id, number);
 
 
 --
@@ -804,6 +819,13 @@ CREATE INDEX index_options_on_decision_id ON public.options USING btree (decisio
 
 
 --
+-- Name: index_options_on_decision_id_and_title; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_options_on_decision_id_and_title ON public.options USING btree (decision_id, title);
+
+
+--
 -- Name: index_options_on_team_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -815,6 +837,13 @@ CREATE INDEX index_options_on_team_id ON public.options USING btree (team_id);
 --
 
 CREATE INDEX index_taggings_on_tag_id ON public.taggings USING btree (tag_id);
+
+
+--
+-- Name: index_taggings_on_tag_taggable_and_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_taggings_on_tag_taggable_and_key ON public.taggings USING btree (tag_id, taggable_type, taggable_id, key);
 
 
 --
@@ -832,6 +861,13 @@ CREATE INDEX index_tags_on_team_id ON public.tags USING btree (team_id);
 
 
 --
+-- Name: index_tags_on_team_id_and_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_tags_on_team_id_and_name ON public.tags USING btree (team_id, name);
+
+
+--
 -- Name: index_team_members_on_team_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -839,10 +875,24 @@ CREATE INDEX index_team_members_on_team_id ON public.team_members USING btree (t
 
 
 --
+-- Name: index_team_members_on_team_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_team_members_on_team_id_and_user_id ON public.team_members USING btree (team_id, user_id);
+
+
+--
 -- Name: index_team_members_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_team_members_on_user_id ON public.team_members USING btree (user_id);
+
+
+--
+-- Name: index_teams_on_handle; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_teams_on_handle ON public.teams USING btree (handle);
 
 
 --
@@ -1097,6 +1147,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412040616'),
 ('20230412041938'),
 ('20230412044504'),
-('20230415035625');
+('20230415035625'),
+('20230416032716'),
+('20230416044353');
 
 

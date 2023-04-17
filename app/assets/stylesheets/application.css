@@ -20,10 +20,14 @@
 }
 
 pre {
-  width: 90vw;
+  width: min(88vw, 800px);
   white-space: pre-wrap;
   font-family: 'Source Code Pro', monospace;
   font-size: 14px;
+  padding: 8px 12px;
+  margin: 0 auto;
+  margin-top: 40px;
+  border: 1px solid #AAA;
 }
 
 .markdown-checkbox {

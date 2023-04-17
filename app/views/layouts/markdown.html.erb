@@ -13,8 +13,8 @@
     <%= javascript_importmap_tags %>
   </head>
   <body>
-    <a href="/"><img src="/icon.svg" alt="decisive team" style="height:40px;"/></a>
-<pre><% if @current_user %><%= @current_user.email %> | <%= link_to 'Log out', destroy_user_session_path, data: { controller: 'logout', action: 'click->logout#logout' } %><% else %><a href="/login">Log in</a><% end %>
+<pre><a href="/"><img src="/icon.svg" alt="decisive team" style="height:40px;"/></a>
+<% if @current_user %><%= @current_user.email %> | <%= link_to 'Log out', destroy_user_session_path, data: { controller: 'logout', action: 'click->logout#logout' } %><% else %><a href="/login">Log in</a><% end %>
 
 <%= yield %>
 </pre>

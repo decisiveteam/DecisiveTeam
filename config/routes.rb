@@ -37,5 +37,9 @@ Rails.application.routes.draw do
     resources :decisions, only: [:create]
     get '/decisions/:number' => 'decisions#show'
     get '/decisions/:number/results.html' => 'decisions#results_partial'
+
+    get '/new_tag' => 'tags#new'
+    resources :tags, only: [:create]
+    get '/tags/:name' => 'tags#show'
   end
 end

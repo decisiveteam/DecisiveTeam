@@ -16,4 +16,8 @@ class Tag < ApplicationRecord
       ).pluck(:taggable_id)
     )
   end
+
+  def path
+    "/teams/#{team_id}/tags/#{name}"
+  end
 end

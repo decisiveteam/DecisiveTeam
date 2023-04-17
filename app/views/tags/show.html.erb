@@ -1,0 +1,9 @@
+<strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > #<%= @tag.name %></strong>
+Tag name: <%= @tag.name %>
+Description: <%= @tag.description || '[none]' %>
+
+<strong>## Decisions (<span id="decision-count-display"><%= @tag.decisions.count %></span>)</strong>
+These decisions reference this tag in one or more of their decision attributes.
+
+<% @tag.decisions.each do |d| %>* <a href="<%= d.path %>"><%= d.question %></a>
+<% end %>

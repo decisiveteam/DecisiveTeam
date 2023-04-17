@@ -4,7 +4,7 @@
   ><strong>## Results</strong>
 <a data-action="click->decision-results#toggleResults" href="#"><% if @show_results %>Hide<% else %>Show<% end %> results</a><span id="results" style="display:<% if @show_results %>inline<% else %>none<% end %>;">
 
-<span data-decision-results-target="message">Results as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh</a> to get latest results.</span>
+<span data-decision-results-target="message">Results as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh</a></span>
 | Approvals | Option               |
 | --------- | -------------------- |
 <% @decision.results.each do |result| %>| <%= "#{result.approved_yes || 0}".rjust(9, ' ') %> | <%= result.option_title.slice(0, 20).ljust(20, ' ') %> |

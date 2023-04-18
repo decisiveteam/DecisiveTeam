@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["message", "age"]
-  static values = { url: String, timeOfInitialRender: String }
+  static values = { url: String }
 
   get csrfToken() {
     return document.querySelector("meta[name='csrf-token']").content;

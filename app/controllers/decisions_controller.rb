@@ -29,6 +29,11 @@ class DecisionsController < ApplicationController
     @decision = Decision.accessible_by(current_user).find_by(team_id: params[:team_id], number: params[:number])
   end
 
+  def options_partial
+    show
+    render partial: 'options'
+  end
+
   def results_partial
     show
     @show_results = true

@@ -34,10 +34,10 @@ Rails.application.routes.draw do
   get '/new_team' => 'teams#new'
   resources :teams, only: [:create, :index, :show] do
     get '/new_decision' => 'decisions#new'
-    resources :decisions, only: [:create]
-    get '/decisions/:number' => 'decisions#show'
-    get '/decisions/:number/results.html' => 'decisions#results_partial'
-    get '/decisions/:number/options.html' => 'decisions#options_partial'
+    resources :decisions, only: [:create, :show] do
+      get '/results.html' => 'decisions#results_partial'
+      get '/options.html' => 'decisions#options_partial'
+    end
 
     get '/new_tag' => 'tags#new'
     resources :tags, only: [:create]

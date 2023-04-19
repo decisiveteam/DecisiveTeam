@@ -2,11 +2,10 @@ class Decision < ApplicationRecord
   include Tracked
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :team
-  has_many :options
+  has_many :options, dependent: :destroy
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
 
-  before_save :set_number
   after_save :update_tags
 
   def results
@@ -14,11 +13,11 @@ class Decision < ApplicationRecord
   end
 
   def path
-    "/teams/#{self.team_id}/decisions/#{self.number}"
+    "/teams/#{self.team_id}/decisions/#{self.id}"
   end
 
   def reference_tag
-    "T#{team_id}D#{number}"
+    "#{id}"
   end
 
   def referenced_by
@@ -32,11 +31,6 @@ class Decision < ApplicationRecord
 
   def reference_count
     referenced_by.count
-  end
-
-  def set_number
-    return unless number.nil?
-    self.number = 1 + (Decision.where(team_id: self.team_id).pluck('max(number)')[0] || 0)
   end
 
   def extract_tags

@@ -88,8 +88,7 @@ CREATE TABLE public.decisions (
     team_id bigint NOT NULL,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    number integer
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -728,13 +727,6 @@ CREATE INDEX index_decisions_on_team_id ON public.decisions USING btree (team_id
 
 
 --
--- Name: index_decisions_on_team_id_and_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_decisions_on_team_id_and_number ON public.decisions USING btree (team_id, number);
-
-
---
 -- Name: index_oauth_access_grants_on_application_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1148,7 +1140,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412041938'),
 ('20230412044504'),
 ('20230415035625'),
-('20230416032716'),
 ('20230416044353'),
 ('20230416224308');
 

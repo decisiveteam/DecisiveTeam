@@ -3,7 +3,7 @@ Reference tag: #<%= @decision.reference_tag %>
 Created at: <%= @decision.created_at %>
 Created by: <%= @decision.created_by.email %>
 Status: <%= @decision.status || '[none]' %>
-<% (@decision.other_attributes || {}).each do |key, val| %><%= key %>: <%= val %>
+<% (@decision.other_attributes || {}).each do |key, val| %><%= key %>: <%= with_tag_links(val, @current_team.id) %>
 <% end %>
 
 <%= render 'options' %>

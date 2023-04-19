@@ -2,7 +2,11 @@ class TagsController < ApplicationController
     layout 'markdown'
   
     def new
-      @tag = Tag.new(team_id: current_team.id)
+      @tag = Tag.new(
+        team_id: current_team.id,
+        name: params[:name],
+        description: params[:description]
+      )
     end
   
     def create
@@ -26,6 +30,11 @@ class TagsController < ApplicationController
   
     def show
       @tag = Tag.accessible_by(current_user).where(team: current_team).find_by(name: params[:name])
+      if @tag.nil?
+        @current_team ||= current_team
+        @name = params[:name]
+        render '404', status: 404
+      end
     end
   
     private

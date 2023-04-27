@@ -29,6 +29,10 @@ class TagsController < ApplicationController
     end
   
     def show
+      if Tag.is_decision_tag?(params[:name])
+        redirect_to "/teams/#{current_team.id}/decisions/#{params[:name]}"
+        return
+      end
       @tag = Tag.accessible_by(current_user).where(team: current_team).find_by(name: params[:name])
       if @tag.nil?
         @current_team ||= current_team

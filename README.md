@@ -10,8 +10,20 @@ Decisive Team is a group decision-making tool that uses a 3 step decision-making
 Learn more at [decisive.team](https://decisive.team).
 
 ## Development
-Assuming you have Docker and Docker Compose installed, you can run the app with the command
+Docker and Docker Compose are the only dependencies you need to have installed to run the app. For initial setup, use `setup.sh`. This will build the docker containers and initialize the database. You only need to run this once.
+
+```bash
+./scripts/setup.sh
 ```
-docker-compose up
+
+To start the containers, run
+
+```bash
+./scripts/start.sh
 ```
-Then you can access the UI at `localhost:3000`.
+
+To stop, run
+
+```bash
+./scripts/stop.sh
+```

@@ -6,9 +6,12 @@
   <p>
     <a data-action="click->decision-results#toggleResults" href="#"><% if @show_results %>Hide<% else %>Show<% end %> results</a>
   </p>
-
   <span id="results" style="display:<% if @show_results %>inline<% else %>none<% end %>;">
-    <span data-decision-results-target="message">Results as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a>
+    <p>
+      Results are sorted first by ✅ approvals, then by ⭐ stars, then by 🎲 random.
+    </p>
+    <span data-decision-results-target="message"><% voter_count = @decision.voter_count %>
+    <%= voter_count %> <%= voter_count == 1 ? 'person has' : 'people have' %> voted on this decision. Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a>
     </span>
     <table style="border-top:none;">
       <thead style="border-top:none;">
@@ -20,11 +23,11 @@
         </tr>
       </thead>
       <tbody>
-        <% @decision.results.each do |result| %>
-          <tr>
+        <% @decision.results.each_with_index do |result, index| %>
+          <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;' : '' %>">
             <td><%= result.option_title %></td>
-            <td><%= (result.approved_yes || 0) > 0 ? result.approved_yes : '' %></td>
-            <td><%= (result.stars || 0) > 0 ? result.stars : '' %></td>
+            <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.4 %>;"><%= (result.approved_yes || 0) %></td>
+            <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.4 %>;"><%= (result.stars || 0) %></td>
             <td style="opacity:0.4;font-size:0.8em;" title="<%= result.random_id %>"><%= "#{result.random_id}".slice(0, 3) + "..." %></td>
           </tr>
         <% end %>

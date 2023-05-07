@@ -69,7 +69,7 @@ label.star-button {
 }
 
 input[type="checkbox"].star-button:checked + label.star-button {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%230969da" stroke="%230969da" stroke-width="38" d="M259.216 29.942L330.27 173.92l158.89 23.087L374.185 309.08l27.145 158.23-142.114-74.698-142.112 74.698 27.146-158.23L29.274 197.007l158.89-23.088z" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%23007aff" stroke="%23007aff" stroke-width="38" d="M259.216 29.942L330.27 173.92l158.89 23.087L374.185 309.08l27.145 158.23-142.114-74.698-142.112 74.698 27.146-158.23L29.274 197.007l158.89-23.088z" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 ul.options-list {

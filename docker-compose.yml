@@ -7,13 +7,13 @@ services:
     volumes:
       - .:/app
     ports:
+      # This port only needs to be exposed for local development.
+      # In production, the web container is behind a reverse proxy (Caddy).
       - "3000:3000"
     depends_on:
       - db
-    environment:
-      - RAILS_ENV=development
-      - HOSTNAME=localhost:3000
-      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
   sidekiq:
     build: .
     command: bundle exec sidekiq -C config/sidekiq.yml
@@ -22,22 +22,30 @@ services:
     depends_on:
       - db
       - redis
-    environment:
-      - RAILS_ENV=development
-      - HOSTNAME=localhost:3000
-      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
   db:
     image: postgres:13
     volumes:
       - pg_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=decisiveteam
-      - POSTGRES_PASSWORD=decisiveteam
-      - POSTGRES_DB=decisive_team_development
+    env_file:
+      - .env
   redis:
     image: redis:6.2-alpine
     volumes:
       - redis_data:/data
+  caddy:
+    image: caddy:2-alpine
+    command: /bin/sh -c "caddy reverse-proxy --from ${HOSTNAME} --to web:3000"
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    env_file:
+      - .env
+    environment:
+      HOSTNAME: "${HOSTNAME}"
 
 volumes:
   pg_data:

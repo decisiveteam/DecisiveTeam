@@ -1,5 +1,4 @@
 class TeamsController < ApplicationController
-  layout 'markdown'
 
   def new
     @team = Team.new

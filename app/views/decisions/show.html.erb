@@ -1,17 +1,20 @@
-<span data-controller="decision"><strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > <%= @decision.question %></strong>
-Reference tag: #<%= @decision.reference_tag %>
-Created at: <%= @decision.created_at %>
-Created by: <%= @decision.created_by.email %>
-Status: <%= @decision.status || '[none]' %>
-<% (@decision.other_attributes || {}).each do |key, val| %><%= key %>: <%= with_tag_links(val, @current_team.id) %>
+<span data-controller="decision">
+<h1><a href="<%= @current_team.path %>"><%= @current_team.name %></a> > <%= @decision.question %></h1>
+<p>
+Reference tag: #<%= @decision.reference_tag %><br/>
+Created at: <%= @decision.created_at %><br/>
+Created by: <%= @decision.created_by.email %><br/>
+Status: <%= @decision.status || '[none]' %><br/>
+<% (@decision.other_attributes || {}).each do |key, val| %>
+  <%= key %>: <%= with_tag_links(val, @current_team.id) %><br/>
 <% end %>
+</p>
 
 <%= render 'options' %>
 <%= render 'results' %>
 </span>
 
-<strong>## Referenced By (<%= @decision.reference_count %>)</strong>
+<h2>Referenced By (<%= @decision.reference_count %>)</h2>
 <% if @decision.reference_count == 0 %>References will show up here when other decisions include this decision's reference tag: #<%= @decision.reference_tag %><% else %>The following decisions reference this decision.
 <% @decision.referenced_by.each do |ref| %>* <a href="<%= ref.path %>" title="<%= ref.question %>">#<%= ref.reference_tag %></a>
 <% end %><% end %>
-</span>

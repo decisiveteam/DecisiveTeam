@@ -1,9 +1,10 @@
-<strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > #<%= @tag.name %></strong>
-Tag name: <%= @tag.name %>
-Description: <%= @tag.description || '[none]' %>
+<h1><a href="<%= @current_team.path %>"><%= @current_team.name %></a> > #<%= @tag.name %></h1>
 
-<strong>## Decisions (<span id="decision-count-display"><%= @tag.decisions.count %></span>)</strong>
-These decisions reference this tag in one or more of their decision attributes.
+<h2>Decisions (<span id="decision-count-display"><%= @tag.decisions.count %></span>)</h2>
+<p>These decisions reference this tag in one or more of their decision attributes.</p>
 
-<% @tag.decisions.each do |d| %>* <a href="<%= d.path %>"><%= d.question %></a>
-<% end %>
+<ul>
+  <% @tag.decisions.each do |d| %>
+    <li><a href="<%= d.path %>"><%= d.question %></a></li>
+  <% end %>
+</ul>

@@ -1,6 +1,23 @@
-<span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html"><strong>## Options (<span id="decision-count-display"><%= @decision.options.count %></span>)</strong>
+<span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html">
+<h2>Options (<span id="decision-count-display"><%= @decision.options.count %></span>)</h2>
 <span data-decision-target="optionsMessage">Check all options you approve. <a href="#" data-decision-target="optionsRefresh" data-action="click->decision#refreshOptions">Refresh options</a></span>
 
-<span data-decision-target="list"><% @decision.options.each do |option| %><% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %><span class="option-item" data-option-id="<%= option.id %>">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[<%= approval.value == 1 ? 'x' : ' ' %>]</span> <%= option.title %></span>
-<% end %></span>- [ ] <form style="display:inline;" data-action="submit->decision#add"><input type="text" data-decision-target="input"  data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>" placeholder="Add an option"><button type="submit">Add</button>
-</form></span>
+<ul>
+  <span data-decision-target="list">
+    <% @decision.options.each do |option| %>
+      <% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %>
+      <li class="option-item" data-option-id="<%= option.id %>">
+        <input type="checkbox" id="option<%= option.id %>" data-action="click->decision#toggleApproved" <%= approval.value == 1 ? 'checked' : '' %>/>
+        <label for="option<%= option.id %>"><%= option.title %></label>
+      </li>
+    <% end %>
+  </span>
+  <li>
+    <input type="checkbox"/>
+    <form style="display:inline;" data-action="submit->decision#add">
+      <input type="text" data-decision-target="input"  data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>" placeholder="Add an option">
+      <button type="submit">Add</button>
+    </form>
+  </li>
+</ul>
+</span>

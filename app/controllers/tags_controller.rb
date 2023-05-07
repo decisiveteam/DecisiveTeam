@@ -1,5 +1,4 @@
 class TagsController < ApplicationController
-    layout 'markdown'
   
     def new
       @tag = Tag.new(

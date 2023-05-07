@@ -1,6 +1,5 @@
 class HomeController < ApplicationController
   before_action :set_current_resources
-  layout 'markdown'
 
   def index
     if current_user

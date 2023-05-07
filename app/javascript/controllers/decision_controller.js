@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["input", "list", "optionsSection", "optionsMessage", "optionsRefresh"];
 
   optionItem(option) {
-    return `<span class="option-item" data-option-id="${option.id}">- <span class="markdown-checkbox" data-action="click->decision#toggleApproved">[${option.value == 1 ? 'x' : ' '}]</span> ${option.title}</span>\n`;
+    return `<li class="option-item" data-option-id="${option.id}"><input type="checkbox" id="option${option.id}" data-action="click->decision#toggleApproved" ${option.value == 1 ? 'checked' : ''}/><label for="option${option.id}">${option.title}</label></li>\n`;
   }
 
   add(event) {
@@ -54,8 +54,7 @@ export default class extends Controller {
     const checkbox = event.target;
     const optionItem = checkbox.closest(".option-item");
     const optionId = optionItem.dataset.optionId;
-    const approved = checkbox.textContent == '[x]' ? false : true;
-    checkbox.textContent = approved ? '[x]' : '[ ]'
+    const approved = checkbox.checked;
   
     await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",

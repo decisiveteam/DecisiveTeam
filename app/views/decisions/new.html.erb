@@ -1,7 +1,6 @@
-<strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > New Decision</strong>
+<h1><a href="<%= @current_team.path %>"><%= @current_team.name %></a> > New Decision</h1>
 <%= form_with(model: [@current_team, @decision]) do |form| %>
 <span><%= form.label :question %>
 <%= form.text_field :question %></span> 
-<span><%= form.label :other_attributes %>
-<%= form.text_field :other_attributes %></span> <%= form.submit 'Create' %>
+<%= form.submit 'Create' %>
 <% end %>

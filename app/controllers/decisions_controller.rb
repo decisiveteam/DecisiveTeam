@@ -1,16 +1,20 @@
 class DecisionsController < ApplicationController
-  layout 'markdown'
 
   def new
     @decision = Decision.new(team: @current_team, created_by: current_user)
   end
 
   def create
+    other_attributes = begin
+      JSON.parse(decision_params[:other_attributes])
+    rescue JSON::ParserError
+      { notes: decision_params[:other_attributes] }
+    end
     @decision = Decision.new(
       team: @current_team,
       created_by: current_user,
       question: decision_params[:question],
-      other_attributes: JSON.parse(decision_params[:other_attributes])
+      other_attributes: other_attributes
     )
 
     if @decision.save

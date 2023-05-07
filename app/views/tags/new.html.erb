@@ -1,8 +1,7 @@
-<strong># <a href="<%= @current_team.path %>"><%= @current_team.name %></a> > New Tag</strong>
+<h1><a href="<%= @current_team.path %>"><%= @current_team.name %></a> > New Tag</h1>
 
 <%= form_with(model: [@current_team, @tag]) do |form| %>
 <span><%= form.label :name %>
 <%= form.text_field :name %></span> 
-<span><%= form.label :description %>
-<%= form.text_field :description %></span> <%= form.submit 'Create' %>
+<%= form.submit 'Create' %>
 <% end %>

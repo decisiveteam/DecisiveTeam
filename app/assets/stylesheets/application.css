@@ -14,20 +14,37 @@
  *= require_self
  */
 
+@media (prefers-color-scheme: light) {
+  body {
+    color: #000;
+    background-color: #FFF;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #c9d1d9;
+    background-color: #000;
+  }
+}
+
 @font-face {
   font-family: "Source Code Pro";
   src: url('/SourceCodePro-VariableFont_wght.ttf') format('truetype');
 }
 
-pre {
+pre, .markdown-body {
   width: min(88vw, 800px);
-  white-space: pre-wrap;
-  font-family: 'Source Code Pro', monospace;
-  font-size: 14px;
   padding: 8px 12px;
   margin: 0 auto;
   margin-top: 40px;
   border: 1px solid #AAA;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 14px;
 }
 
 .markdown-checkbox {

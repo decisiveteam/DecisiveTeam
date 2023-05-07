@@ -1,13 +1,22 @@
-<strong># <%= @team.name %></strong>
+<h1><%= @team.name %></h1>
 
-<strong>## Team Members (<%= @team.team_members.count %>) <a href="<%= @team.path %>/invite"> + </a></strong>
-<% @team.team_members.limit(10).each do |tm| %>* <%= tm.user.email %>
-<% end %>
+<h2>Team Members (<%= @team.team_members.count %>) <a href="<%= @team.path %>/invite"> + </a></h2>
+<ul>
+  <% @team.team_members.limit(10).each do |tm| %>
+    <li><%= tm.user.email %></li>
+  <% end %>
+</ul>
 
-<strong>## Tags (<%= @team.tags.count %>) <a href="<%= @team.path %>/new_tag"> + </a></strong>
-<% @team.tags.limit(10).each do |tag| %>* <a href="<%= tag.path %>"><%= tag.name %></a>
-<% end %>
-    
-<strong>## Decisions (<%= @team.decisions.count %>) <a href="<%= @team.path %>/new_decision"> + </a></strong>
-<% @team.decisions.order(id: :desc).limit(10).each do |d| %>* <a href="<%= d.path %>"><%= d.question %></a>
-<% end %>
+<h2>Decisions (<%= @team.decisions.count %>) <a href="<%= @team.path %>/new_decision"> + </a></h2>
+<ul>
+  <% @team.decisions.order(id: :desc).limit(10).each do |d| %>
+    <li><a href="<%= d.path %>"><%= d.question %></a></li>
+  <% end %>
+</ul>
+
+<h2>Tags (<%= @team.tags.count %>) <a href="<%= @team.path %>/new_tag"> + </a></h2>
+<ul>
+  <% @team.tags.limit(10).each do |tag| %>
+    <li><a href="<%= tag.path %>"><%= tag.name %></a></li>
+  <% end %>
+</ul>

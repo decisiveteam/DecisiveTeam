@@ -1,5 +1,7 @@
-<strong># Teams</strong>
+<h1>Teams</h1>
 
-<% @teams.each do |team| %>
-* <a href="<%= team.path %>"><%= team.name %></a>
-<% end %>
+<ul>
+  <% @teams.each do |team| %>
+    <li><a href="<%= team.path %>"><%= team.name %></a></li>
+  <% end %>
+</ul>

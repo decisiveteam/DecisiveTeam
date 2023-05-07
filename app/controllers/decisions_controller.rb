@@ -6,9 +6,9 @@ class DecisionsController < ApplicationController
 
   def create
     other_attributes = begin
-      JSON.parse(decision_params[:other_attributes])
+      JSON.parse(decision_params[:other_attributes] || '')
     rescue JSON::ParserError
-      { notes: decision_params[:other_attributes] }
+      { notes: decision_params[:other_attributes] || '' }
     end
     @decision = Decision.new(
       team: @current_team,

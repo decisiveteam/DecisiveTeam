@@ -7,6 +7,7 @@ module Api::V1
         option_id: current_option.id,
         created_by_id: current_user.id,
         value: params[:value],
+        stars: params[:stars],
         note: params[:note]
       }, unique_by: [:option_id, :created_by_id])[0]['id']
       approval = Approval.find(approval_id)

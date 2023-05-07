@@ -7,8 +7,8 @@
     <% @decision.options.each do |option| %>
       <% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %>
       <li class="option-item" data-option-id="<%= option.id %>">
-        <input type="checkbox" id="option<%= option.id %>" data-action="click->decision#toggleApproved" <%= approval.value == 1 ? 'checked' : '' %>/>
-        <input type="checkbox" class="star-button" id="star-option<%= option.id %>" data-action="click->decision#toggleStars" <%= approval.value == 1 ? 'checked' : '' %>/>
+        <input type="checkbox" class="approval-button" id="option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.value == 1 ? 'checked' : '' %>/>
+        <input type="checkbox" class="star-button" id="star-option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.value == 1 ? 'checked' : '' %>/>
         <label for="star-option<%= option.id %>" class="star-button"></label>
         <label for="option<%= option.id %>"><%= option.title %></label>
       </li>

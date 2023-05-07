@@ -4,7 +4,12 @@ export default class extends Controller {
   static targets = ["input", "list", "optionsSection", "optionsMessage", "optionsRefresh"];
 
   optionItem(option) {
-    return `<li class="option-item" data-option-id="${option.id}"><input type="checkbox" id="option${option.id}" data-action="click->decision#toggleApproved" ${option.value == 1 ? 'checked' : ''}/><label for="option${option.id}">${option.title}</label></li>\n`;
+    return `<li class="option-item" data-option-id="${option.id}">
+      <input type="checkbox" class="approval-button" id="option${option.id}" data-action="click->decision#toggleApprovalValues" ${option.value == 1 ? 'checked' : ''}/>
+      <input type="checkbox" class="star-button" id="star-option${option.id}" data-action="click->decision#toggleApprovalValues"/>
+      <label for="star-option${option.id}" class="star-button"></label>
+      <label for="option${option.id}">${option.title}</label></li>
+    `;
   }
 
   add(event) {
@@ -48,13 +53,15 @@ export default class extends Controller {
     return response.json();
   }
 
-  async toggleApproved(event) {
+  async toggleApprovalValues(event) {
     const teamId = this.inputTarget.dataset.teamId;
     const decisionId = this.inputTarget.dataset.decisionId;
-    const checkbox = event.target;
-    const optionItem = checkbox.closest(".option-item");
+    const optionItem = event.target.parentElement;
+    const checkbox = optionItem.querySelector('input.approval-button');
     const optionId = optionItem.dataset.optionId;
     const approved = checkbox.checked;
+    const starButton = optionItem.querySelector('input.star-button');
+    const stars = starButton.checked;
   
     await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
@@ -62,7 +69,7 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ value: approved }),
+      body: JSON.stringify({ value: approved, stars }),
     });
   }
 

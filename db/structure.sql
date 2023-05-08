@@ -26,7 +26,8 @@ CREATE TABLE public.approvals (
     created_by_id bigint NOT NULL,
     team_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    stars integer DEFAULT 0
 );
 
 
@@ -72,7 +73,9 @@ SELECT
     NULL::text AS option_title,
     NULL::bigint AS approved_yes,
     NULL::bigint AS approved_no,
-    NULL::bigint AS approval_count;
+    NULL::bigint AS approval_count,
+    NULL::bigint AS stars,
+    NULL::integer AS random_id;
 
 
 --
@@ -235,7 +238,8 @@ CREATE TABLE public.options (
     team_id bigint NOT NULL,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    random_id integer
 );
 
 
@@ -953,11 +957,13 @@ CREATE OR REPLACE VIEW public.decision_results AS
     o.title AS option_title,
     COALESCE(sum(a.value), (0)::bigint) AS approved_yes,
     (count(a.value) - COALESCE(sum(a.value), (0)::bigint)) AS approved_no,
-    count(a.value) AS approval_count
+    count(a.value) AS approval_count,
+    COALESCE(sum(a.stars), (0)::bigint) AS stars,
+    o.random_id
    FROM (public.options o
      LEFT JOIN public.approvals a ON ((a.option_id = o.id)))
   GROUP BY o.decision_id, o.id
-  ORDER BY COALESCE(sum(a.value), (0)::bigint) DESC;
+  ORDER BY COALESCE(sum(a.value), (0)::bigint) DESC, COALESCE(sum(a.stars), (0)::bigint) DESC, o.random_id DESC;
 
 
 --
@@ -1141,6 +1147,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412044504'),
 ('20230415035625'),
 ('20230416044353'),
-('20230416224308');
+('20230416224308'),
+('20230507175029'),
+('20230507185725'),
+('20230507200305'),
+('20230507202114');
 
 

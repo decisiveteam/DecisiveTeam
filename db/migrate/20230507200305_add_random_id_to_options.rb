@@ -9,7 +9,7 @@ class AddRandomIdToOptions < ActiveRecord::Migration[7.0]
     SQL
 
     # Set the default value for new rows
-    change_column_default :options, :random_id, 'floor(random() * 1000000000)::integer'
+    change_column_default :options, :random_id, -> { 'floor(random() * 1000000000)::integer' }
   end
 
   def down

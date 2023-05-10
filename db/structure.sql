@@ -239,7 +239,7 @@ CREATE TABLE public.options (
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    random_id integer
+    random_id integer DEFAULT (floor((random() * (1000000000)::double precision)))::integer
 );
 
 

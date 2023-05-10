@@ -23,6 +23,9 @@
       <% end %>
     </div>
     <div class="markdown-body">
+      <% if @current_team %>
+        <h5><a href="<%= @current_team.path %>"><%= @current_team.name %></a></h5>
+      <% end %>
       <%= yield %>
     </div>
   </body>

@@ -8,23 +8,22 @@
   </p>
   <span id="results" style="display:<% if @show_results %>inline<% else %>none<% end %>;">
     <p>
-      Results are sorted first by ✅ approvals, then by ⭐ stars, then by 🎲 random.
+      Results are sorted first by approvals ✅, then by stars ⭐, then by random digits 🎲.
     </p>
-    <span data-decision-results-target="message"><% voter_count = @decision.voter_count %>
-    <%= voter_count %> <%= voter_count == 1 ? 'person has' : 'people have' %> voted on this decision. Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a>
-    </span>
-    <table style="border-top:none;">
-      <thead style="border-top:none;">
-        <tr style="border-top:none;">
-          <th style="border:none;min-width:30%;"></th>
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th title="place"></th>
+          <th title="option"></th>
           <th title="approvals">✅</th>
           <th title="stars">⭐</th>
-          <th title="random">🎲</th>
+          <th title="random digits">🎲</th>
         </tr>
       </thead>
       <tbody>
         <% @decision.results.each_with_index do |result, index| %>
           <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;' : '' %>">
+            <td><%= index + 1 %></td>
             <td><%= result.option_title %></td>
             <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.4 %>;"><%= (result.approved_yes || 0) %></td>
             <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.4 %>;"><%= (result.stars || 0) %></td>
@@ -33,5 +32,8 @@
         <% end %>
       </tbody>
     </table>
+    <span data-decision-results-target="message"><% voter_count = @decision.voter_count %>
+    <%= voter_count %> <%= voter_count == 1 ? 'person has' : 'people have' %> voted on this decision. Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a>
+    </span>
   </span>
 </span>

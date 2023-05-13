@@ -1,16 +1,22 @@
-<span data-controller="decision">
+<span data-controller="decision" data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
 <p>
 Reference tag: #<%= @decision.reference_tag %><br/>
-Created at: <%= @decision.created_at %><br/>
-Created by: <%= @decision.created_by.email %><br/>
-Status: <%= @decision.status || '[none]' %><br/>
+Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= username_with_profile_link(@decision.created_by) %></strong><br/>
+Status: <select name="status" data-action="change->decision#changeStatus">
+  <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>
+  <option value="draft" <%= @decision.status == 'draft' ? 'selected' : '' %>>draft</option>
+  <option value="finalized" <%= @decision.status == 'finalized' ? 'selected' : '' %>>finalized</option>
+</select>
+<br/>
 <% (@decision.other_attributes || {}).each do |key, val| %>
   <%= key %>: <%= with_tag_links(val, @current_team.id) %><br/>
 <% end %>
 </p>
 
-<%= render 'options' %>
+<% unless @decision.is_finalized? %>
+  <%= render 'options' %>
+<% end %>
 <%= render 'results' %>
 </span>
 
@@ -18,3 +24,9 @@ Status: <%= @decision.status || '[none]' %><br/>
 <% if @decision.reference_count == 0 %>References will show up here when other decisions include this decision's reference tag: #<%= @decision.reference_tag %><% else %>The following decisions reference this decision.
 <% @decision.referenced_by.each do |ref| %>* <a href="<%= ref.path %>" title="<%= ref.question %>">#<%= ref.reference_tag %></a>
 <% end %><% end %>
+
+<h2>Actions</h2>
+<ul>
+  <li>Duplicate</li>
+</ul>
+

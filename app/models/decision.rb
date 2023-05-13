@@ -6,8 +6,19 @@ class Decision < ApplicationRecord
   has_many :approvals
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
+  validates :question, presence: true
+  validates :status, inclusion: { in: %w(open draft finalized) }, allow_nil: true
 
   after_save :update_tags
+
+  def is_finalized?
+    status == 'finalized'
+  end
+
+  def finalize!
+    self.status = 'finalized'
+    save!
+  end
 
   def results
     DecisionResult.where(decision_id: self.id)

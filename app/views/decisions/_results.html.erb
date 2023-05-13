@@ -2,9 +2,11 @@
   data-controller="decision-results"
   data-decision-results-url-value="<%= @decision.path %>/results.html"
   >
-  <h2>Results</h2>
+  <h2><%= @decision.is_finalized? ? "Final" : "Current" %> Results</h2>
   <p>
-    <a data-action="click->decision-results#toggleResults" href="#"><% if @show_results %>Hide<% else %>Show<% end %> results</a>
+    <% unless @decision.is_finalized? %>
+      <a data-action="click->decision-results#toggleResults" href="#"><% if @show_results %>Hide<% else %>Show<% end %> results</a>
+    <% end %>
   </p>
   <span id="results" style="display:<% if @show_results %>inline<% else %>none<% end %>;">
     <p>
@@ -22,7 +24,7 @@
       </thead>
       <tbody>
         <% @decision.results.each_with_index do |result, index| %>
-          <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;' : '' %>">
+          <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;font-weight:bold;' : '' %>">
             <td><%= index + 1 %></td>
             <td><%= result.option_title %></td>
             <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.4 %>;"><%= (result.approved_yes || 0) %></td>
@@ -32,8 +34,9 @@
         <% end %>
       </tbody>
     </table>
-    <span data-decision-results-target="message"><% voter_count = @decision.voter_count %>
-    <%= voter_count %> <%= voter_count == 1 ? 'person has' : 'people have' %> voted on this decision. Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a>
+    <span data-decision-results-target="message">
+    <%= @voter_count %> <%= @voter_verb_phrase %> voted on this decision.
+    <% unless @decision.is_finalized? %>Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a><% end %>
     </span>
   </span>
 </span>

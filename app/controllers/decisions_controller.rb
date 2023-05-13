@@ -31,6 +31,8 @@ class DecisionsController < ApplicationController
 
   def show
     @decision = get_decision
+    @show_results = @decision.is_finalized?
+    set_results_view_vars
     render '404', status: 404 unless @decision
   end
 
@@ -42,13 +44,14 @@ class DecisionsController < ApplicationController
   def results_partial
     @decision = get_decision
     @show_results = true
+    set_results_view_vars
     render partial: 'results'
   end
 
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :other_attributes)
+    params.require(:decision).permit(:question, :other_attributes, :status, :deadline)
   end
 
   def get_decision
@@ -56,5 +59,18 @@ class DecisionsController < ApplicationController
       team_id: params[:team_id],
       id: params[:id] || params[:decision_id]
     )
+  end
+
+  def set_results_view_vars
+    @voter_count = @decision.voter_count
+    @voter_verb_phrase = if @voter_count == 1 && @decision.is_finalized?
+      "person"
+    elsif @voter_count == 1 && !@decision.is_finalized?
+      "person has"
+    elsif @voter_count != 1 && @decision.is_finalized?
+      "people"
+    elsif @voter_count != 1 && !@decision.is_finalized?
+      "people have"
+    end
   end
 end

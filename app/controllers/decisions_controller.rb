@@ -31,7 +31,7 @@ class DecisionsController < ApplicationController
 
   def show
     @decision = get_decision
-    @show_results = @decision.is_finalized?
+    @show_results = @decision.closed?
     set_results_view_vars
     render '404', status: 404 unless @decision
   end
@@ -63,13 +63,13 @@ class DecisionsController < ApplicationController
 
   def set_results_view_vars
     @voter_count = @decision.voter_count
-    @voter_verb_phrase = if @voter_count == 1 && @decision.is_finalized?
+    @voter_verb_phrase = if @voter_count == 1 && @decision.closed?
       "person"
-    elsif @voter_count == 1 && !@decision.is_finalized?
+    elsif @voter_count == 1 && !@decision.closed?
       "person has"
-    elsif @voter_count != 1 && @decision.is_finalized?
+    elsif @voter_count != 1 && @decision.closed?
       "people"
-    elsif @voter_count != 1 && !@decision.is_finalized?
+    elsif @voter_count != 1 && !@decision.closed?
       "people have"
     end
   end

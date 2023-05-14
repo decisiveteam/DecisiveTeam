@@ -7,16 +7,16 @@ class Decision < ApplicationRecord
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
   validates :question, presence: true
-  validates :status, inclusion: { in: %w(open draft finalized) }, allow_nil: true
+  validates :status, inclusion: { in: %w(open draft closed) }, allow_nil: true
 
   after_save :update_tags
 
-  def is_finalized?
-    status == 'finalized'
+  def closed?
+    status == 'closed'
   end
 
-  def finalize!
-    self.status = 'finalized'
+  def close!
+    self.status = 'closed'
     save!
   end
 

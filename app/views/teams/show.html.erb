@@ -16,13 +16,13 @@
   <% end %>
   <% if open_decisions.count > 10 %><!-- TODO --><% end %>
 </ul>
-<% finalized_decisions = @team.decisions.where(status: 'finalized').order(id: :desc) %>
-<h5>Finalized (<%= finalized_decisions.count %>)</h5>
+<% closed_decisions = @team.decisions.where(status: 'closed').order(id: :desc) %>
+<h5>Closed (<%= closed_decisions.count %>)</h5>
 <ul>
-  <% finalized_decisions.limit(10).each do |d| %>
+  <% closed_decisions.limit(10).each do |d| %>
     <li><a href="<%= d.path %>"><%= d.question %></a></li>
   <% end %>
-  <% if finalized_decisions.count > 10 %><!-- TODO --><% end %>
+  <% if closed_decisions.count > 10 %><!-- TODO --><% end %>
 </ul>
 <% draft_decisions = @team.decisions.where(status: 'draft', created_by: current_user).order(id: :desc) %>
 <h5>Your Drafts (<%= draft_decisions.count %>)</h5>

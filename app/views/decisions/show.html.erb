@@ -9,22 +9,29 @@ Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= use
 Status: <select name="status" data-action="change->decision#changeStatus">
   <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>
   <option value="draft" <%= @decision.status == 'draft' ? 'selected' : '' %>>draft</option>
-  <option value="finalized" <%= @decision.status == 'finalized' ? 'selected' : '' %>>finalized</option>
+  <option value="closed" <%= @decision.status == 'closed' ? 'selected' : '' %>>closed</option>
 </select>
 <br/>
-<% (@decision.other_attributes || {}).each do |key, val| %>
-  <%= key %>: <%= with_tag_links(val, @current_team.id) %><br/>
-<% end %>
 </p>
 
-<% unless @decision.is_finalized? %>
+<% unless @decision.closed? %>
   <%= render 'options' %>
 <% end %>
 <%= render 'results' %>
 </span>
 
+<h2>References</h2>
+<p>Add named relationships to other decisions to create a decision graph.</p>
+<p>Relationship names should be a verb or verb phrase like "follows" or "depends on" or "references". Values can be any text. Any number preceded by a hash "#" is interpreted as a decision tag, and any word preceded by a hash "#" is interpreted as a normal tag.</p>
+<% (@decision.other_attributes || {}).each do |key, val| %>
+  <%= key %>: <%= with_tag_links(val, @current_team.id) %><br/>
+<% end %>
+
 <h2>Referenced By (<%= @decision.reference_count %>)</h2>
-<% if @decision.reference_count == 0 %>References will show up here when other decisions include this decision's reference tag: #<%= @decision.reference_tag %><% else %>The following decisions reference this decision.
+<% if @decision.reference_count == 0 %>
+<p>Backlinks will show up here when other decisions include this decision's reference tag: #<%= @decision.reference_tag %></p>
+<% else %>
+<p>The following decisions reference this decision.</p>
 <% @decision.referenced_by.each do |ref| %>* <a href="<%= ref.path %>" title="<%= ref.question %>">#<%= ref.reference_tag %></a>
 <% end %><% end %>
 

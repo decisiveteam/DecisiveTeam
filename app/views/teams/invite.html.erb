@@ -1,0 +1,6 @@
+Share this link with up to <%= @invite_code.remaining_uses %> people to invite them to join <strong><%= @team.name %></strong>:<br/>
+
+<span data-controller="clipboard" data-clipboard-success-content="Copied!">
+  <span data-clipboard-target="source"><%= @invite_code.shareable_link %></span>
+  <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy to clipboard</button>
+</span><br/>

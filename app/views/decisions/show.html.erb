@@ -1,7 +1,10 @@
 <span data-controller="decision" data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
 <p>
-Reference tag: #<%= @decision.reference_tag %><br/>
+Reference tag: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+  <span data-clipboard-target="source">#<%= @decision.reference_tag %></span>
+  <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy to clipboard</button>
+</span><br/>
 Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= username_with_profile_link(@decision.created_by) %></strong><br/>
 Status: <select name="status" data-action="change->decision#changeStatus">
   <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>

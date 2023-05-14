@@ -339,6 +339,42 @@ ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 
 
 --
+-- Name: team_invites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.team_invites (
+    id bigint NOT NULL,
+    team_id bigint NOT NULL,
+    created_by_id bigint NOT NULL,
+    code character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    max_uses integer DEFAULT 1 NOT NULL,
+    uses integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: team_invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.team_invites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: team_invites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.team_invites_id_seq OWNED BY public.team_invites.id;
+
+
+--
 -- Name: team_members; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -542,6 +578,13 @@ ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id
 
 
 --
+-- Name: team_invites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_invites ALTER COLUMN id SET DEFAULT nextval('public.team_invites_id_seq'::regclass);
+
+
+--
 -- Name: team_members id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -647,6 +690,14 @@ ALTER TABLE ONLY public.taggings
 
 ALTER TABLE ONLY public.tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: team_invites team_invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_invites
+    ADD CONSTRAINT team_invites_pkey PRIMARY KEY (id);
 
 
 --
@@ -864,6 +915,27 @@ CREATE UNIQUE INDEX index_tags_on_team_id_and_name ON public.tags USING btree (t
 
 
 --
+-- Name: index_team_invites_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_team_invites_on_code ON public.team_invites USING btree (code);
+
+
+--
+-- Name: index_team_invites_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_team_invites_on_created_by_id ON public.team_invites USING btree (created_by_id);
+
+
+--
+-- Name: index_team_invites_on_team_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_team_invites_on_team_id ON public.team_invites USING btree (team_id);
+
+
+--
 -- Name: index_team_members_on_team_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1007,6 +1079,14 @@ ALTER TABLE ONLY public.decisions
 
 
 --
+-- Name: team_invites fk_rails_70e00c2daa; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_invites
+    ADD CONSTRAINT fk_rails_70e00c2daa FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: oauth_access_tokens fk_rails_732cb83ab7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1036,6 +1116,14 @@ ALTER TABLE ONLY public.team_members
 
 ALTER TABLE ONLY public.taggings
     ADD CONSTRAINT fk_rails_9fcd2e236b FOREIGN KEY (tag_id) REFERENCES public.tags(id);
+
+
+--
+-- Name: team_invites fk_rails_adf016a6d4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_invites
+    ADD CONSTRAINT fk_rails_adf016a6d4 FOREIGN KEY (team_id) REFERENCES public.teams(id);
 
 
 --
@@ -1151,6 +1239,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230507175029'),
 ('20230507185725'),
 ('20230507200305'),
-('20230507202114');
+('20230507202114'),
+('20230514003758');
 
 

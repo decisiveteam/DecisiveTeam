@@ -13,4 +13,13 @@ class Team < ApplicationRecord
   def path
     "/teams/#{self.id}"
   end
+
+  def generate_invite_code(created_by:, expires_at:, max_uses:)
+    TeamInvite.create!(
+      team: self,
+      created_by: created_by,
+      expires_at: expires_at || 1.month.from_now,
+      max_uses: max_uses || 10
+    )
+  end
 end

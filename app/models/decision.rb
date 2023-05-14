@@ -51,9 +51,11 @@ class Decision < ApplicationRecord
 
   def extract_tags
     all_tags = []
+    question_tags = Tag.extract_tags_from_string(self.question)
+    all_tags << { key: nil, tags: question_tags } if question_tags.any?
     self.other_attributes.map do |key, val|
       tags = Tag.extract_tags_from_string(val)
-      unless tags.empty?
+      if tags.any?
         all_tags << { key: key, tags: tags }
       end
     end

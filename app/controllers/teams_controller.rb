@@ -38,7 +38,11 @@ class TeamsController < ApplicationController
     invite.assert_valid!
     already_member = TeamMember.find_by(team: invite.team, user: current_user)
     unless already_member
-      TeamMember.create!(user: current_user, team: invite.team)
+      TeamMember.create!(
+        user: current_user,
+        team: invite.team,
+        team_invite: invite
+      )
       invite.use!
     end
     redirect_to "/teams/#{invite.team.id}"

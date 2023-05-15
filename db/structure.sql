@@ -386,7 +386,8 @@ CREATE TABLE public.team_members (
     user_id bigint NOT NULL,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    team_invite_id bigint
 );
 
 
@@ -1240,6 +1241,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230507185725'),
 ('20230507200305'),
 ('20230507202114'),
-('20230514003758');
+('20230514003758'),
+('20230514234410');
 
 

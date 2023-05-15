@@ -1,6 +1,7 @@
 class TeamInvite < ApplicationRecord
   belongs_to :team
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  has_many :team_members
   
   before_create :generate_code
 

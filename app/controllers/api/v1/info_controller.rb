@@ -31,6 +31,10 @@ module Api::V1
             methods: ['GET'],
           },
           {
+            path: '/api/v1/me',
+            methods: ['GET'],
+          },
+          {
             path: '/api/v1/teams',
             methods: ['GET', 'POST'],
           },

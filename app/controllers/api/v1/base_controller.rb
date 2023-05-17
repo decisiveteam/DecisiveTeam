@@ -2,6 +2,7 @@ class Api::V1::BaseController < ApplicationController
   skip_before_action :verify_authenticity_token, if: :doorkeeper_token_present?
   before_action :doorkeeper_authorize!, if: :doorkeeper_token_present?
   before_action :authenticate_user!, unless: :doorkeeper_token_present?
+  before_action :enforce_oauth_scope!, if: :doorkeeper_token_present?
 
   def index
     render json: current_scope
@@ -15,6 +16,27 @@ class Api::V1::BaseController < ApplicationController
 
   def doorkeeper_token_present?
     doorkeeper_token.present?
+  end
+
+  def enforce_oauth_scope!
+    scopes = if doorkeeper_token_present?
+      doorkeeper_token.scopes
+    else
+      # Here we are assuming that the user is authenticated through authenticate_user!
+      ['read', 'write']
+    end
+    is_in_scope = if is_write_request?
+      scopes.include?('write')
+    else
+      scopes.include?('read')
+    end
+    unless is_in_scope
+      return render json: { error: 'Insufficient scope' }, status: :forbidden
+    end
+  end
+
+  def is_write_request?
+    ['POST', 'PUT', 'PATCH', 'DELETE'].include?(request.method)
   end
 
   def current_user

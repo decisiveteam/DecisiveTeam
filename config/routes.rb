@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   end
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
-  use_doorkeeper
+  use_doorkeeper do
+    controllers applications: 'oauth_applications'
+  end
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
     sign_out: 'logout',
@@ -16,6 +18,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get '/', to: 'info#index'
       resources :teams do
         resources :webhooks, only: [:index, :create, :destroy]
         resources :decisions do

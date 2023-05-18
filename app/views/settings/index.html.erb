@@ -17,7 +17,7 @@
 // JavaScript
 const token = "<%= @api_token.token %>";
 // Get your own user info
-await fetch('https://<%= ENV['HOSTNAME'] %>/api/v1/me', {
+await fetch('https://<%= ENV['HOSTNAME'] %>/api/v1/whoami', {
   headers: {
     Authorization: `Bearer ${token}`
   }

@@ -1,6 +1,6 @@
 module Api::V1
   class UsersController < BaseController    
-    def me
+    def whoami
       render json: {
         id: current_user.id,
         email: current_user.email,

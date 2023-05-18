@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/', to: 'info#index'
-      get '/me', to: 'users#me'
+      get '/whoami', to: 'users#whoami'
       resources :teams do
         resources :webhooks, only: [:index, :create, :destroy]
         resources :decisions do

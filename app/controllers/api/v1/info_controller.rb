@@ -31,7 +31,7 @@ module Api::V1
             methods: ['GET'],
           },
           {
-            path: '/api/v1/me',
+            path: '/api/v1/whoami',
             methods: ['GET'],
           },
           {

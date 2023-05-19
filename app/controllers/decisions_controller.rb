@@ -31,9 +31,9 @@ class DecisionsController < ApplicationController
 
   def show
     @decision = get_decision
+    return render '404', status: 404 unless @decision
     @show_results = @decision.closed?
     set_results_view_vars
-    render '404', status: 404 unless @decision
   end
 
   def options_partial

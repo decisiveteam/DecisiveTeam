@@ -15,7 +15,7 @@ class SystemResourceService
 
   def self.system_oauth_application
     @system_oauth_application ||= Doorkeeper::Application.find_by(
-      name: "System", owner: system_user
+      uid: "system", name: "System", owner: system_user
     )
     raise "System oauth application not found" if @system_oauth_application.nil?
     @system_oauth_application
@@ -42,6 +42,7 @@ class SystemResourceService
     @system_oauth_application = Doorkeeper::Application.find_or_create_by!(name: 'System') do |app|
       # This application is used to generate access tokens for individual users
       # so they can access the API without having to go through the OAuth flow.
+      app.uid = 'system'
       app.owner = @system_user
       app.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
       app.scopes = 'read write'

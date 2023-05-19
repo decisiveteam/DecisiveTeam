@@ -9,6 +9,7 @@ Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= use
 Status: <select name="status" data-action="change->decision#changeStatus">
   <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>
   <option value="draft" <%= @decision.status == 'draft' ? 'selected' : '' %>>draft</option>
+  <option value="ephemeral" <%= @decision.status == 'ephemeral' ? 'selected' : '' %>>ephemeral</option>
   <option value="closed" <%= @decision.status == 'closed' ? 'selected' : '' %>>closed</option>
 </select>
 <br/>

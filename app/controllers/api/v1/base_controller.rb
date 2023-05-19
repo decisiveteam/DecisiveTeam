@@ -31,7 +31,10 @@ class Api::V1::BaseController < ApplicationController
       scopes.include?('read')
     end
     unless is_in_scope
-      return render json: { error: 'Insufficient scope' }, status: :forbidden
+      return render json: {
+        error: 'Insufficient scope',
+        message: "The access token you are using has scopes '#{scopes.to_a.join(', ')}', but this request requires '#{is_write_request? ? 'write' : 'read'}' scope."
+      }, status: :forbidden
     end
   end
 

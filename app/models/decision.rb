@@ -3,13 +3,14 @@ class Decision < ApplicationRecord
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :team
   has_many :options, dependent: :destroy
-  has_many :approvals
+  has_many :approvals # dependent: :destroy through options
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
   validates :question, presence: true
-  validates :status, inclusion: { in: %w(open draft closed) }, allow_nil: true
+  validates :status, inclusion: { in: %w(ephemeral draft open closed) }, allow_nil: true
 
   after_save :update_tags
+  after_save :schedule_destroy_ephemeral
 
   def closed?
     status == 'closed'
@@ -18,6 +19,27 @@ class Decision < ApplicationRecord
   def close!
     self.status = 'closed'
     save!
+  end
+
+  def destroy_ephemeral_at
+    created_at + 1.hour
+  end
+
+  def schedule_destroy_ephemeral
+    if status == 'ephemeral'
+      # TODO - prevent duplicate jobs
+      DestroyEphemeralJob.set(wait_until: destroy_ephemeral_at).perform_later(self.id)
+    end
+  end
+
+  def destroy_ephemeral!
+    if status == 'ephemeral'
+      if destroy_ephemeral_at < Time.now
+        destroy!
+      else
+        schedule_destroy_ephemeral
+      end
+    end
   end
 
   def results

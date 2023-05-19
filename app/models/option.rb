@@ -4,6 +4,6 @@ class Option < ApplicationRecord
   belongs_to :decision
   belongs_to :team
 
-  has_many :approvals
+  has_many :approvals, dependent: :destroy
 
 end

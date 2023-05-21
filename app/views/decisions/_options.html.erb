@@ -6,7 +6,7 @@
 <ul class="options-list">
   <span data-decision-target="list">
     <% @decision.options.each do |option| %>
-      <% approval = option.approvals.where(created_by: current_user).first || Approval.new(value: 0) %>
+      <% approval = @approvals.where(option: option).first || Approval.new(value: 0) %>
       <li class="option-item" data-option-id="<%= option.id %>">
         <input type="checkbox" class="approval-button" id="option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.value == 1 ? 'checked' : '' %>/>
         <input type="checkbox" class="star-button" id="star-option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.stars == 1 ? 'checked' : '' %>/>

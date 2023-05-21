@@ -30,19 +30,21 @@ class DecisionsController < ApplicationController
   end
 
   def show
-    @decision = get_decision
+    @decision = current_decision
+    @approvals = current_approvals
     return render '404', status: 404 unless @decision
     @show_results = @decision.closed?
     set_results_view_vars
   end
 
   def options_partial
-    @decision = get_decision
+    @decision = current_decision
+    @approvals = current_approvals
     render partial: 'options'
   end
 
   def results_partial
-    @decision = get_decision
+    @decision = current_decision
     @show_results = true
     set_results_view_vars
     render partial: 'results'
@@ -52,13 +54,6 @@ class DecisionsController < ApplicationController
 
   def decision_params
     params.require(:decision).permit(:question, :other_attributes, :status, :deadline)
-  end
-
-  def get_decision
-    Decision.accessible_by(current_user).find_by(
-      team_id: params[:team_id],
-      id: params[:id] || params[:decision_id]
-    )
   end
 
   def set_results_view_vars

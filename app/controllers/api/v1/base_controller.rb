@@ -46,6 +46,8 @@ class Api::V1::BaseController < ApplicationController
     return @current_user if defined?(@current_user)
     if doorkeeper_token_present?
       @current_user = User.find(doorkeeper_token.resource_owner_id)
+    # elsif params[:invite_code].present?
+      # TODO
     else
       @current_user = super
     end

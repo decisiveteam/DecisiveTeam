@@ -23,7 +23,7 @@ CREATE TABLE public.approvals (
     note text,
     option_id bigint NOT NULL,
     decision_id bigint NOT NULL,
-    created_by_id bigint NOT NULL,
+    decision_participant_id bigint NOT NULL,
     team_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -60,6 +60,78 @@ CREATE TABLE public.ar_internal_metadata (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: decision_invites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.decision_invites (
+    id bigint NOT NULL,
+    team_id bigint NOT NULL,
+    decision_id bigint NOT NULL,
+    created_by_id bigint NOT NULL,
+    code character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    max_uses integer DEFAULT 1 NOT NULL,
+    uses integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: decision_invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.decision_invites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: decision_invites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.decision_invites_id_seq OWNED BY public.decision_invites.id;
+
+
+--
+-- Name: decision_participants; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.decision_participants (
+    id bigint NOT NULL,
+    decision_id bigint NOT NULL,
+    entity_type character varying,
+    entity_id bigint,
+    name character varying,
+    invite_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: decision_participants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.decision_participants_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: decision_participants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.decision_participants_id_seq OWNED BY public.decision_participants.id;
 
 
 --
@@ -233,7 +305,7 @@ CREATE TABLE public.options (
     id bigint NOT NULL,
     title text,
     description text,
-    created_by_id bigint NOT NULL,
+    decision_participant_id bigint NOT NULL,
     decision_id bigint NOT NULL,
     team_id bigint NOT NULL,
     other_attributes jsonb,
@@ -530,6 +602,20 @@ ALTER TABLE ONLY public.approvals ALTER COLUMN id SET DEFAULT nextval('public.ap
 
 
 --
+-- Name: decision_invites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_invites ALTER COLUMN id SET DEFAULT nextval('public.decision_invites_id_seq'::regclass);
+
+
+--
+-- Name: decision_participants id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants ALTER COLUMN id SET DEFAULT nextval('public.decision_participants_id_seq'::regclass);
+
+
+--
 -- Name: decisions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -627,6 +713,22 @@ ALTER TABLE ONLY public.approvals
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: decision_invites decision_invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_invites
+    ADD CONSTRAINT decision_invites_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: decision_participants decision_participants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants
+    ADD CONSTRAINT decision_participants_pkey PRIMARY KEY (id);
 
 
 --
@@ -734,17 +836,17 @@ ALTER TABLE ONLY public.webhooks
 
 
 --
--- Name: index_approvals_on_created_by_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_approvals_on_created_by_id ON public.approvals USING btree (created_by_id);
-
-
---
 -- Name: index_approvals_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_approvals_on_decision_id ON public.approvals USING btree (decision_id);
+
+
+--
+-- Name: index_approvals_on_decision_participant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_approvals_on_decision_participant_id ON public.approvals USING btree (decision_participant_id);
 
 
 --
@@ -755,10 +857,10 @@ CREATE INDEX index_approvals_on_option_id ON public.approvals USING btree (optio
 
 
 --
--- Name: index_approvals_on_option_id_and_created_by_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_approvals_on_option_id_and_decision_participant_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_approvals_on_option_id_and_created_by_id ON public.approvals USING btree (option_id, created_by_id);
+CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON public.approvals USING btree (option_id, decision_participant_id);
 
 
 --
@@ -766,6 +868,55 @@ CREATE UNIQUE INDEX index_approvals_on_option_id_and_created_by_id ON public.app
 --
 
 CREATE INDEX index_approvals_on_team_id ON public.approvals USING btree (team_id);
+
+
+--
+-- Name: index_decision_invites_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_decision_invites_on_code ON public.decision_invites USING btree (code);
+
+
+--
+-- Name: index_decision_invites_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_invites_on_created_by_id ON public.decision_invites USING btree (created_by_id);
+
+
+--
+-- Name: index_decision_invites_on_decision_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_invites_on_decision_id ON public.decision_invites USING btree (decision_id);
+
+
+--
+-- Name: index_decision_invites_on_team_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_invites_on_team_id ON public.decision_invites USING btree (team_id);
+
+
+--
+-- Name: index_decision_participants_on_decision_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_participants_on_decision_id ON public.decision_participants USING btree (decision_id);
+
+
+--
+-- Name: index_decision_participants_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_participants_on_entity ON public.decision_participants USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_decision_participants_on_invite_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_participants_on_invite_id ON public.decision_participants USING btree (invite_id);
 
 
 --
@@ -853,13 +1004,6 @@ CREATE UNIQUE INDEX index_oauth_applications_on_uid ON public.oauth_applications
 
 
 --
--- Name: index_options_on_created_by_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_options_on_created_by_id ON public.options USING btree (created_by_id);
-
-
---
 -- Name: index_options_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -871,6 +1015,13 @@ CREATE INDEX index_options_on_decision_id ON public.options USING btree (decisio
 --
 
 CREATE UNIQUE INDEX index_options_on_decision_id_and_title ON public.options USING btree (decision_id, title);
+
+
+--
+-- Name: index_options_on_decision_participant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_options_on_decision_participant_id ON public.options USING btree (decision_participant_id);
 
 
 --
@@ -1040,11 +1191,11 @@ CREATE OR REPLACE VIEW public.decision_results AS
 
 
 --
--- Name: approvals fk_rails_07c004d29a; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: decision_invites fk_rails_0558686910; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.approvals
-    ADD CONSTRAINT fk_rails_07c004d29a FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+ALTER TABLE ONLY public.decision_invites
+    ADD CONSTRAINT fk_rails_0558686910 FOREIGN KEY (team_id) REFERENCES public.teams(id);
 
 
 --
@@ -1064,6 +1215,14 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: decision_participants fk_rails_2fac9cdcc1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants
+    ADD CONSTRAINT fk_rails_2fac9cdcc1 FOREIGN KEY (decision_id) REFERENCES public.decisions(id);
+
+
+--
 -- Name: approvals fk_rails_387fb9c532; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1077,6 +1236,14 @@ ALTER TABLE ONLY public.approvals
 
 ALTER TABLE ONLY public.decisions
     ADD CONSTRAINT fk_rails_453a12fd18 FOREIGN KEY (team_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: decision_invites fk_rails_62d2975652; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_invites
+    ADD CONSTRAINT fk_rails_62d2975652 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
 
 
 --
@@ -1096,11 +1263,27 @@ ALTER TABLE ONLY public.oauth_access_tokens
 
 
 --
+-- Name: decision_participants fk_rails_9abb85eb34; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants
+    ADD CONSTRAINT fk_rails_9abb85eb34 FOREIGN KEY (invite_id) REFERENCES public.decision_invites(id);
+
+
+--
 -- Name: options fk_rails_9c86b231af; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.options
     ADD CONSTRAINT fk_rails_9c86b231af FOREIGN KEY (team_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: options fk_rails_9d942eefce; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.options
+    ADD CONSTRAINT fk_rails_9d942eefce FOREIGN KEY (decision_participant_id) REFERENCES public.decision_participants(id);
 
 
 --
@@ -1117,6 +1300,22 @@ ALTER TABLE ONLY public.team_members
 
 ALTER TABLE ONLY public.taggings
     ADD CONSTRAINT fk_rails_9fcd2e236b FOREIGN KEY (tag_id) REFERENCES public.tags(id);
+
+
+--
+-- Name: decision_invites fk_rails_a203efa0b9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_invites
+    ADD CONSTRAINT fk_rails_a203efa0b9 FOREIGN KEY (decision_id) REFERENCES public.decisions(id);
+
+
+--
+-- Name: approvals fk_rails_a6ed1157e1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.approvals
+    ADD CONSTRAINT fk_rails_a6ed1157e1 FOREIGN KEY (decision_participant_id) REFERENCES public.decision_participants(id);
 
 
 --
@@ -1165,14 +1364,6 @@ ALTER TABLE ONLY public.oauth_applications
 
 ALTER TABLE ONLY public.approvals
     ADD CONSTRAINT fk_rails_d0108bdf1a FOREIGN KEY (team_id) REFERENCES public.teams(id);
-
-
---
--- Name: options fk_rails_d46f59e826; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.options
-    ADD CONSTRAINT fk_rails_d46f59e826 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
 
 
 --
@@ -1242,6 +1433,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230507200305'),
 ('20230507202114'),
 ('20230514003758'),
-('20230514234410');
+('20230514234410'),
+('20230520210702'),
+('20230520210703'),
+('20230520211339');
 
 

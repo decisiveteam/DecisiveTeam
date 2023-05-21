@@ -2,6 +2,7 @@ class Decision < ApplicationRecord
   include Tracked
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :team
+  has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
   has_many :taggings, as: :taggable, dependent: :destroy
@@ -11,6 +12,10 @@ class Decision < ApplicationRecord
 
   after_save :update_tags
   after_save :schedule_destroy_ephemeral
+
+  def self.accessible_by(user)
+    super.or(self.where(decision_participants: user.decision_participants))
+  end
 
   def closed?
     status == 'closed'
@@ -47,7 +52,7 @@ class Decision < ApplicationRecord
   end
 
   def voter_count
-    approvals.distinct.count(:created_by_id)
+    approvals.distinct.count(:decision_participant_id)
   end
 
   def path

@@ -7,6 +7,12 @@ class SystemResourceService
     @system_user
   end
 
+  def self.anonymous_user
+    @anonymous_user ||= User.find_by(email: "anonymous@decisive.team")
+    raise "Anonymous user not found" if @anonymous_user.nil?
+    @anonymous_user
+  end
+
   def self.system_team
     @system_team ||= Team.find_by(name: "System", handle: "system")
     raise "System team not found" if @system_team.nil?
@@ -30,19 +36,27 @@ class SystemResourceService
       user.confirmed_at = Time.now
       user.is_admin = true
     end
+
+    @anonymous_user = User.find_or_create_by!(email: 'anonymous@decisive.team') do |user|
+      # This user is used to represent anonymous users in the system.
+      user.username = 'anonymous'
+      user.password = SecureRandom.hex
+      user.display_name = 'Anonymous'
+      user.confirmed_at = Time.now
+    end
     
-    @system_team = Team.find_or_create_by!(name: 'System') do |team|
+    @system_team = Team.find_or_create_by!(handle: 'system') do |team|
       # This team is intended to consist of system users, such as the system user above,
       # and admin users/developers who manage the system through the admin API.
-      team.handle = 'system'
+      team.name = 'System'
     end
     
     @system_team.users << @system_user unless @system_team.users.include?(@system_user)
     
-    @system_oauth_application = Doorkeeper::Application.find_or_create_by!(name: 'System') do |app|
+    @system_oauth_application = Doorkeeper::Application.find_or_create_by!(uid: 'system') do |app|
       # This application is used to generate access tokens for individual users
       # so they can access the API without having to go through the OAuth flow.
-      app.uid = 'system'
+      app.name = 'System'
       app.owner = @system_user
       app.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
       app.scopes = 'read write'

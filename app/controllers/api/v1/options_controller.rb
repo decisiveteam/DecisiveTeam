@@ -4,7 +4,7 @@ module Api::V1
       option = Option.create!(
         team: current_team,
         decision: current_decision,
-        created_by: current_user,
+        decision_participant: current_decision_participant,
         title: params[:title],
         description: params[:description],
         other_attributes: {} # TODO

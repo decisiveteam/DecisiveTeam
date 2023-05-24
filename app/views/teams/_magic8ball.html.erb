@@ -1,0 +1,19 @@
+Ask a yes-or-no question and click the ball for your answer.
+<h1 style="border-bottom:none;">
+  <span id="ball" style="cursor:pointer;">🎱</span>
+  <span id="answer" class="magic8ball-answer"></span>
+</h1>
+
+<script>
+const answers = ["Yes", "No"];
+document.getElementById('ball').addEventListener('click', () => {
+  const answer = document.getElementById('answer')
+  answer.classList.remove("magic8ball-answer")
+  answer.style.display = 'none'
+  setTimeout(() => {
+    answer.textContent = "✨ " + answers[Math.floor(Math.random() * answers.length)] + " ✨"
+    answer.style.display = 'inline-block'
+    answer.classList.add("magic8ball-answer")
+  }, 10)
+})
+</script>

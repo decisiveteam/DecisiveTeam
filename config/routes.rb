@@ -48,9 +48,5 @@ Rails.application.routes.draw do
       get '/results.html' => 'decisions#results_partial'
       get '/options.html' => 'decisions#options_partial'
     end
-
-    get '/new_tag' => 'tags#new'
-    resources :tags, only: [:create]
-    get '/tags/:name' => 'tags#show'
   end
 end

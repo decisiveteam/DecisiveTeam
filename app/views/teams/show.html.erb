@@ -32,10 +32,3 @@
   <% end %>
   <% if draft_decisions.count > 10 %><!-- TODO --><% end %>
 </ul>
-
-<h2>Tags (<%= @team.tags.count %>) <a href="<%= @team.path %>/new_tag"> + </a></h2>
-<ul>
-  <% @team.tags.limit(10).each do |tag| %>
-    <li><a href="<%= tag.path %>"><%= tag.name %></a></li>
-  <% end %>
-</ul>

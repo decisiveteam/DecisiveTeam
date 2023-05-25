@@ -26,7 +26,7 @@
             <td><%= result.option_title %></td>
             <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.4 %>;"><%= (result.approved_yes || 0) %></td>
             <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.4 %>;"><%= (result.stars || 0) %></td>
-            <td style="opacity:0.4;font-size:0.8em;" title="<%= result.random_id %>"><%= "#{result.random_id}".slice(0, 3) + "..." %></td>
+            <td style="opacity:0.4;font-size:0.8em;" title="<%= result.random_id %>"><%= "#{result.random_id.to_s.rjust(9, '0')}".slice(0, 3) + "..." %></td>
           </tr>
         <% end %>
       </tbody>

@@ -1,19 +1,21 @@
 Ask a yes-or-no question and click the ball for your answer.
 <h1 style="border-bottom:none;">
-  <span id="ball" style="cursor:pointer;">🎱</span>
-  <span id="answer" class="magic8ball-answer"></span>
+  <div id="answer" style="text-align:center;min-height:1.5em;" class="magic8ball-answer">?</div>
+  <div id="ball" style="cursor:pointer;text-align:center;margin-top:16px;">🎱</div>
 </h1>
 
 <script>
-const answers = ["Yes", "No"];
+const answersLists = {
+  "list-yes-no": ["Yes", "No"],
+  "list-team-members": <%= raw(@team.team_members.map { |tm| tm.user.name }.to_json) %>,
+};
 document.getElementById('ball').addEventListener('click', () => {
-  const answer = document.getElementById('answer')
-  answer.classList.remove("magic8ball-answer")
-  answer.style.display = 'none'
+  const answers = answersLists["list-yes-no"];
+  const answerElement = document.getElementById('answer')
+  answerElement.classList.remove("magic8ball-answer")
   setTimeout(() => {
-    answer.textContent = "✨ " + answers[Math.floor(Math.random() * answers.length)] + " ✨"
-    answer.style.display = 'inline-block'
-    answer.classList.add("magic8ball-answer")
+    answerElement.textContent = "✨ " + answers[Math.floor(Math.random() * answers.length)] + " ✨"
+    answerElement.classList.add("magic8ball-answer")
   }, 10)
 })
 </script>

@@ -3,7 +3,7 @@
 <h2>Team Members (<%= @team.team_members.count %>) <a href="<%= @team.path %>/invite"> + </a></h2>
 <ul>
   <% @team.team_members.limit(10).each do |tm| %>
-    <li><%= tm.user.email %></li>
+    <li><%= tm.user.name %></li>
   <% end %>
 </ul>
 

@@ -55,6 +55,8 @@ export default class extends Controller {
   }
 
   async createOption(title) {
+    // TODO - refactor this
+    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
     const teamId = this.inputTarget.dataset.teamId;
     const decisionId = this.inputTarget.dataset.decisionId;
     const response = await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options`, {
@@ -63,7 +65,7 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ title }),
+      body: JSON.stringify({ title, participant_name }),
     });
 
     if (!response.ok) {
@@ -74,6 +76,8 @@ export default class extends Controller {
   }
 
   async toggleApprovalValues(event) {
+    // TODO - refactor this
+    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
     const teamId = this.inputTarget.dataset.teamId;
     const decisionId = this.inputTarget.dataset.decisionId;
     const optionItem = event.target.parentElement;
@@ -89,7 +93,7 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ value: approved, stars }),
+      body: JSON.stringify({ value: approved, stars, participant_name }),
     });
   }
 

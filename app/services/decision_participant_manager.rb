@@ -11,15 +11,23 @@ class DecisionParticipantManager
 
   def find_or_create_participant
     if @decision && @entity
-      DecisionParticipant.find_or_create_by(
+      participant = DecisionParticipant.find_by(
         decision: @decision,
         entity: @entity,
-        name: @name || @entity.name,
-        invite: @invite
+        name: @name, # NOTE - this allows the same user to vote multiple times
       )
+      if participant.nil?
+        participant = DecisionParticipant.create!(
+          decision: @decision,
+          entity: @entity,
+          name: @name,
+          invite: @invite,
+        )
+      end
     else
       # TODO - implement anonymous participants
       raise 'both decision and entity must be present to create a decision participant'
     end
+    participant
   end
 end

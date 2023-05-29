@@ -44,6 +44,8 @@ class ApplicationController < ActionController::Base
       @current_decision_participant = DecisionParticipantManager.new(
         decision: current_decision,
         entity: current_user,
+        # TODO - refactor this. This is a hack to allow admins to easily create participants and approvals.
+        name: (current_user.is_admin? ? params[:participant_name] : nil),
       ).find_or_create_participant
     else
       @current_decision_participant = nil

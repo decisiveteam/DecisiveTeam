@@ -1,20 +1,18 @@
 class DecisionsController < ApplicationController
 
   def new
-    @decision = Decision.new(team: @current_team, created_by: current_user)
+    @decision = Decision.new(
+      team: @current_team,
+      created_by: current_user,
+      question: params[:question],
+    )
   end
 
   def create
-    other_attributes = begin
-      JSON.parse(decision_params[:other_attributes] || '')
-    rescue JSON::ParserError
-      { notes: decision_params[:other_attributes] || '' }
-    end
     @decision = Decision.new(
       team: @current_team,
       created_by: current_user,
       question: decision_params[:question],
-      other_attributes: other_attributes
     )
 
     if @decision.save
@@ -53,19 +51,19 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :other_attributes, :status, :deadline)
+    params.require(:decision).permit(:question, :status, :deadline)
   end
 
   def set_results_view_vars
     @voter_count = @decision.voter_count
     @voter_verb_phrase = if @voter_count == 1 && @decision.closed?
-      "person"
+      "participant"
     elsif @voter_count == 1 && !@decision.closed?
-      "person has"
+      "participant has"
     elsif @voter_count != 1 && @decision.closed?
-      "people"
+      "participants"
     elsif @voter_count != 1 && !@decision.closed?
-      "people have"
+      "participants have"
     end
   end
 end

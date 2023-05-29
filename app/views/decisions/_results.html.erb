@@ -34,6 +34,14 @@
     <p>
       Results are sorted first by approvals ✅, then by stars ⭐, then by random digits 🎲.
     </p>
+    <!-- <p>
+      Why are results sorted this way?
+      <ol>
+        <li>✅ Approvals encourage consensus.</li>
+        <li>⭐️ Stars discourage the <a href="https://en.wikipedia.org/wiki/Abilene_paradox" target="_blank">Abilene paradox</a>.</li>
+        <li>🎲 Random digits create a <a href="https://en.wikipedia.org/wiki/Focal_point_(game_theory)" target="_blank">Schelling point</a>.</li>
+      </ol>
+    </p> -->
     <span data-decision-results-target="message">
       <%= @voter_count %> <%= @voter_verb_phrase %> voted on this decision.
       <% unless @decision.closed? %>Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a><% end %>

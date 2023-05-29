@@ -49,10 +49,12 @@ class TeamsController < ApplicationController
   end
 
   def index
+    return redirect_to '/login' unless current_user
     @teams = Team.accessible_by(current_user)
   end
 
   def show
+    return redirect_to '/login' unless current_user
     @team = Team.accessible_by(current_user).find(params[:id])
   end
 

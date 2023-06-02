@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ['time'];
-  static values = { endTime: String };
+  static values = { endTime: String, baseUnit: String };
 
   connect() {
     this.startCountdown();
@@ -32,28 +32,19 @@ export default class extends Controller {
     const minutes = Math.floor((distance % oneHour) / oneMinute);
     let seconds = Math.floor((distance % oneMinute) / oneSecond);
     if (seconds < 10) seconds = `0${seconds}`;
+
+    let values = [years, days, hours, minutes, seconds];
+    let keys = ["years", "days", "hours", "minutes", "seconds"];
+    const nonZeroIndex = values.findIndex((value) => value > 0);
+    const unitIndex = keys.indexOf(this.baseUnitValue || 'seconds');
+    keys = keys.slice(nonZeroIndex, unitIndex + 1);
+    values = values.slice(nonZeroIndex, unitIndex + 1);
+
+    const textChunks = keys.map((key, index) => `${values[index]}${key[0]}`);
+    textChunks[0] += "<span style='opacity:0.5;'>";
+    textChunks[textChunks.length - 1] += "</span>";
     
-    let text = "";
-    switch (true) {
-      case years > 0:
-        text = `${years}y : ${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
-        break;
-      case days > 0:
-        text = `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
-        break;
-      case hours > 0:
-        text = `${hours}h : ${minutes}m : ${seconds}s`;
-        break;
-      case minutes > 0:
-        text = `${minutes}m : ${seconds}s`;
-        break;
-      case seconds > 0:
-        text = `${seconds}s`;
-        break;
-      default:
-        text = "0";
-    }
-    this.timeTarget.innerText = text;
+    this.timeTarget.innerHTML = textChunks.join(" : ");
 
     if (distance < 0) {
       clearInterval(this.interval);

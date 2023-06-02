@@ -9,12 +9,13 @@ module ApplicationHelper
     >#{time_ago_in_words(datetime)}</time> #{ago_or_from_now}".html_safe
   end
 
-  def countdown(datetime)
+  def countdown(datetime, base_unit: 'seconds')
     "<time
       data-controller='countdown'
       data-countdown-end-time-value='#{datetime.iso8601}'
+      data-countdown-base-unit-value='#{base_unit}'
       >
-      <span data-target='countdown.time' style='font-family:monospace;'>...</span>
+      <span data-countdown-target='time' style='font-family:monospace;'>...</span>
     </time>".html_safe
   end
 

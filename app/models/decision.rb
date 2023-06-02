@@ -9,9 +9,43 @@ class Decision < ApplicationRecord
   validates :status, inclusion: { in: %w(ephemeral draft open closed) }, allow_nil: true
 
   after_save :schedule_destroy_ephemeral
+  after_save :schedule_close_at_deadline
 
   def self.accessible_by(user)
     super.or(self.where(decision_participants: user.decision_participants))
+  end    
+
+  def self.grouped_by_urgency
+    open_decisions = self.where(status: ['open', nil])
+      .where('deadline > ? OR deadline IS NULL', Time.now)
+      .order(deadline: :asc)
+      .group_by do |decision|
+        if decision.deadline.nil?
+          'no deadline'
+        elsif decision.deadline < 1.day.from_now
+          'closing soon'
+        elsif decision.deadline < 1.week.from_now
+          'closing this week'
+        else
+          'closing later'
+        end
+      end
+    closed_decisions = self.where(status: 'closed')
+      .where('deadline <= ?', Time.now)
+      .order(deadline: :desc)
+      .group_by do |decision|
+        if decision.deadline.nil?
+          'no deadline'
+        elsif (Time.now - decision.deadline) < 1.day
+          'recently closed'
+        else
+          'closed'
+        end
+      end
+    {
+      'open' => open_decisions,
+      'closed' => closed_decisions,
+    }
   end
 
   def closed?
@@ -23,8 +57,20 @@ class Decision < ApplicationRecord
     save!
   end
 
+  def close_if_deadline_passed!
+    if deadline && deadline < Time.now
+      close!
+    end
+  end
+
+  def schedule_close_at_deadline
+    if deadline && deadline > Time.now
+      CloseDecisionJob.set(wait_until: deadline).perform_later(self.id)
+    end
+  end
+
   def destroy_ephemeral_at
-    created_at + 1.hour
+    (deadline || created_at) + 1.hour
   end
 
   def schedule_destroy_ephemeral

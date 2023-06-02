@@ -1,6 +1,21 @@
 module ApplicationHelper
   def timeago(datetime)
-    "<time data-controller='timeago' data-timeago-datetime-value='#{datetime.iso8601}' data-refresh-interval='#{60 * 1000}'>#{time_ago_in_words(datetime)}</time> ago".html_safe
+    ago_or_from_now = datetime < Time.now ? 'ago' : 'from now'
+    "<time
+      data-controller='timeago'
+      data-timeago-datetime-value='#{datetime.iso8601}'
+      data-refresh-interval='#{60 * 1000}'
+      title='#{datetime.to_s(:long)}'
+    >#{time_ago_in_words(datetime)}</time> #{ago_or_from_now}".html_safe
+  end
+
+  def countdown(datetime)
+    "<time
+      data-controller='countdown'
+      data-countdown-end-time-value='#{datetime.iso8601}'
+      >
+      <span data-target='countdown.time' style='font-family:monospace;'>...</span>
+    </time>".html_safe
   end
 
   def username_with_profile_link(user)

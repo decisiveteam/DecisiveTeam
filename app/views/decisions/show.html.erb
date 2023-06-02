@@ -1,3 +1,6 @@
+<% if @decision.deadline %>
+  <div style="float:right;"><strong><%= countdown(@decision.deadline) %></strong><br/></div>
+<% end %>
 <span data-controller="decision" data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
 <p>

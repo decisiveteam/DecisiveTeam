@@ -24,7 +24,7 @@
     </div>
     <div class="markdown-body">
       <% if @current_team %>
-        <h5><a href="<%= @current_team.path %>"><%= @current_team.name %></a></h5>
+        <h5 style="display:inline-block;"><a href="<%= @current_team.path %>"><%= @current_team.name %></a></h5>
       <% end %>
       <%= yield %>
     </div>

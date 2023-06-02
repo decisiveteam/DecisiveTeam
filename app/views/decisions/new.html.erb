@@ -1,6 +1,12 @@
 <h1>New Decision</h1>
 <%= form_with(model: [@current_team, @decision]) do |form| %>
-<span><%= form.label :question %>
-<%= form.text_field :question %></span> 
-<%= form.submit 'Create' %>
+  <div>
+    <%= form.label :question %><br/>
+    <%= form.text_field :question %>
+  </div> 
+  <div>
+    <%= form.label :deadline %><br/>
+    <%= form.datetime_local_field :deadline, value: (DateTime.now + 1.day).midnight.iso8601.slice(0..-10) %>
+  </div>
+  <%= form.submit 'Create' %>
 <% end %>

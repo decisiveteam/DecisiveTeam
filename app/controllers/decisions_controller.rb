@@ -13,6 +13,7 @@ class DecisionsController < ApplicationController
       team: @current_team,
       created_by: current_user,
       question: decision_params[:question],
+      deadline: decision_params[:deadline],
     )
 
     if @decision.save

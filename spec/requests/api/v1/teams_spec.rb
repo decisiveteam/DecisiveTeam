@@ -68,6 +68,7 @@ RSpec.describe 'api/v1/teams', type: :request do
         end
         it 'returns 200' do
           expect(response.code).to eq("200")
+          expect(response.body).to eq(Team.last.to_json)
         end
       end
     end
@@ -108,34 +109,64 @@ RSpec.describe 'api/v1/teams', type: :request do
       end
     end
 
-    # put('update team') do
-    #   response(200, 'successful') do
-    #     let(:id) { '123' }
+    put('update team') do
+      response(200, 'successful') do
+        let(:params) { {name: team.name + ' updated'} }
 
-    #     after do |example|
-    #       example.metadata[:response][:content] = {
-    #         'application/json' => {
-    #           example: JSON.parse(response.body, symbolize_names: true)
-    #         }
-    #       }
-    #     end
-    #     run_test!
-    #   end
-    # end
+        before do
+          put "/api/v1/teams/#{team.id}", params: params.to_json, headers: headers
+        end
+        it 'returns 200 with the expected team' do
+          expect(response.code).to eq("200")
+          expect(team.reload.name).to eq(params[:name])
+          expect(JSON.parse(response.body, symbolize_names: true)[:name]).to eq(params[:name])
+        end
+        after do |example|
+          example.metadata[:response][:content] = {
+            'application/json' => {
+              example: JSON.parse(response.body, symbolize_names: true)
+            }
+          }
+        end
+      end
+    end
 
-    # delete('delete team') do
-    #   response(200, 'successful') do
-    #     let(:id) { '123' }
-
-    #     after do |example|
-    #       example.metadata[:response][:content] = {
-    #         'application/json' => {
-    #           example: JSON.parse(response.body, symbolize_names: true)
-    #         }
-    #       }
-    #     end
-    #     run_test!
-    #   end
-    # end
+    delete('delete team') do
+      response(200, 'successful') do
+        before do
+          team.decisions.destroy_all # only teams with no decisions can be deleted
+          delete "/api/v1/teams/#{team.id}", headers: headers
+        end
+        it 'returns 200 with the expected team' do
+          expect(response.code).to eq("200")
+          expect { team.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+        after do |example|
+          example.metadata[:response][:content] = {
+            'application/json' => {
+              example: JSON.parse(response.body, symbolize_names: true)
+            }
+          }
+        end
+      end
+      response(400, 'bad request') do
+        # can't delete a team with decisions
+        let!(:decision) { FactoryBot.create(:decision, team: team) }
+        before do
+          delete "/api/v1/teams/#{team.id}", headers: headers
+        end
+        it 'returns 400 with the expected team' do
+          expect(response.code).to eq("400")
+          expect(team.reload).to eq(team)
+        end
+        after do |example|
+          example.metadata[:response][:content] = {
+            'application/json' => {
+              example: JSON.parse(response.body, symbolize_names: true)
+            }
+          }
+        end
+      end
+    end
   end
 end

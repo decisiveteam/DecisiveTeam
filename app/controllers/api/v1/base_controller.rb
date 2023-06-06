@@ -55,7 +55,8 @@ class Api::V1::BaseController < ApplicationController
 
   def current_team
     return @current_team if defined?(@current_team)
-    @current_team = Team.accessible_by(current_user).find_by(id: params[:team_id])
+    id = current_resource_model == Team ? params[:id] : params[:team_id]
+    @current_team = Team.accessible_by(current_user).find_by(id: id)
   end
 
   def current_resource_model

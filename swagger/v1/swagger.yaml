@@ -49,6 +49,18 @@ paths:
       responses:
         '200':
           description: successful
+    put:
+      summary: update team
+      responses:
+        '200':
+          description: successful
+    delete:
+      summary: delete team
+      responses:
+        '200':
+          description: successful
+        '400':
+          description: bad request
 servers:
 - url: https://{defaultHost}
   variables:

@@ -6,11 +6,7 @@ RSpec.describe 'api/v1/teams', type: :request do
   let(:user) { FactoryBot.create(:user) }
   let!(:team) { FactoryBot.create(:team) }
   let!(:team_member) { FactoryBot.create(:team_member, user: user, team: team) }
-  let(:application) { Doorkeeper::Application.create!(
-    name: "Test app",
-    redirect_uri: "https://decisive.team",
-    scopes: "read write"
-  ) }
+  let(:application) { SystemResourceService.system_oauth_application }
   let(:token) { Doorkeeper::AccessToken.create!(
     application_id: application.id,
     resource_owner_id: user.id,

@@ -5,6 +5,10 @@
     <%= form.text_field :question %>
   </div> 
   <div>
+    <%= form.label :description %><br/>
+    <%= form.text_field :description %>
+  </div> 
+  <div>
     <%= form.label :deadline %><br/>
     <%= form.datetime_local_field :deadline, value: (DateTime.now + 1.day).midnight.iso8601.slice(0..-10) %>
   </div>

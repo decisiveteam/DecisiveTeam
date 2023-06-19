@@ -163,7 +163,8 @@ CREATE TABLE public.decisions (
     team_id bigint NOT NULL,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    description text
 );
 
 
@@ -1289,6 +1290,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230520210702'),
 ('20230520210703'),
 ('20230520211339'),
-('20230524032233');
+('20230524032233'),
+('20230619223228');
 
 

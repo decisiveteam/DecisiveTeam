@@ -3,7 +3,7 @@
 <% end %>
 <span data-controller="decision" data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
-<p>
+<p style="font-size:0.8em;">
   Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= username_with_profile_link(@decision.created_by) %></strong><br/>
   Status: <select name="status" data-action="change->decision#changeStatus">
     <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>
@@ -11,8 +11,10 @@
     <option value="ephemeral" <%= @decision.status == 'ephemeral' ? 'selected' : '' %>>ephemeral</option>
     <option value="closed" <%= @decision.status == 'closed' ? 'selected' : '' %>>closed</option>
   </select>
-  <br/>
 </p>
+<% if @decision.description %>
+  <p><%= @decision.description %></p>
+<% end %>
 
 <% unless @decision.closed? %>
   <%= render 'options' %>

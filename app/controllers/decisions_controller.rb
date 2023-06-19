@@ -13,6 +13,7 @@ class DecisionsController < ApplicationController
       team: @current_team,
       created_by: current_user,
       question: decision_params[:question],
+      description: decision_params[:description],
       deadline: decision_params[:deadline],
     )
 
@@ -52,7 +53,7 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :status, :deadline)
+    params.require(:decision).permit(:question, :description, :status, :deadline)
   end
 
   def set_results_view_vars

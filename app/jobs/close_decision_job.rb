@@ -1,5 +1,5 @@
 class CloseDecisionJob < ApplicationJob
-  queue_as :default
+  queue_as :scheduled
 
   def perform(decision_id)
     decision = Decision.find_by(id: decision_id)

@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 
 class SendWebhookJob < ApplicationJob
-  queue_as :default
+  queue_as :webhooks
 
   def perform(webhook_id, payload)
     webhook = Webhook.find(webhook_id)

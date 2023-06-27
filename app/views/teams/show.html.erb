@@ -1,14 +1,7 @@
 <h1><%= @team.name %></h1>
 
-<h2>Team Members (<%= @team.team_members.count %>) <a href="<%= @team.path %>/invite"> + </a></h2>
-<ul>
-  <% @team.team_members.limit(10).each do |tm| %>
-    <li><%= tm.user.name %></li>
-  <% end %>
-</ul>
-
-<h2>Decisions (<%= @team.decisions.count %>) <a href="<%= @team.path %>/new_decision"> + </a></h2>
 <% grouped_decisions = @team.decisions.grouped_by_urgency %>
+<h2>Open Decisions <a href="<%= @team.path %>/new_decision"> + </a></h2>
 <% open_decisions = grouped_decisions['open'] %>
 <% if open_decisions['closing soon'] %>
   <h5>Closing Soon</h5>
@@ -34,9 +27,25 @@
     <% end %>
   </ul>
 <% end %>
-<% if open_decisions['no deadline'] %><!-- TODO --><% end %>
+<% if open_decisions['no deadline'] %>
+  <h5>No Deadline</h5>
+  <ul>
+    <% open_decisions['no deadline'].each do |d| %>
+      <li><a href="<%= d.path %>"><%= d.question %></a></li>
+    <% end %>
+  </ul>
+<% end %>
 </ul>
+<h2>Closed Decisions</h2>
 <% closed_decisions = grouped_decisions['closed'] %>
+<% if closed_decisions['closed early'] %>
+  <h5>Closed Early</h5>
+  <ul>
+    <% closed_decisions['closed early'].each do |d| %>
+      <li><a href="<%= d.path %>"><%= d.question %></a></li>
+    <% end %>
+  </ul>
+<% end %>
 <% if closed_decisions['recently closed'] %>
   <h5>Recently Closed</h5>
   <ul>
@@ -60,6 +69,13 @@
     <li><a href="<%= d.path %>"><%= d.question %></a></li>
   <% end %>
   <% if draft_decisions.count > 10 %><!-- TODO --><% end %>
+</ul>
+
+<h2>Team Members (<%= @team.team_members.count %>) <a href="<%= @team.path %>/invite"> + </a></h2>
+<ul>
+  <% @team.team_members.limit(10).each do |tm| %>
+    <li><%= tm.user.name %></li>
+  <% end %>
 </ul>
 
 <h2>Magic 8 Ball</h2>

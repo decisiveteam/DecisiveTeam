@@ -17,7 +17,6 @@ class Decision < ApplicationRecord
 
   def self.grouped_by_urgency
     open_decisions = self.where(status: ['open', nil])
-      .where('deadline > ? OR deadline IS NULL', Time.now)
       .order(deadline: :asc)
       .group_by do |decision|
         if decision.deadline.nil?
@@ -31,11 +30,12 @@ class Decision < ApplicationRecord
         end
       end
     closed_decisions = self.where(status: 'closed')
-      .where('deadline <= ?', Time.now)
       .order(deadline: :desc)
       .group_by do |decision|
         if decision.deadline.nil?
           'no deadline'
+        elsif decision.deadline > Time.now
+          'closed early'
         elsif (Time.now - decision.deadline) < 1.day
           'recently closed'
         else
@@ -99,7 +99,8 @@ class Decision < ApplicationRecord
   end
 
   def results
-    DecisionResult.where(decision_id: self.id)
+    return @results if @results
+    @results = DecisionResult.where(decision_id: self.id)
   end
 
   def voter_count

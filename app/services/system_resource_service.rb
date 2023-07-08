@@ -33,6 +33,12 @@ class SystemResourceService
     @system_oauth_application
   end
 
+  def self.public_team
+    @public_team ||= Team.find_by(name: "Public", handle: "public")
+    raise "public team not found" if @public_team.nil?
+    @public_team
+  end
+
   def self.create_anonymous_resources!
     @anonymous_user = User.find_or_create_by!(email: 'anonymous@decisive.team') do |user|
       # This user is used to represent anonymous users in the system.
@@ -58,7 +64,6 @@ class SystemResourceService
       user.password = SecureRandom.hex
       user.display_name = 'System'
       user.confirmed_at = Time.now
-      user.is_admin = true
     end
 
     @system_team = Team.find_or_create_by!(handle: 'system') do |team|

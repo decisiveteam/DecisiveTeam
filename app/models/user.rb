@@ -22,7 +22,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable#,
         #  :confirmable, :lockable
 
-  has_many :team_members
+  has_many :team_members, dependent: :destroy
   has_many :teams, through: :team_members
 
   def name

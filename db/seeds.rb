@@ -1,1 +1,2 @@
 SystemResourceService.create_system_resources!
+SystemResourceService.create_anonymous_resources!

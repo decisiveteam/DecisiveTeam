@@ -8,7 +8,10 @@ export default class extends Controller {
     return document.querySelector("meta[name='csrf-token']").content;
   }
 
-  connect() { this.initAgeDisplay() }
+  connect() {
+    this.initAgeDisplay()
+    document.addEventListener('decisionDataUpdated', this.refreshResults.bind(this))
+  }
 
   initAgeDisplay() {
     const timeOfInitialRender = new Date();
@@ -38,22 +41,6 @@ export default class extends Controller {
         displayEl.textContent = seconds + ' seconds ago';
       }
     }, 1000);
-  }
-
-  toggleResults(event) {
-    event.preventDefault();
-    const text = event.target.textContent;
-    const table = document.getElementById('results');
-    if (text == 'Show results') {
-      table.style.display = 'inline';
-      event.target.textContent = 'Hide results';
-      this.refreshResults(event)
-    } else if (text == 'Hide results') {
-      table.style.display = 'none';
-      event.target.textContent = 'Show results';
-    } else {
-      throw new Error(`Unexpected text value "${text}"`);
-    }
   }
 
   async refreshResults(event) {

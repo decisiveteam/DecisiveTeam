@@ -33,7 +33,6 @@ class DecisionsController < ApplicationController
     @decision = current_decision
     @approvals = current_approvals
     return render '404', status: 404 unless @decision
-    @show_results = @decision.closed?
     set_results_view_vars
   end
 
@@ -45,7 +44,6 @@ class DecisionsController < ApplicationController
 
   def results_partial
     @decision = current_decision
-    @show_results = true
     set_results_view_vars
     render partial: 'results'
   end

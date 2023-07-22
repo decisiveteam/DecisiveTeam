@@ -71,7 +71,8 @@ export default class extends Controller {
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
     }
-
+    const ddu = new Event('decisionDataUpdated');
+    document.dispatchEvent(ddu);
     return response.json();
   }
 
@@ -95,6 +96,8 @@ export default class extends Controller {
       },
       body: JSON.stringify({ value: approved, stars, participant_name }),
     });
+    const ddu = new Event('decisionDataUpdated');
+    document.dispatchEvent(ddu);
   }
 
   async refreshOptions(event) {

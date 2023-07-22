@@ -3,12 +3,7 @@
   data-decision-results-url-value="<%= @decision.path %>/results.html"
   >
   <h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
-  <p>
-    <% unless @decision.closed? %>
-      <a data-action="click->decision-results#toggleResults" href="#"><% if @show_results %>Hide<% else %>Show<% end %> results</a>
-    <% end %>
-  </p>
-  <span id="results" style="display:<% if @show_results %>inline<% else %>none<% end %>;">
+  <span id="results">
     <table class="results-table">
       <thead>
         <tr>

@@ -1,0 +1,19 @@
+<span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html">
+<h2>Options</h2>
+<span>Check all options you approve. Star your favorites.</span>
+
+<ul class="options-list">
+  <span data-decision-target="list">
+    <%= render 'options_list_items' %>
+  </span>
+  <li>
+    <input type="checkbox"/>
+    <input type="checkbox" class="star-button"/>
+    <label class="star-button"></label>
+    <form style="display:inline;" data-action="submit->decision#add">
+      <input type="text" data-decision-target="input"  data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>" placeholder="Add an option">
+      <button type="submit">Add</button>
+    </form>
+  </li>
+</ul>
+</span>

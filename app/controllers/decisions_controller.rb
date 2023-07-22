@@ -39,7 +39,20 @@ class DecisionsController < ApplicationController
   def options_partial
     @decision = current_decision
     @approvals = current_approvals
-    render partial: 'options'
+    render partial: 'options_list_items'
+  end
+
+  def create_option_and_return_options_partial
+    # TODO check for duplicate option titles
+    Option.create!(
+      team: current_team,
+      decision: current_decision,
+      decision_participant: current_decision_participant,
+      title: params[:title],
+      description: params[:description],
+      other_attributes: {} # TODO
+    )
+    options_partial
   end
 
   def results_partial

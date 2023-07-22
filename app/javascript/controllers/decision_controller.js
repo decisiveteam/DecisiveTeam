@@ -1,15 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "list", "optionsSection", "optionsMessage", "optionsRefresh"];
+  static targets = ["input", "list", "optionsSection"];
 
-  optionItem(option) {
-    return `<li class="option-item" data-option-id="${option.id}">
-      <input type="checkbox" class="approval-button" id="option${option.id}" data-action="click->decision#toggleApprovalValues" ${option.value == 1 ? 'checked' : ''}/>
-      <input type="checkbox" class="star-button" id="star-option${option.id}" data-action="click->decision#toggleApprovalValues"/>
-      <label for="star-option${option.id}" class="star-button"></label>
-      <label for="option${option.id}">${option.title}</label></li>
-    `;
+  initialize() {
+    document.addEventListener('poll', this.refreshOptions.bind(this))
   }
 
   add(event) {
@@ -17,11 +12,9 @@ export default class extends Controller {
     const input = this.inputTarget.value.trim();
     if (input.length > 0) {
       this.createOption(input)
-        .then((option) => {
-          this.listTarget.insertAdjacentHTML("beforeend", this.optionItem(option));
-          const countDisplay = document.getElementById('decision-count-display');
-          const count = +countDisplay.textContent;
-          countDisplay.textContent = '' + (count + 1);
+        .then(response => response.text())
+        .then((html) => {
+          this.listTarget.innerHTML = html;
           this.inputTarget.value = "";
         })
         .catch((error) => {
@@ -51,15 +44,16 @@ export default class extends Controller {
       throw new Error(`API request failed with status ${response.status}`);
     }
 
-    return response.json();
+    return response;
   }
 
   async createOption(title) {
     // TODO - refactor this
     const participant_name = new URLSearchParams(window.location.search).get("participant_name");
-    const teamId = this.inputTarget.dataset.teamId;
-    const decisionId = this.inputTarget.dataset.decisionId;
-    const response = await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options`, {
+    // const teamId = this.inputTarget.dataset.teamId;
+    // const decisionId = this.inputTarget.dataset.decisionId;
+    const url = this.optionsSectionTarget.dataset.url;
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +67,7 @@ export default class extends Controller {
     }
     const ddu = new Event('decisionDataUpdated');
     document.dispatchEvent(ddu);
-    return response.json();
+    return response;
   }
 
   async toggleApprovalValues(event) {
@@ -88,6 +82,7 @@ export default class extends Controller {
     const starButton = optionItem.querySelector('input.star-button');
     const stars = starButton.checked;
   
+    this.updatingApprovals = true;
     await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
       headers: {
@@ -96,30 +91,34 @@ export default class extends Controller {
       },
       body: JSON.stringify({ value: approved, stars, participant_name }),
     });
+    this.updatingApprovals = false;
+    this.lastApprovalUpdate = new Date().toString();
     const ddu = new Event('decisionDataUpdated');
     document.dispatchEvent(ddu);
   }
 
   async refreshOptions(event) {
     event.preventDefault()
-    if (this.refreshing) return;
+    if (this.refreshing || this.updatingApprovals) return;
     this.refreshing = true;
-    this.optionsMessageTarget.textContent = "Refreshing ...";
-    const minTimeout = new Promise(resolve => setTimeout(resolve, 500));
     const url = this.optionsSectionTarget.dataset.url;
+    const lastApprovalUpdateBeforeRefresh = this.lastApprovalUpdate;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         "X-CSRF-Token": this.csrfToken,
       }
     });
-    if (response.ok) {
+    const refreshIsStale = this.updatingApprovals || (this.lastApprovalUpdate !== lastApprovalUpdateBeforeRefresh);
+    if (refreshIsStale) {
+      this.refreshing = false;
+    } else if (response.ok) {
       const html = await response.text();
-      await minTimeout;
-      this.optionsSectionTarget.outerHTML = html;
+      this.listTarget.innerHTML = html;
       this.refreshing = false;
     } else {
-      this.optionsRefreshTarget.textContent = "Something went wrong. Refresh the page to get the latest options."
+      console.error("Error refreshing options:", response);
+      this.refreshing = false;
     }
   }
   

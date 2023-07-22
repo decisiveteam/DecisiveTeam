@@ -1,0 +1,9 @@
+<% @decision.options.each do |option| %>
+  <% approval = @approvals.where(option: option).first || Approval.new(value: 0) %>
+  <li class="option-item" data-option-id="<%= option.id %>">
+    <input type="checkbox" class="approval-button" id="option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.value == 1 ? 'checked' : '' %>/>
+    <input type="checkbox" class="star-button" id="star-option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.stars == 1 ? 'checked' : '' %>/>
+    <label for="star-option<%= option.id %>" class="star-button"></label>
+    <label for="option<%= option.id %>"><%= option.title %></label>
+  </li>
+<% end %>

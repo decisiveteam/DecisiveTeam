@@ -22,9 +22,16 @@ Rails.application.routes.draw do
       get '/whoami', to: 'users#whoami'
       resources :teams do
         resources :webhooks, only: [:index, :create, :destroy]
+        # resources :invites, only: [:index, :create, :destroy]
+        # resources :members, only: [:index, :create, :destroy]
         resources :decisions do
           resources :webhooks, only: [:index, :create, :destroy]
+          # resources :invites, only: [:index, :create, :destroy]
           get :results, to: 'results#index'
+          # resources :participants, only: [:index, :create, :destroy] do
+          #   resources :approvals
+          #   resources :tokens, only: [:index, :create, :destroy]
+          # end
           resources :options do
             resources :approvals
           end
@@ -47,6 +54,7 @@ Rails.application.routes.draw do
     resources :decisions, only: [:create, :show] do
       get '/results.html' => 'decisions#results_partial'
       get '/options.html' => 'decisions#options_partial'
+      post '/options.html' => 'decisions#create_option_and_return_options_partial'
     end
   end
 end

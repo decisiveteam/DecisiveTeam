@@ -1,7 +1,7 @@
 <h1><%= @team.name %></h1>
 
 <% grouped_decisions = @team.decisions.grouped_by_urgency %>
-<h2>Open Decisions <a href="<%= @team.path %>/new_decision"> + </a></h2>
+<h2>Open Decisions <a href="<%= @team.path %>/decide"> + </a></h2>
 <% open_decisions = grouped_decisions['open'] %>
 <% if open_decisions['closing soon'] %>
   <h5>Closing Soon</h5>

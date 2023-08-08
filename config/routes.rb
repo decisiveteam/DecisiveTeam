@@ -46,11 +46,13 @@ Rails.application.routes.draw do
   end
 
   get '/new_team' => 'teams#new'
+  get '/decide' => 'decisions#new'
+  get '/decision/:decision_uid' => 'decisions#show_by_uid'
   resources :teams, only: [:create, :index, :show] do
     get '/invite' => 'teams#invite'
     get '/join/:invite_code' => 'teams#join'
     get '/join/:invite_code/confirm' => 'teams#confirm_invite'
-    get '/new_decision' => 'decisions#new'
+    get '/decide' => 'decisions#new'
     resources :decisions, only: [:create, :show] do
       get '/results.html' => 'decisions#results_partial'
       get '/options.html' => 'decisions#options_partial'

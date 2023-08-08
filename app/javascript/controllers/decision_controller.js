@@ -102,6 +102,8 @@ export default class extends Controller {
     if (this.refreshing || this.updatingApprovals) return;
     this.refreshing = true;
     const url = this.optionsSectionTarget.dataset.url;
+    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
+    if (participant_name) url += `?participant_name=${participant_name}`;
     const lastApprovalUpdateBeforeRefresh = this.lastApprovalUpdate;
     const response = await fetch(url, {
       method: "GET",

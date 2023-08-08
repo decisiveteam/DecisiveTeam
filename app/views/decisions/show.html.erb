@@ -10,7 +10,11 @@
     <option value="draft" <%= @decision.status == 'draft' ? 'selected' : '' %>>draft</option>
     <option value="ephemeral" <%= @decision.status == 'ephemeral' ? 'selected' : '' %>>ephemeral</option>
     <option value="closed" <%= @decision.status == 'closed' ? 'selected' : '' %>>closed</option>
-  </select>
+  </select><br/>
+  Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+    <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
+    <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>
+  </span><br/>
 </p>
 <% if @decision.description %>
   <p><%= @decision.description %></p>

@@ -110,4 +110,8 @@ class Decision < ApplicationRecord
   def path
     "/teams/#{self.team_id}/decisions/#{self.id}"
   end
+
+  def shareable_link
+    "https://#{ENV['HOSTNAME']}#{path}"
+  end
 end

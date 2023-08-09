@@ -2,7 +2,6 @@ module Api::V1
   class OptionsController < BaseController    
     def create
       option = Option.create!(
-        team: current_team,
         decision: current_decision,
         decision_participant: current_decision_participant,
         title: params[:title],

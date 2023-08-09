@@ -2,37 +2,29 @@ class DecisionsController < ApplicationController
 
   def new
     @decision = Decision.new(
-      team: @current_team,
-      created_by: current_user,
       question: params[:question],
     )
   end
 
   def create
     @decision = Decision.new(
-      team: @current_team,
-      created_by: current_user,
       question: decision_params[:question],
       description: decision_params[:description],
       deadline: decision_params[:deadline],
     )
 
     if @decision.save
-      redirect_to "/teams/#{@decision.team_id}/decisions/#{@decision.id}"
+      redirect_to "/decisions/#{@decision.id}"
     else
       flash.now[:alert] = 'There was an error creating the decision. Please try again.'
       render :new
     end
   end
 
-  def index
-    @decisions = Decision.accessible_by(current_user).where(team: @current_team)
-  end
-
   def show
     @decision = current_decision
-    @approvals = current_approvals
     return render '404', status: 404 unless @decision
+    @approvals = current_approvals
     set_results_view_vars
   end
 
@@ -45,7 +37,6 @@ class DecisionsController < ApplicationController
   def create_option_and_return_options_partial
     # TODO check for duplicate option titles
     Option.create!(
-      team: current_team,
       decision: current_decision,
       decision_participant: current_decision_participant,
       title: params[:title],

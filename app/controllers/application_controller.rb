@@ -5,45 +5,21 @@ class ApplicationController < ActionController::Base
     self.class.name.sub('Controller', '').singularize.constantize
   end
 
-  def current_team
-    return @current_team if defined?(@current_team)
-    if current_user
-      @current_team = Team.accessible_by(current_user).find_by(id: params[:team_id])
-    else
-      @current_team = nil
-    end
-  end
-
-  def current_team_member
-    return @current_team_member if defined?(@current_team_member)
-    if current_team
-      @current_team_member = current_team.team_members.find_by(user: current_user)
-    else
-      @current_team_member = nil
-    end
-  end
-
   def current_decision
     return @current_decision if defined?(@current_decision)
-    if current_team
-      # TODO implement non-team member participants
-      if current_resource_model == Decision
-        decision_id = params[:id] || params[:decision_id]
-      else
-        decision_id = params[:decision_id]
-      end
-      @current_decision = current_team.decisions.find_by(id: decision_id)
+    if current_resource_model == Decision
+      decision_id = params[:id] || params[:decision_id]
     else
-      @current_decision = nil
+      decision_id = params[:decision_id]
     end
+    @current_decision = current_team.decisions.find_by(id: decision_id)
   end
 
   def current_decision_participant
     return @current_decision_participant if defined?(@current_decision_participant)
-    if current_decision && current_user
+    if current_decision
       @current_decision_participant = DecisionParticipantManager.new(
         decision: current_decision,
-        entity: current_user,
         # TODO - refactor this. This is a hack to allow admins to easily create participants and approvals.
         name: (current_user.is_admin? ? params[:participant_name] : nil),
       ).find_or_create_participant

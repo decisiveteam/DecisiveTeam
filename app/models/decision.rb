@@ -1,7 +1,5 @@
 class Decision < ApplicationRecord
   include Tracked
-  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
-  belongs_to :team
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
@@ -10,10 +8,6 @@ class Decision < ApplicationRecord
 
   after_save :schedule_destroy_ephemeral
   after_save :schedule_close_at_deadline
-
-  def self.accessible_by(user)
-    super.or(self.where(decision_participants: user.decision_participants))
-  end    
 
   def self.grouped_by_urgency
     open_decisions = self.where(status: ['open', nil])
@@ -108,7 +102,7 @@ class Decision < ApplicationRecord
   end
 
   def path
-    "/teams/#{self.team_id}/decisions/#{self.id}"
+    "/decisions/#{self.id}"
   end
 
   def shareable_link

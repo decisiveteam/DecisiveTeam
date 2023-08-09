@@ -9,7 +9,7 @@ class DecisionParticipantManager
   end
 
   def find_or_create_participant
-    if @decision && @entity
+    if @decision
       participant = DecisionParticipant.find_by(
         decision: @decision,
         entity: @entity,
@@ -23,8 +23,7 @@ class DecisionParticipantManager
         )
       end
     else
-      # TODO - implement anonymous participants
-      raise 'both decision and entity must be present to create a decision participant'
+      raise 'decision must be present to create a decision participant'
     end
     participant
   end

@@ -22,7 +22,6 @@ class Api::V1::BaseController < ApplicationController
     return @current_decision if defined?(@current_decision)
     if params[:decision_id].present?
       d = Decision
-      d = d.where(team: current_team) unless current_team.nil?
       @current_decision = d.find_by(id: params[:decision_id])
     else
       @current_decision = nil

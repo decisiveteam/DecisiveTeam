@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  before_action :current_team
 
   def current_resource_model
     self.class.name.sub('Controller', '').singularize.constantize
@@ -12,7 +11,7 @@ class ApplicationController < ActionController::Base
     else
       decision_id = params[:decision_id]
     end
-    @current_decision = current_team.decisions.find_by(id: decision_id)
+    @current_decision = Decision.find_by(id: decision_id)
   end
 
   def current_decision_participant
@@ -21,7 +20,7 @@ class ApplicationController < ActionController::Base
       @current_decision_participant = DecisionParticipantManager.new(
         decision: current_decision,
         # TODO - refactor this. This is a hack to allow admins to easily create participants and approvals.
-        name: (current_user.is_admin? ? params[:participant_name] : nil),
+        name: params[:participant_name],
       ).find_or_create_participant
     else
       @current_decision_participant = nil

@@ -1,8 +1,0 @@
-<h1>Edit OAuth Application</h1>
-
-<%= form_with(model: @oauth_application, url: oauth_application_path(@oauth_application), method: :patch) do |form| %>
-  <%= render 'form', form: form %>
-  <%= form.submit 'Update' %>
-<% end %>
-
-<%= link_to 'Back', oauth_applications_path %>

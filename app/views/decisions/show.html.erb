@@ -1,7 +1,7 @@
 <% if @decision.deadline %>
   <div style="float:right;"><strong><%= countdown(@decision.deadline) %></strong><br/></div>
 <% end %>
-<span data-controller="decision" data-team-id="<%= @decision.team_id %>" data-decision-id="<%= @decision.id %>">
+<span data-controller="decision" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@decision.created_at) %></strong> by <strong><%= username_with_profile_link(@decision.created_by) %></strong><br/>

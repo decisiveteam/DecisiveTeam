@@ -89,7 +89,7 @@ class Decision < ApplicationRecord
   end
 
   def public?
-    false # team_id == SystemResourceService.anonymous_team.id
+    false
   end
 
   def results

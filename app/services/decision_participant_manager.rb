@@ -1,10 +1,9 @@
 # This class is responsible for managing the business logic around
 # creating decision participants and inviting users to participate.
 class DecisionParticipantManager
-  def initialize(decision:, entity: nil, invite: nil, name: nil)
+  def initialize(decision:, entity: nil, name: nil)
     @decision = decision
     @entity = entity
-    @invite = invite
     @name = name
     # TODO - add validations
   end
@@ -21,7 +20,6 @@ class DecisionParticipantManager
           decision: @decision,
           entity: @entity,
           name: @name,
-          invite: @invite,
         )
       end
     else

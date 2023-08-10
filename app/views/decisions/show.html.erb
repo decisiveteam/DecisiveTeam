@@ -1,16 +1,7 @@
-<% if @decision.deadline %>
-  <div style="float:right;"><strong><%= countdown(@decision.deadline) %></strong><br/></div>
-<% end %>
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@decision.created_at) %></strong><br/>
-  Status: <select name="status" data-action="change->decision#changeStatus">
-    <option value="open" <%= @decision.status.nil? || @decision.status == 'open' ? 'selected' : '' %>>open</option>
-    <option value="draft" <%= @decision.status == 'draft' ? 'selected' : '' %>>draft</option>
-    <option value="ephemeral" <%= @decision.status == 'ephemeral' ? 'selected' : '' %>>ephemeral</option>
-    <option value="closed" <%= @decision.status == 'closed' ? 'selected' : '' %>>closed</option>
-  </select><br/>
   Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
     <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>

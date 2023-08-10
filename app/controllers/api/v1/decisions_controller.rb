@@ -3,8 +3,7 @@ module Api::V1
     def create
       decision = Decision.create!(
         question: params[:question],
-        status: params[:status],
-        deadline: params[:deadline],
+        description: params[:description],
         other_attributes: {} # TODO
       )
       
@@ -24,7 +23,7 @@ module Api::V1
     private
 
     def updatable_attributes
-      [:other_attributes, :status, :deadline]
+      [:other_attributes]
     end
   end
 end

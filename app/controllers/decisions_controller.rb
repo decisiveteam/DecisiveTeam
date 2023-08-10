@@ -10,7 +10,6 @@ class DecisionsController < ApplicationController
     @decision = Decision.new(
       question: decision_params[:question],
       description: decision_params[:description],
-      deadline: decision_params[:deadline],
     )
 
     if @decision.save
@@ -55,7 +54,7 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :description, :status, :deadline)
+    params.require(:decision).permit(:question, :description)
   end
 
   def set_results_view_vars

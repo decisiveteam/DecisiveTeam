@@ -118,8 +118,6 @@ SELECT
 CREATE TABLE public.decisions (
     id bigint NOT NULL,
     question text,
-    status character varying,
-    deadline timestamp(6) without time zone,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -438,6 +436,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230520211339'),
 ('20230524032233'),
 ('20230619223228'),
-('20230808204725');
+('20230808204725'),
+('20230810195248');
 
 

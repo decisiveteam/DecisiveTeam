@@ -27,25 +27,6 @@ export default class extends Controller {
     return document.querySelector("meta[name='csrf-token']").content;
   }
 
-  async changeStatus(event) {
-    const decisionId = this.element.dataset.decisionId;
-    const status = event.target.value;
-    const response = await fetch(`/api/v1/decisions/${decisionId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": this.csrfToken,
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
-    }
-
-    return response;
-  }
-
   async createOption(title) {
     // TODO - refactor this
     const participant_name = new URLSearchParams(window.location.search).get("participant_name");

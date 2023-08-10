@@ -17,10 +17,15 @@ class ApplicationController < ActionController::Base
   def current_decision_participant
     return @current_decision_participant if defined?(@current_decision_participant)
     if current_decision
+      participant_uid = cookies[:decision_participant_uid] || SecureRandom.hex(16)
+      cookies[:decision_participant_uid] = {
+        value: participant_uid,
+        expires: 30.days.from_now,
+        httponly: true,
+      }
       @current_decision_participant = DecisionParticipantManager.new(
         decision: current_decision,
-        # TODO - refactor this. This is a hack to allow admins to easily create participants and approvals.
-        name: params[:participant_name],
+        name: participant_uid,
       ).find_or_create_participant
     else
       @current_decision_participant = nil

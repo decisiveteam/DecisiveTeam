@@ -35,20 +35,6 @@ RSpec.configure do |config|
         }
       ],
       components: {
-        securitySchemes: {
-          OAuth2: {
-            type: 'oauth2',
-            flows: {
-              clientCredentials: {
-                tokenUrl: "https://#{host}/oauth/token",
-                scopes: {
-                  read: 'Read access to all data',
-                  write: 'Write access to all data'
-                }
-              }
-            }
-          }
-        }
       }
     }
   }

@@ -66,6 +66,14 @@ pre {
   font-size: 14px;
 }
 
+button, input[type="submit"] {
+  cursor: pointer;
+}
+
+input[type="text"] {
+  width: 66%;
+}
+
 input[type="checkbox"], .markdown-checkbox {
   cursor: pointer;
 }

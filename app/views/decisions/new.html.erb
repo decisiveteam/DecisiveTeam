@@ -1,12 +1,14 @@
-<h1>New Decision</h1>
+<h1>Make a Decision</h1>
+<p>Making a group decision with Decisive Team is a 3 step processs:</p>
 <%= form_with(model: [@decision]) do |form| %>
+  <h2>1. Ask a question</h2>
+  <p>Type the question that this decision will answer.</p>
   <div>
-    <%= form.label :question %><br/>
-    <%= form.text_field :question %>
+    <%= form.text_field :question, placeholder: 'Question' %>
   </div> 
-  <div>
-    <%= form.label :description %><br/>
-    <%= form.text_field :description %>
-  </div> 
-  <%= form.submit 'Create' %>
+  <h2>2. Gather options</h2>
+  <p>Your team will collectively make a list of options on the decision page.</p>
+  <h2>3. Make a decision</h2>
+  <p>Go to the decision page and share the link with your team.</p>
+  <%= form.submit 'Go to decision page' %>
 <% end %>

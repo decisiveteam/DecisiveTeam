@@ -4,75 +4,9 @@ info:
   title: Decisive Team API V1
   version: v1
 paths:
-  "/api/v1/teams":
-    get:
-      summary: List teams for current user
-      tags:
-      - Teams
-      description: List of teams
-      operationId: listTeams
-      security:
-      - OAuth2:
-        - read
-      responses:
-        '200':
-          description: successful
-    post:
-      summary: Create new team
-      tags:
-      - Teams
-      description: Create a new team
-      operationId: createTeam
-      security:
-      - OAuth2:
-        - write
-      responses:
-        '200':
-          description: successful
-  "/api/v1/teams/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: id
-      required: true
-      schema:
-        type: string
-    get:
-      summary: show team
-      tags:
-      - Teams
-      description: List of teams
-      operationId: getTeam
-      security:
-      - OAuth2:
-        - read
-      responses:
-        '200':
-          description: successful
-    put:
-      summary: update team
-      responses:
-        '200':
-          description: successful
-    delete:
-      summary: delete team
-      responses:
-        '200':
-          description: successful
-        '400':
-          description: bad request
 servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
       default: localhost:3000
 components:
-  securitySchemes:
-    OAuth2:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: https://localhost:3000/oauth/token
-          scopes:
-            read: Read access to all data
-            write: Write access to all data

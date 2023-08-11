@@ -2,7 +2,6 @@ module Api::V1
   class ApprovalsController < BaseController
     def create
       associations = {
-        team: current_team,
         decision: current_decision,
         option: current_option,
         decision_participant: current_decision_participant,

@@ -27,30 +27,9 @@ export default class extends Controller {
     return document.querySelector("meta[name='csrf-token']").content;
   }
 
-  async changeStatus(event) {
-    const teamId = this.element.dataset.teamId;
-    const decisionId = this.element.dataset.decisionId;
-    const status = event.target.value;
-    const response = await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": this.csrfToken,
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
-    }
-
-    return response;
-  }
-
   async createOption(title) {
     // TODO - refactor this
     const participant_name = new URLSearchParams(window.location.search).get("participant_name");
-    // const teamId = this.inputTarget.dataset.teamId;
     // const decisionId = this.inputTarget.dataset.decisionId;
     const url = this.optionsSectionTarget.dataset.url;
     const response = await fetch(url, {
@@ -73,7 +52,6 @@ export default class extends Controller {
   async toggleApprovalValues(event) {
     // TODO - refactor this
     const participant_name = new URLSearchParams(window.location.search).get("participant_name");
-    const teamId = this.inputTarget.dataset.teamId;
     const decisionId = this.inputTarget.dataset.decisionId;
     const optionItem = event.target.parentElement;
     const checkbox = optionItem.querySelector('input.approval-button');
@@ -83,7 +61,7 @@ export default class extends Controller {
     const stars = starButton.checked;
   
     this.updatingApprovals = true;
-    await fetch(`/api/v1/teams/${teamId}/decisions/${decisionId}/options/${optionId}/approvals`, {
+    await fetch(`/api/v1/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

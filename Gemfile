@@ -79,8 +79,5 @@ group :development, :test do
   gem 'faker'
 end
 
-gem 'doorkeeper'
-gem 'devise'
 gem 'rswag'
 gem 'sidekiq'
-

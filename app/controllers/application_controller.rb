@@ -11,7 +11,8 @@ class ApplicationController < ActionController::Base
     else
       decision_id = params[:decision_id]
     end
-    @current_decision = Decision.find_by(id: decision_id)
+    column_name = decision_id.to_s.length == 8 ? :truncated_id : :id
+    @current_decision = Decision.find_by(column_name => decision_id)
   end
 
   def current_decision_participant

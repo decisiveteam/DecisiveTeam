@@ -94,7 +94,8 @@ CREATE TABLE public.decisions (
     description text,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL
 );
 
 
@@ -205,6 +206,13 @@ CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON 
 --
 
 CREATE INDEX index_decision_participants_on_decision_id ON public.decision_participants USING btree (decision_id);
+
+
+--
+-- Name: index_decisions_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_decisions_on_truncated_id ON public.decisions USING btree (truncated_id);
 
 
 --
@@ -339,6 +347,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230808204725'),
 ('20230810195248'),
 ('20230811224634'),
-('20230811232138');
+('20230811232138'),
+('20230812051757');
 
 

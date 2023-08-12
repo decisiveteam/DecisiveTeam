@@ -22,9 +22,10 @@
             <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.2 %>;"><%= (result.approved_yes || 0) %></td>
             <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.2 %>;"><%= (result.stars || 0) %></td>
             <% random_id_is_relevant = result.is_sorting_factor?(prev_result, 'random_id') || result.is_sorting_factor?(next_result, 'random_id') %>
+            <% random_id_rjusted = result.random_id.to_s.rjust(9, '0') %>
             <td style="font-size:0.8em;"
-                title="<%= result.random_id %>"
-                ><%= random_id_is_relevant ?  ("#{result.random_id.to_s.rjust(9, '0')}".slice(0, 3) + "...") : "" %>
+                title="<%= random_id_rjusted %>"
+                ><%= random_id_is_relevant ?  (random_id_rjusted.slice(0, 3) + "...") : "" %>
             </td>
           </tr>
         <% end %>

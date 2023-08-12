@@ -15,7 +15,7 @@ class DecisionsController < ApplicationController
     )
 
     if @decision.save
-      redirect_to "/decisions/#{@decision.id}"
+      redirect_to @decision.path
     else
       flash.now[:alert] = 'There was an error creating the decision. Please try again.'
       render :new

@@ -1,5 +1,6 @@
 class Approval < ApplicationRecord
   include Tracked
+  self.implicit_order_column = "created_at"
   belongs_to :option
   belongs_to :decision
   belongs_to :decision_participant

@@ -1,5 +1,6 @@
 class Decision < ApplicationRecord
   include Tracked
+  self.implicit_order_column = "created_at"
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options

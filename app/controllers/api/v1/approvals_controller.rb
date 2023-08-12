@@ -9,7 +9,6 @@ module Api::V1
       approval = Approval.find_by(associations) || Approval.new(associations)
       approval.value = params[:value]
       approval.stars = params[:stars]
-      approval.note = params[:note]
       approval.save!
       render json: approval
     end

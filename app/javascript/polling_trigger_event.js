@@ -1,7 +1,7 @@
 const POLLING_INTERVAL = 5 * 1000;
 let currentTimeout = null;
 const triggerPolling = () => {
-  if (document.hidden){
+  if (document.hidden || document.visibilityState === "hidden" || window.pausePolling){
     // noop
   } else {
     const event = new Event("poll");

@@ -9,6 +9,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -18,35 +32,15 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.approvals (
-    id bigint NOT NULL,
-    value integer,
-    note text,
-    option_id bigint NOT NULL,
-    decision_id bigint NOT NULL,
-    decision_participant_id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    decision_id uuid,
+    decision_participant_id uuid,
+    option_id uuid,
+    value integer NOT NULL,
+    stars integer DEFAULT 0,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    stars integer DEFAULT 0
+    updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: approvals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.approvals_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: approvals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.approvals_id_seq OWNED BY public.approvals.id;
 
 
 --
@@ -66,33 +60,12 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.decision_participants (
-    id bigint NOT NULL,
-    decision_id bigint NOT NULL,
-    entity_type character varying,
-    entity_id bigint,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    decision_id uuid,
     name character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: decision_participants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.decision_participants_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: decision_participants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.decision_participants_id_seq OWNED BY public.decision_participants.id;
 
 
 --
@@ -101,8 +74,8 @@ ALTER SEQUENCE public.decision_participants_id_seq OWNED BY public.decision_part
 
 CREATE VIEW public.decision_results AS
 SELECT
-    NULL::bigint AS decision_id,
-    NULL::bigint AS option_id,
+    NULL::uuid AS decision_id,
+    NULL::uuid AS option_id,
     NULL::text AS option_title,
     NULL::bigint AS approved_yes,
     NULL::bigint AS approved_no,
@@ -116,32 +89,13 @@ SELECT
 --
 
 CREATE TABLE public.decisions (
-    id bigint NOT NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
     question text,
+    description text,
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    description text
+    updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: decisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.decisions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: decisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.decisions_id_seq OWNED BY public.decisions.id;
 
 
 --
@@ -149,35 +103,16 @@ ALTER SEQUENCE public.decisions_id_seq OWNED BY public.decisions.id;
 --
 
 CREATE TABLE public.options (
-    id bigint NOT NULL,
-    title text,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    decision_id uuid,
+    decision_participant_id uuid,
+    title text NOT NULL,
     description text,
-    decision_participant_id bigint NOT NULL,
-    decision_id bigint NOT NULL,
     other_attributes jsonb,
+    random_id integer DEFAULT (floor((random() * (1000000000)::double precision)))::integer NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    random_id integer DEFAULT (floor((random() * (1000000000)::double precision)))::integer
+    updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: options_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.options_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: options_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.options_id_seq OWNED BY public.options.id;
 
 
 --
@@ -187,34 +122,6 @@ ALTER SEQUENCE public.options_id_seq OWNED BY public.options.id;
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
 );
-
-
---
--- Name: approvals id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.approvals ALTER COLUMN id SET DEFAULT nextval('public.approvals_id_seq'::regclass);
-
-
---
--- Name: decision_participants id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.decision_participants ALTER COLUMN id SET DEFAULT nextval('public.decision_participants_id_seq'::regclass);
-
-
---
--- Name: decisions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.decisions ALTER COLUMN id SET DEFAULT nextval('public.decisions_id_seq'::regclass);
-
-
---
--- Name: options id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.options ALTER COLUMN id SET DEFAULT nextval('public.options_id_seq'::regclass);
 
 
 --
@@ -298,13 +205,6 @@ CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON 
 --
 
 CREATE INDEX index_decision_participants_on_decision_id ON public.decision_participants USING btree (decision_id);
-
-
---
--- Name: index_decision_participants_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_decision_participants_on_entity ON public.decision_participants USING btree (entity_type, entity_id);
 
 
 --
@@ -437,6 +337,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230524032233'),
 ('20230619223228'),
 ('20230808204725'),
-('20230810195248');
+('20230810195248'),
+('20230811224634'),
+('20230811232138');
 
 

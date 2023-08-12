@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Decisive Team</title>
+    <title><%= @page_title || 'Decisive Team' %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="description" content="<%= @page_description || 'fast group decision-making' %>">
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="<%= @page_title || 'Decisive Team' %>" />
+    <meta name="twitter:description" content="<%= @page_description || 'fast group decision-making' %>" />
+    <meta name="twitter:image" content="https://decisive.team/logo-white-bg.png" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="<%= @page_title || 'Decisive Team' %>" />
+    <meta property="og:description" content="<%= @page_description || 'fast group decision-making' %>" />
+    <meta property="og:url" content="https://decisive.team/" />
+    <meta property="og:image" content="https://decisive.team/logo-white-bg.png" />
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 

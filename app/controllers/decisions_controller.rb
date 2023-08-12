@@ -1,6 +1,8 @@
 class DecisionsController < ApplicationController
 
   def new
+    @page_title = "Make a Decision"
+    @page_description = "Decide as a group with Decisive Team"
     @decision = Decision.new(
       question: params[:question],
     )
@@ -23,6 +25,9 @@ class DecisionsController < ApplicationController
   def show
     @decision = current_decision
     return render '404', status: 404 unless @decision
+    @page_title = @decision.question
+    @page_description = "Decide as a group with Decisive Team"
+
     @approvals = current_approvals
     set_results_view_vars
   end

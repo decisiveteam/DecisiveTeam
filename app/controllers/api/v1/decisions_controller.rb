@@ -1,12 +1,15 @@
 module Api::V1
   class DecisionsController < BaseController
+    def index
+      render_404
+    end
+  
     def create
       decision = Decision.create!(
         question: params[:question],
         description: params[:description],
         other_attributes: {} # TODO
       )
-      
       render json: decision
     end
 
@@ -23,7 +26,7 @@ module Api::V1
     private
 
     def updatable_attributes
-      [:other_attributes]
+      [:other_attributes, :description]
     end
   end
 end

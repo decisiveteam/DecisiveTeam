@@ -1,5 +1,5 @@
 class Api::V1::BaseController < ApplicationController
-
+  # Read actions are allowed by default
   def index
     render json: current_scope
   end
@@ -8,7 +8,24 @@ class Api::V1::BaseController < ApplicationController
     render json: current_resource
   end
 
+  # Write actions are not allowed by default
+  def create
+    render_404
+  end
+
+  def update
+    render_404
+  end
+  
+  def destroy
+    render_404
+  end
+  
   private
+
+  def render_404
+    render json: { error: 'Not found' }, status: 404
+  end
 
   def is_write_request?
     ['POST', 'PUT', 'PATCH', 'DELETE'].include?(request.method)
@@ -18,22 +35,25 @@ class Api::V1::BaseController < ApplicationController
     self.class.name.sub('Api::V1::', '').sub('Controller', '').singularize.constantize
   end
 
-  def current_decision
-    return @current_decision if defined?(@current_decision)
-    if params[:decision_id].present?
-      d = Decision
-      @current_decision = d.find_by(id: params[:decision_id])
+  def current_resource
+    return @current_resource if defined?(@current_resource)  
+    @current_resource = if current_resource_model == Decision
+      current_decision
     else
-      @current_decision = nil
+      current_scope.find_by(id: params[:id])
     end
-    @current_decision
+  end
+
+  def current_scope
+    current_resource_model.where(decision: current_decision)
   end
 
   def current_option
     return @current_option if defined?(@current_option)
-    if params[:option_id].present?
-      o = Option
-      o = o.where(decision: current_decision) unless current_decision.nil?
+    if current_resource_model == Option
+      @current_option = current_resource
+    elsif params[:option_id].present?
+      o = Option.where(decision: current_decision)
       @current_option = o.find_by(id: params[:option_id])
     else
       @current_option = nil

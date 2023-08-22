@@ -17,7 +17,13 @@ class ApplicationController < ActionController::Base
 
   def current_decision_participant
     return @current_decision_participant if defined?(@current_decision_participant)
-    if current_decision
+    if current_resource_model == DecisionParticipant
+      @current_decision_participant = current_resource
+    elsif params[:decision_participant_id].present?
+      @current_decision_participant = current_decision.participants.find_by(id: params[:decision_participant_id])
+    elsif params[:participant_id].present?
+      @current_decision_participant = current_decision.participants.find_by(id: params[:participant_id])
+    elsif current_decision
       participant_uid = cookies[:decision_participant_uid] || SecureRandom.hex(16)
       cookies[:decision_participant_uid] = {
         value: participant_uid,
@@ -36,7 +42,7 @@ class ApplicationController < ActionController::Base
   def current_approvals
     return @current_approvals if defined?(@current_approvals)
     if current_decision_participant
-      @current_approvals = current_decision_participant.approvals.where(decision: current_decision)
+      @current_approvals = current_decision_participant.approvals
     else
       @current_approvals = nil
     end

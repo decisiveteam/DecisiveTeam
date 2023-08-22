@@ -4,9 +4,9 @@ Rails.application.routes.draw do
       get '/', to: 'info#index'
       resources :decisions do
         get :results, to: 'results#index'
-        # resources :participants, only: [:index, :create, :destroy] do
-        #   resources :approvals
-        # end
+        resources :participants do
+          resources :approvals
+        end
         resources :options do
           resources :approvals
         end

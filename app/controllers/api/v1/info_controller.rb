@@ -32,6 +32,22 @@ module Api::V1
             methods: ['GET', 'PUT', 'DELETE'],
           },
           {
+            path: '/api/v1/decisions/:decision_id/participants',
+            methods: ['GET', 'POST'],
+          },
+          {
+            path: '/api/v1/decisions/:decision_id/participants/:participant_id',
+            methods: ['GET', 'PUT', 'DELETE'],
+          },
+          {
+            path: '/api/v1/decisions/:decision_id/participants/:participant_id/approvals',
+            methods: ['GET', 'POST'],
+          },
+          {
+            path: '/api/v1/decisions/:decision_id/participants/:participant_id/approvals/:approval_id',
+            methods: ['GET', 'PUT', 'DELETE'],
+          },
+          {
             path: '/api/v1/decisions/:decision_id/results',
             methods: ['GET'],
           },

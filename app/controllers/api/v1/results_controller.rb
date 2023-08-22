@@ -3,5 +3,15 @@ module Api::V1
     def index
       render json: current_decision.results
     end
+
+    def show
+      render_404
+    end
+
+    private
+
+    def current_resource_model
+      DecisionResult
+    end
   end
 end

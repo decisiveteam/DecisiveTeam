@@ -95,7 +95,8 @@ CREATE TABLE public.decisions (
     other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
+    deadline timestamp(6) without time zone
 );
 
 
@@ -348,6 +349,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230810195248'),
 ('20230811224634'),
 ('20230811232138'),
-('20230812051757');
+('20230812051757'),
+('20230826212206');
 
 

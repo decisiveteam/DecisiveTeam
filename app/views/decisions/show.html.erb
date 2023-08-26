@@ -2,6 +2,9 @@
 <h1><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@decision.created_at) %></strong><br/>
+  <% if @decision.deadline && !@decision.closed? %>
+    Time remaining: <strong><%= countdown(@decision.deadline) %></strong><br/>
+  <% end %>
   Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
     <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>

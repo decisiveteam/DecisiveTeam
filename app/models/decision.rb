@@ -16,7 +16,7 @@ class Decision < ApplicationRecord
   end
 
   def closed?
-    false
+    deadline && deadline < Time.now
   end
 
   def public?

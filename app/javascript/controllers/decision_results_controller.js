@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
+let lastInitialized = null;
+
 export default class extends Controller {
   static targets = []
   static values = { url: String }
@@ -12,11 +14,13 @@ export default class extends Controller {
     // TODO Only poll if the decision is open
     document.addEventListener('decisionDataUpdated', this.refreshResults.bind(this))
     document.addEventListener('poll', this.refreshResults.bind(this))
+    // TODO figure out how to prevent multiple instances of this controller
+    lastInitialized = this;
   }
 
   async refreshResults(event) {
     event.preventDefault()
-    if (this.refreshing) return;
+    if (this.refreshing || lastInitialized != this) return;
     this.refreshing = true;
     const response = await fetch(this.urlValue, {
       method: "GET",

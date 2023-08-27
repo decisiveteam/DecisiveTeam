@@ -10,7 +10,8 @@
   <p>Your team will collectively make a list of options on the decision page.</p>
   <h2>3. Make a decision</h2>
   <p>
-    <%= form.select :duration, options_for_select([['1 hour', 1], ['24 hours', 24], ['1 week', 24 * 7]], selected: 24) %>
+    <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
+    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
   <p>Go to the decision page and share the link with your team.</p>

@@ -1,4 +1,6 @@
 class Api::V1::BaseController < ApplicationController
+  before_action :validate_can_write, if: :is_write_request?
+
   # Read actions are allowed by default
   def index
     render json: current_scope
@@ -29,6 +31,14 @@ class Api::V1::BaseController < ApplicationController
 
   def is_write_request?
     ['POST', 'PUT', 'PATCH', 'DELETE'].include?(request.method)
+  end
+
+  def validate_can_write
+    if current_decision && current_resource_model != Decision # is Option, Approval, or DecisionParticipant
+      if current_decision.closed?
+        render json: { error: 'Decision is closed' }, status: 403
+      end
+    end
   end
 
   def current_resource_model

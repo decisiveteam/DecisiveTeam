@@ -4,6 +4,8 @@ class Decision < ApplicationRecord
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
+  belongs_to :created_by, class_name: 'DecisionParticipant', foreign_key: 'created_by_id', optional: true
+
   validates :question, presence: true
 
   def truncated_id

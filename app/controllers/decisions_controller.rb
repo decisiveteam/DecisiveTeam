@@ -15,9 +15,15 @@ class DecisionsController < ApplicationController
       deadline: Time.now + duration_param,
     )
 
-    if @decision.save
+    begin
+      ActiveRecord::Base.transaction do
+        @decision.save!
+        @current_decision = @decision
+        @current_decision.created_by = current_decision_participant
+        @current_decision.save!
+      end
       redirect_to @decision.path
-    else
+    rescue ActiveRecord::RecordInvalid => e
       flash.now[:alert] = 'There was an error creating the decision. Please try again.'
       render :new
     end

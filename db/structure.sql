@@ -96,7 +96,8 @@ CREATE TABLE public.decisions (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
-    deadline timestamp(6) without time zone
+    deadline timestamp(6) without time zone,
+    created_by_id uuid
 );
 
 
@@ -297,6 +298,14 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: decisions fk_rails_db126ea214; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decisions
+    ADD CONSTRAINT fk_rails_db126ea214 FOREIGN KEY (created_by_id) REFERENCES public.decision_participants(id);
+
+
+--
 -- Name: options fk_rails_df3bc80da2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -350,6 +359,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230811224634'),
 ('20230811232138'),
 ('20230812051757'),
-('20230826212206');
+('20230826212206'),
+('20230827183501');
 
 

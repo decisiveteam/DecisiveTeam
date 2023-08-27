@@ -5,11 +5,16 @@ module Api::V1
     end
   
     def create
-      decision = Decision.create!(
-        question: params[:question],
-        description: params[:description],
-        other_attributes: {} # TODO
-      )
+      ActiveRecord::Base.transaction do
+        decision = Decision.create!(
+          question: params[:question],
+          description: params[:description],
+          other_attributes: {} # TODO
+        )
+        @current_decision = decision
+        @current_decision.created_by = current_decision_participant
+        @current_decision.save!
+      end
       render json: decision
     end
 

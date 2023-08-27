@@ -6,7 +6,7 @@
   <span data-decision-target="list">
     <%= render 'options_list_items' %>
   </span>
-  <li>
+  <li style="display:<%= @decision.can_add_options?(@participant) ? 'block': 'none' %>;">
     <input type="checkbox"/>
     <input type="checkbox" class="star-button"/>
     <label class="star-button"></label>

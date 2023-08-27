@@ -9,6 +9,7 @@ module Api::V1
         decision = Decision.create!(
           question: params[:question],
           description: params[:description],
+          options_open: params[:options_open] || true,
           other_attributes: {} # TODO
         )
         @current_decision = decision

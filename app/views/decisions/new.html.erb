@@ -7,13 +7,17 @@
     <%= form.text_field :question, placeholder: 'Question' %>
   </div> 
   <h2>2. Gather options</h2>
-  <p>Your team will collectively make a list of options on the decision page.</p>
+  <p>
+    <%= form.select :options_open, options_for_select([['Everyone', true], ['Just you', false]], selected: 'Everyone') %>
+    will be able to add options on the decision page.
+  </p>
   <h2>3. Make a decision</h2>
   <p>
     <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
+  <hr style="height:1px;" />
   <p>Go to the decision page and share the link with your team.</p>
   <%= form.submit 'Go to decision page' %>
 <% end %>

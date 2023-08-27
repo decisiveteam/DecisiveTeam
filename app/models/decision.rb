@@ -17,6 +17,17 @@ class Decision < ApplicationRecord
     decision_participants
   end
 
+  def can_add_options?(participant)
+    return false if closed?
+    return true if options_open?
+    return true if participant == created_by
+    return false if participant.nil?
+  end
+
+  def can_update_options?(participant)
+    can_add_options?(participant)
+  end
+
   def closed?
     deadline && deadline < Time.now
   end

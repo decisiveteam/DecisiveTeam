@@ -12,9 +12,9 @@ class DecisionsController < ApplicationController
     @decision = Decision.new(
       question: decision_params[:question],
       description: decision_params[:description],
+      options_open: decision_params[:options_open],
       deadline: Time.now + duration_param,
     )
-
     begin
       ActiveRecord::Base.transaction do
         @decision.save!
@@ -32,6 +32,7 @@ class DecisionsController < ApplicationController
   def show
     @decision = current_decision
     return render '404', status: 404 unless @decision
+    @participant = current_decision_participant
     @page_title = @decision.question
     @page_description = "Decide as a group with Decisive Team"
 
@@ -83,7 +84,7 @@ class DecisionsController < ApplicationController
   end
 
   def decision_params
-    params.require(:decision).permit(:question, :description, :duration, :duration_unit)
+    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit)
   end
 
   def set_results_view_vars

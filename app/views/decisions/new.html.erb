@@ -1,5 +1,5 @@
 <h1>Make a Decision</h1>
-<p>Making a group decision with Decisive Team is a 3 step processs:</p>
+<p>Making a group decision with Decisive Team is a 3 step process:</p>
 <%= form_with(model: [@decision]) do |form| %>
   <h2>1. Ask a question</h2>
   <p>Type the question that this decision will answer.</p>
@@ -9,6 +9,10 @@
   <h2>2. Gather options</h2>
   <p>Your team will collectively make a list of options on the decision page.</p>
   <h2>3. Make a decision</h2>
+  <p>
+    <%= form.select :duration, options_for_select([['1 hour', 1], ['24 hours', 24], ['1 week', 24 * 7]], selected: 24) %>
+    will be given for everyone to vote.
+  </p>
   <p>Go to the decision page and share the link with your team.</p>
   <%= form.submit 'Go to decision page' %>
 <% end %>

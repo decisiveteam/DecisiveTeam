@@ -9,9 +9,11 @@ class DecisionsController < ApplicationController
   end
 
   def create
+    duration = (decision_params[:duration] || 24).to_i.hours
     @decision = Decision.new(
       question: decision_params[:question],
       description: decision_params[:description],
+      deadline: Time.now + duration,
     )
 
     if @decision.save
@@ -59,7 +61,7 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :description)
+    params.require(:decision).permit(:question, :description, :duration)
   end
 
   def set_results_view_vars

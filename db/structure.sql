@@ -64,7 +64,9 @@ CREATE TABLE public.decision_participants (
     decision_id uuid,
     name character varying,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    user_id uuid,
+    participant_uid character varying DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -129,6 +131,22 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    auth0_id character varying NOT NULL,
+    email character varying DEFAULT ''::character varying NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL,
+    picture_url character varying,
+    metadata json,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: approvals approvals_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -177,6 +195,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_approvals_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -212,6 +238,13 @@ CREATE INDEX index_decision_participants_on_decision_id ON public.decision_parti
 
 
 --
+-- Name: index_decision_participants_on_decision_id_and_participant_uid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_decision_participants_on_decision_id_and_participant_uid ON public.decision_participants USING btree (decision_id, participant_uid);
+
+
+--
 -- Name: index_decisions_on_truncated_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -237,6 +270,20 @@ CREATE UNIQUE INDEX index_options_on_decision_id_and_title ON public.options USI
 --
 
 CREATE INDEX index_options_on_decision_participant_id ON public.options USING btree (decision_participant_id);
+
+
+--
+-- Name: index_users_on_auth0_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_auth0_id ON public.users USING btree (auth0_id);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
@@ -280,6 +327,14 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.approvals
     ADD CONSTRAINT fk_rails_387fb9c532 FOREIGN KEY (decision_id) REFERENCES public.decisions(id);
+
+
+--
+-- Name: decision_participants fk_rails_81ebc9cc6f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants
+    ADD CONSTRAINT fk_rails_81ebc9cc6f FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -362,6 +417,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230812051757'),
 ('20230826212206'),
 ('20230827183501'),
-('20230827190826');
+('20230827190826'),
+('20230908024626'),
+('20230913025720');
 
 

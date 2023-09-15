@@ -82,6 +82,10 @@ input[type="checkbox"].star-button {
   display: none;
 }
 
+select {
+  font-size: 16px;
+}
+
 label.star-button {
   display: inline-block;
   cursor: pointer;

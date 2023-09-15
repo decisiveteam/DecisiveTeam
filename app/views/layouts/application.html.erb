@@ -27,6 +27,16 @@
 
   <body>
     <a href="/"><i alt="decisive team" class="logo"></i></a>
+    <div style="float:right;">
+      <% if @current_user %>
+        <img src="<%= @current_user.picture_url %>" title="<%= @current_user.name %>" style="height: 2em; border-radius: 50%; margin: 0.5em;">
+        <%= button_to 'Logout', '/auth/logout', method: :get, data: { turbo: false } %>
+      <% else %>
+        <div style="display:none;">
+          <%= button_to 'Login', '/auth/auth0', method: :post, data: { turbo: false } %>
+        </div>
+      <% end %>
+    </div>
     <div class="markdown-body">
       <%= yield %>
     </div>

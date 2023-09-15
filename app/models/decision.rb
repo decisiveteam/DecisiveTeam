@@ -41,6 +41,14 @@ class Decision < ApplicationRecord
     @results = DecisionResult.where(decision_id: self.id)
   end
 
+  def view_count
+    participants.count
+  end
+
+  def option_contributor_count
+    options.distinct.count(:decision_participant_id)
+  end
+
   def voter_count
     approvals.distinct.count(:decision_participant_id)
   end

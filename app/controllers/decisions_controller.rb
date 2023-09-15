@@ -88,15 +88,8 @@ class DecisionsController < ApplicationController
   end
 
   def set_results_view_vars
+    @view_count = @decision.view_count
+    @option_contributor_count = @decision.option_contributor_count
     @voter_count = @decision.voter_count
-    @voter_verb_phrase = if @voter_count == 1 && @decision.closed?
-      "participant"
-    elsif @voter_count == 1 && !@decision.closed?
-      "participant has"
-    elsif @voter_count != 1 && @decision.closed?
-      "participants"
-    elsif @voter_count != 1 && !@decision.closed?
-      "participants have"
-    end
   end
 end

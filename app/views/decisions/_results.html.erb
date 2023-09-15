@@ -1,42 +1,40 @@
-<span
-  data-controller="decision-results"
-  data-decision-results-url-value="<%= @decision.path %>/results.html"
-  >
-  <h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
-  <span id="results">
-    <table class="results-table">
-      <thead>
-        <tr>
-          <th title="place"></th>
-          <th title="option"></th>
-          <th title="approvals">✅</th>
-          <th title="stars">⭐</th>
-          <th title="random digits">🎲</th>
+<h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
+<span id="results">
+  <table class="results-table">
+    <thead>
+      <tr>
+        <th title="place"></th>
+        <th title="option"></th>
+        <th title="approvals">✅</th>
+        <th title="stars">⭐</th>
+        <th title="random digits">🎲</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% ([nil] + @decision.results + [nil]).each_cons(3).with_index do |(prev_result, result, next_result), index| %>
+        <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;font-weight:bold;' : '' %>">
+          <td><%= index + 1 %></td>
+          <td><%= result.option_title %></td>
+          <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.2 %>;"><%= (result.approved_yes || 0) %></td>
+          <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.2 %>;"><%= (result.stars || 0) %></td>
+          <% random_id_is_relevant = result.is_sorting_factor?(prev_result, 'random_id') || result.is_sorting_factor?(next_result, 'random_id') %>
+          <% random_id_rjusted = result.random_id.to_s.rjust(9, '0') %>
+          <td style="font-size:0.8em;"
+              title="<%= random_id_rjusted %>"
+              ><%= random_id_is_relevant ?  (random_id_rjusted.slice(0, 3) + "...") : "" %>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <% ([nil] + @decision.results + [nil]).each_cons(3).with_index do |(prev_result, result, next_result), index| %>
-          <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;font-weight:bold;' : '' %>">
-            <td><%= index + 1 %></td>
-            <td><%= result.option_title %></td>
-            <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.2 %>;"><%= (result.approved_yes || 0) %></td>
-            <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.2 %>;"><%= (result.stars || 0) %></td>
-            <% random_id_is_relevant = result.is_sorting_factor?(prev_result, 'random_id') || result.is_sorting_factor?(next_result, 'random_id') %>
-            <% random_id_rjusted = result.random_id.to_s.rjust(9, '0') %>
-            <td style="font-size:0.8em;"
-                title="<%= random_id_rjusted %>"
-                ><%= random_id_is_relevant ?  (random_id_rjusted.slice(0, 3) + "...") : "" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <p>
-      Results are sorted first by approvals ✅, then by favorites ⭐, then by random digits 🎲.
-    </p>
-    <span data-decision-results-target="message">
-      <%= @voter_count %> <%= @voter_verb_phrase %> voted on this decision.
-      <!-- <% unless @decision.closed? %>Recent as of <span data-decision-results-target="age"></span>. <a data-action="click->decision-results#refreshResults" href="#">Refresh results</a><% end %> -->
-    </span>
+      <% end %>
+    </tbody>
+  </table>
+  <p>
+    Results are sorted first by approvals ✅, then by favorites ⭐, then by random digits 🎲.
+  </p>
+  <span data-decision-results-target="message">
+    👀 <%= @decision.view_count %> view<%= @decision.view_count == 1 ? "" : "s" %>
+    <br/>
+    ➕ <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>
+    <br/>
+    🗳️ <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
   </span>
 </span>

@@ -26,7 +26,10 @@ export default class extends Controller {
     });
     if (response.ok) {
       const html = await response.text();
-      this.element.innerHTML = html;
+      if (html !== this.previousHtml) {
+        this.element.innerHTML = html;
+        this.previousHtml = html;
+      }
       this.refreshing = false;
     } else {
       console.error("Error refreshing results:", response);

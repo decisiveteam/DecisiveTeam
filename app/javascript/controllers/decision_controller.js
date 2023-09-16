@@ -94,7 +94,10 @@ export default class extends Controller {
       this.refreshing = false;
     } else if (response.ok) {
       const html = await response.text();
-      this.listTarget.innerHTML = html;
+      if (html !== this.previousOptionsListHtml) {
+        this.listTarget.innerHTML = html;
+        this.previousOptionsListHtml = html;
+      }
       this.refreshing = false;
     } else {
       console.error("Error refreshing options:", response);

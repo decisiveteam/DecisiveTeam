@@ -3,7 +3,7 @@
 <p>
   🎬 Created <strong><%= timeago(@decision.created_at) %></strong><br/>
   <% if @decision.deadline && !@decision.closed? %>
-    ⏳ <strong><%= countdown(@decision.deadline) %></strong> remaining<br/>
+    ⏳ Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
   <% elsif @decision.deadline && @decision.closed? %>
     ⌛ Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
   <% end %>
@@ -13,6 +13,7 @@
   </span><br/>
 </p>
 <% if @decision.description %>
+  <h2>Description</h2>
   <p><%= @decision.description %></p>
 <% end %>
 

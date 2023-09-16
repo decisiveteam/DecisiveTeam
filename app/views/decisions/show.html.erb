@@ -12,8 +12,8 @@
     <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>
   </span><br/>
 </p>
-<% if @decision.description %>
-  <h2>Description</h2>
+<% if @decision.description && @decision.description.length > 0 %>
+  <h2>📖 Description</h2>
   <p><%= @decision.description %></p>
 <% end %>
 

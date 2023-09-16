@@ -1,4 +1,4 @@
-<h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
+<h2>📊 <%= @decision.closed? ? "Final" : "Current" %> Results</h2>
 <span id="results">
   <table class="results-table">
     <thead>
@@ -11,6 +11,11 @@
       </tr>
     </thead>
     <tbody>
+      <% if @decision.results.empty? %>
+        <tr>
+          <td colspan="5">Add options to see results.</td>
+        </tr>
+      <% end %>
       <% ([nil] + @decision.results + [nil]).each_cons(3).with_index do |(prev_result, result, next_result), index| %>
         <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;font-weight:bold;' : '' %>">
           <td><%= index + 1 %></td>
@@ -30,10 +35,11 @@
   <p>
     Results are sorted first by approvals ✅, then by favorites ⭐, then by random digits 🎲.
   </p>
+  <h2>🤝 Participation</h2>
   <span data-decision-results-target="message">
-    👀 <%= @decision.view_count %> view<%= @decision.view_count == 1 ? "" : "s" %>
+    👀 <%= @decision.view_count %> viewer<%= @decision.view_count == 1 ? "" : "s" %>
     <br/>
-    ➕ <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>
+    ✏️ <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>
     <br/>
     🗳️ <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
   </span>

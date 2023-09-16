@@ -2,9 +2,13 @@
 <p>Making a group decision with Decisive Team is a 3 step process:</p>
 <%= form_with(model: [@decision]) do |form| %>
   <h2>1. Ask a question</h2>
-  <p>Type the question that this decision will answer.</p>
+  <p style="margin-bottom:2px;">Type the <strong>question</strong> that this decision will answer.</p>
   <div>
     <%= form.text_field :question, placeholder: 'Question' %>
+  </div> 
+  <p style="margin-bottom:2px;margin-top:16px;">Add a <strong>description</strong> to provide context. (optional)</p>
+  <div>
+    <%= form.text_area :description, placeholder: 'Description' %>
   </div> 
   <h2>2. Gather options</h2>
   <p>
@@ -17,6 +21,14 @@
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
+  <fieldset style="display:none;">
+    <legend><strong>Authentication</strong></legend>
+    <%= form.radio_button :anonymous_access, 'require-login', checked: true %> 
+    <%= form.label :anonymous_access, 'Require login to participate (recommended)', value: false %><br/>
+
+    <%= form.radio_button :anonymous_access, 'allow-anonymous' %> 
+    <%= form.label :anonymous_access, 'Allow anonymous participation (more convenient, less secure)', value: true %><br/>
+  </fieldset>
   <hr style="height:1px;" />
   <p>Go to the decision page and share the link with your team.</p>
   <%= form.submit 'Go to decision page' %>

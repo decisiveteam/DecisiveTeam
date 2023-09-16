@@ -70,8 +70,15 @@ button, input[type="submit"] {
   cursor: pointer;
 }
 
-input[type="text"] {
-  width: 66%;
+input[type="text"], textarea {
+  min-width: 66%;
+  width: 600px;
+  max-width: 98%;
+}
+
+textarea {
+  height: 6em;
+  font-family: inherit;
 }
 
 input[type="checkbox"], .markdown-checkbox {

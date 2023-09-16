@@ -1,5 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 
+const formatUnit = (unit, value) => {
+  return unit[0];
+  // if (value === 1) {
+  //   // assuming that the unit is plural
+  //   return " " + unit.slice(0, -1) + " ";
+  // } else {
+  //   return " " + unit;
+  // }
+};
+
 export default class extends Controller {
   static targets = ['time'];
   static values = { endTime: String, baseUnit: String };
@@ -40,10 +50,10 @@ export default class extends Controller {
     keys = keys.slice(nonZeroIndex, unitIndex + 1);
     values = values.slice(nonZeroIndex, unitIndex + 1);
 
-    const textChunks = keys.map((key, index) => `${values[index]}${key[0]}`);
-    textChunks[0] += "<span style='opacity:0.5;'>";
-    textChunks[textChunks.length - 1] += "</span>";
+    const textChunks = keys.map((key, index) => `${values[index]}${formatUnit(key, values[index])}`);
     
+    // textChunks[textChunks.length - 1] = "and " + textChunks[textChunks.length - 1]; 
+
     this.timeTarget.innerHTML = textChunks.join(" : ");
 
     if (distance < 0) {

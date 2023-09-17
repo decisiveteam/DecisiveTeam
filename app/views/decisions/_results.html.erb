@@ -1,4 +1,4 @@
-<h2>📊 <%= @decision.closed? ? "Final" : "Current" %> Results</h2>
+<h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
 <span id="results">
   <table class="results-table">
     <thead>
@@ -35,12 +35,10 @@
   <p>
     Results are sorted first by approvals ✅, then by favorites ⭐, then by random digits 🎲.
   </p>
-  <h2>🤝 Participation</h2>
-  <span data-decision-results-target="message">
-    👀 <%= @decision.view_count %> viewer<%= @decision.view_count == 1 ? "" : "s" %>
-    <br/>
-    ✏️ <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>
-    <br/>
-    🗳️ <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
+  <span data-decision-results-target="message" style="font-size:0.8em;">
+    Participants: 
+    <%= @decision.view_count %> viewer<%= @decision.view_count == 1 ? "" : "s" %>,
+    <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>,
+    <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
   </span>
 </span>

@@ -1,6 +1,6 @@
 <span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html">
-<h2>📝 Options</h2>
-<span>Check all options you approve ✅. Star your favorites ⭐.</span>
+<h2>Options</h2>
+<span>Check all options you approve. Star your favorites.</span>
 
 <ul class="options-list">
   <span data-decision-target="list">
@@ -11,7 +11,7 @@
     <input type="checkbox" class="star-button"/>
     <label class="star-button"></label>
     <form style="display:inline;" data-action="submit->decision#add">
-      <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option">
+      <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option" style="width:66%;">
       <button type="submit">Add</button>
     </form>
   </li>

@@ -1,19 +1,19 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
 <h1><%= @decision.question %></h1>
-<p>
-  🎬 Created <strong><%= timeago(@decision.created_at) %></strong><br/>
+<p style="font-size:0.8em;">
+  Created <strong><%= timeago(@decision.created_at) %></strong><br/>
   <% if @decision.deadline && !@decision.closed? %>
-    ⏳ Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
+    Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
   <% elsif @decision.deadline && @decision.closed? %>
-    ⌛ Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
+    Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
   <% end %>
-  📣 Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+  Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
     <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>
   </span><br/>
 </p>
 <% if @decision.description && @decision.description.length > 0 %>
-  <h2>📖 Description</h2>
+  <h2>Description</h2>
   <p><%= @decision.description %></p>
 <% end %>
 

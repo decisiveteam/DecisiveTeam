@@ -14,7 +14,7 @@
 </p>
 <% if @decision.description && @decision.description.length > 0 %>
   <h2>Description</h2>
-  <p><%= @decision.description %></p>
+  <p><%= markdown(@decision.description) %></p>
 <% end %>
 
 <% unless @decision.closed? %>

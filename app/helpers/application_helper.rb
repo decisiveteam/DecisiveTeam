@@ -19,7 +19,9 @@ module ApplicationHelper
     </time>".html_safe
   end
 
-  def username_with_profile_link(user)
-    "<a href='/users/#{user.id}'>#{sanitize(user.username || user.display_name || user.email)}</a>".html_safe
+  def markdown(text)
+    return "" unless text
+    MarkdownRenderer.render(text).html_safe
   end
+
 end

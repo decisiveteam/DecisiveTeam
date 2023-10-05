@@ -1,5 +1,5 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<h1><%= @decision.question %></h1>
+<h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@decision.created_at) %></strong><br/>
   <% if @decision.deadline && !@decision.closed? %>

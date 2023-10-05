@@ -52,7 +52,7 @@ body {
   src: url('/SourceCodePro-VariableFont_wght.ttf') format('truetype');
 }
 
-pre, .markdown-body {
+pre, code, .markdown-body {
   width: min(88vw, 800px);
   padding: 8px 12px;
   margin: 0 auto;
@@ -60,7 +60,8 @@ pre, .markdown-body {
   border: 1px solid #AAA;
 }
 
-pre {
+pre, code {
+  width: auto;
   white-space: pre-wrap;
   font-family: 'Source Code Pro', monospace;
   font-size: 14px;

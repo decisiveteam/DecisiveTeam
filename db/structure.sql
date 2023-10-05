@@ -100,7 +100,8 @@ CREATE TABLE public.decisions (
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     deadline timestamp(6) without time zone,
     created_by_id uuid,
-    options_open boolean DEFAULT true NOT NULL
+    options_open boolean DEFAULT true NOT NULL,
+    auth_required boolean DEFAULT false
 );
 
 
@@ -419,6 +420,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230827183501'),
 ('20230827190826'),
 ('20230908024626'),
-('20230913025720');
+('20230913025720'),
+('20231005010534');
 
 

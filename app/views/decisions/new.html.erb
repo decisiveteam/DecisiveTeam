@@ -21,10 +21,10 @@
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
-  <fieldset style="display:none;">
+  <fieldset style="display:<%= @current_user ? 'block' : 'none' %>;">
     <legend><strong>Authentication</strong></legend>
     <%= form.radio_button :auth_required, 'require-login', checked: true %> 
-    <%= form.label :auth_required, 'Require login to participate (recommended)', value: true %><br/>
+    <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>
 
     <%= form.radio_button :auth_required, 'allow-anonymous' %> 
     <%= form.label :auth_required, 'Allow anonymous participation (more convenient, less secure)', value: false %><br/>

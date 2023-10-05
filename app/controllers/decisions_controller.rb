@@ -14,6 +14,7 @@ class DecisionsController < ApplicationController
       description: decision_params[:description],
       options_open: decision_params[:options_open],
       deadline: Time.now + duration_param,
+      auth_required: decision_params[:auth_required],
     )
     begin
       ActiveRecord::Base.transaction do
@@ -84,7 +85,7 @@ class DecisionsController < ApplicationController
   end
 
   def decision_params
-    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit)
+    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit, :auth_required)
   end
 
   def set_results_view_vars

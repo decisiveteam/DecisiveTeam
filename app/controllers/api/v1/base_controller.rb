@@ -37,6 +37,8 @@ class Api::V1::BaseController < ApplicationController
     if current_decision && current_resource_model != Decision # is Option, Approval, or DecisionParticipant
       if current_decision.closed?
         render json: { error: 'Decision is closed' }, status: 403
+      elsif current_decision.auth_required? && (!current_decision_participant || !current_decision_participant.authenticated?)
+        render json: { error: 'Decision requires authentication' }, status: 403
       end
     end
   end

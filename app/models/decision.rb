@@ -19,12 +19,17 @@ class Decision < ApplicationRecord
 
   def can_add_options?(participant)
     return false if closed?
+    return false if auth_required? && !participant.authenticated?
     return true if options_open?
     return true if participant == created_by
     return false if participant.nil?
   end
 
   def can_update_options?(participant)
+    can_add_options?(participant)
+  end
+
+  def can_delete_options?(participant)
     can_add_options?(participant)
   end
 

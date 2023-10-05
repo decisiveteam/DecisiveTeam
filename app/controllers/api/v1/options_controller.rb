@@ -30,10 +30,14 @@ module Api::V1
     end
     
     def destroy
-      # TODO Check for approvals first
-      option = current_resource
-      option.destroy!
-      render json: option
+      if current_decision.can_delete_options?(current_decision_participant)
+        # TODO Check for approvals first
+        option = current_resource
+        option.destroy!
+        render json: option
+      else
+        render json: { error: 'Cannot delete options' }, status: 403
+      end
     end
   end
 end

@@ -1,19 +1,23 @@
 <span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html">
 <h2>Options</h2>
-<span>Check all options you approve. Star your favorites.</span>
+<% if @decision.auth_required? && (@participant.nil? || !@participant.authenticated?) %>
+  <span>You must be logged in to participate. <%= button_to 'Login', '/auth/auth0', method: :post, data: { turbo: false } %></span>
+<% else %>
+  <span>Check all options you approve. Star your favorites.</span>
 
-<ul class="options-list">
-  <span data-decision-target="list">
-    <%= render 'options_list_items' %>
-  </span>
-  <li style="display:<%= @decision.can_add_options?(@participant) ? 'block': 'none' %>;">
-    <input type="checkbox"/>
-    <input type="checkbox" class="star-button"/>
-    <label class="star-button"></label>
-    <form style="display:inline;" data-action="submit->decision#add">
-      <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option" style="width:66%;">
-      <button type="submit">Add</button>
-    </form>
-  </li>
-</ul>
+  <ul class="options-list">
+    <span data-decision-target="list">
+      <%= render 'options_list_items' %>
+    </span>
+    <li style="display:<%= @decision.can_add_options?(@participant) ? 'block': 'none' %>;">
+      <input type="checkbox"/>
+      <input type="checkbox" class="star-button"/>
+      <label class="star-button"></label>
+      <form style="display:inline;" data-action="submit->decision#add">
+        <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option" style="width:66%;">
+        <button type="submit">Add</button>
+      </form>
+    </li>
+  </ul>
+<% end %>
 </span>

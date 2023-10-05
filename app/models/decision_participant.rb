@@ -6,4 +6,9 @@ class DecisionParticipant < ApplicationRecord
 
   has_many :approvals, dependent: :destroy
   has_many :options, dependent: :destroy
+
+  def authenticated?
+    # If there is a user association, then we know the participant is authenticated
+    user.present?
+  end
 end

@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get '/auth/failure' => 'auth0#failure'
   get '/auth/logout' => 'auth0#logout'
   get '/auth/redirect' => 'auth0#redirect'
-  # get '/login' => 'auth0#login'
+  get '/login' => 'auth0#login'
   # get '/signup' => 'auth0#signup'
 
   namespace :api do

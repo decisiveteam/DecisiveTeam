@@ -33,6 +33,11 @@ class Auth0Controller < ApplicationController
     @error_msg = request.params['message']
   end
 
+  def login
+    # TODO
+    redirect_to '/'
+  end
+
   def logout
     reset_session
     redirect_to logout_url, allow_other_host: true

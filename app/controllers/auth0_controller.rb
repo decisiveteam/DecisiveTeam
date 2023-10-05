@@ -34,8 +34,11 @@ class Auth0Controller < ApplicationController
   end
 
   def login
-    # TODO
-    redirect_to '/'
+    if current_user
+      redirect_to '/'
+    else
+      redirect_to login_url, allow_other_host: true
+    end
   end
 
   def logout
@@ -45,6 +48,19 @@ class Auth0Controller < ApplicationController
 
   private
 
+  def login_url
+    request_params = {
+      client_id: AUTH0_CONFIG['auth0_client_id'],
+      response_type: 'code',
+      redirect_uri: auth0_callback_url,
+    }
+    URI::HTTPS.build(host: AUTH0_CONFIG['auth0_domain'], path: '/authorize', query: request_params.to_query).to_s
+  end
+
+  def auth0_callback_url
+    request.protocol + request.host_with_port + '/auth/auth0/callback'
+  end
+   
   def logout_url
     request_params = {
       returnTo: root_url,

@@ -14,7 +14,7 @@ class DecisionsController < ApplicationController
       description: decision_params[:description],
       options_open: decision_params[:options_open],
       deadline: Time.now + duration_param,
-      auth_required: decision_params[:auth_required],
+      auth_required: @current_user && decision_params[:auth_required].to_s == 'true',
     )
     begin
       ActiveRecord::Base.transaction do

@@ -28,9 +28,6 @@ export default class extends Controller {
   }
 
   async createOption(title) {
-    // TODO - refactor this
-    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
-    // const decisionId = this.inputTarget.dataset.decisionId;
     const url = this.optionsSectionTarget.dataset.url;
     const response = await fetch(url, {
       method: "POST",
@@ -38,7 +35,7 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ title, participant_name }),
+      body: JSON.stringify({ title }),
     });
 
     if (!response.ok) {
@@ -49,16 +46,32 @@ export default class extends Controller {
     return response;
   }
 
+  nextApprovalState(approved, stars) {
+    if (stars) {
+      return [false, false]
+    } else if (approved) {
+      return [true, true]
+    } else {
+      return [true, false]
+    }
+  }
+
   async toggleApprovalValues(event) {
-    // TODO - refactor this
-    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
     const decisionId = this.inputTarget.dataset.decisionId;
     const optionItem = event.target.parentElement;
     const checkbox = optionItem.querySelector('input.approval-button');
-    const optionId = optionItem.dataset.optionId;
-    const approved = checkbox.checked;
     const starButton = optionItem.querySelector('input.star-button');
-    const stars = starButton.checked;
+
+    const optionId = optionItem.dataset.optionId;
+    let approved = checkbox.checked;
+    let stars = starButton.checked;
+
+    if (event.target.id.startsWith('option-label')) {
+      // Cycle approval state
+      [approved, stars] = this.nextApprovalState(approved, stars);
+      checkbox.checked = approved;
+      starButton.checked = stars;
+    }
   
     this.updatingApprovals = true;
     await fetch(`/api/v1/decisions/${decisionId}/options/${optionId}/approvals`, {
@@ -67,7 +80,7 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
-      body: JSON.stringify({ value: approved, stars, participant_name }),
+      body: JSON.stringify({ value: approved, stars }),
     });
     this.updatingApprovals = false;
     this.lastApprovalUpdate = new Date().toString();
@@ -75,13 +88,16 @@ export default class extends Controller {
     document.dispatchEvent(ddu);
   }
 
+  async cycleApprovalState(event) {
+    event.preventDefault();
+    return this.toggleApprovalValues(event);
+  }
+
   async refreshOptions(event) {
     event.preventDefault()
     if (this.refreshing || this.updatingApprovals) return;
     this.refreshing = true;
     const url = this.optionsSectionTarget.dataset.url;
-    const participant_name = new URLSearchParams(window.location.search).get("participant_name");
-    if (participant_name) url += `?participant_name=${participant_name}`;
     const lastApprovalUpdateBeforeRefresh = this.lastApprovalUpdate;
     const response = await fetch(url, {
       method: "GET",

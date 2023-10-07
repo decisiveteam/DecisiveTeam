@@ -27,26 +27,6 @@ body {
   display: inline-block;
 }
 
-@media (prefers-color-scheme: light) {
-  body {
-    color: #000;
-    background-color: #FFF;
-  }
-  .logo {
-    background-image: url(/icon.svg);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    color: #c9d1d9;
-    background-color: #000;
-  }
-  .logo {
-    background-image: url(/icon-white.svg);
-  }
-}
-
 @font-face {
   font-family: "Source Code Pro";
   src: url('/SourceCodePro-VariableFont_wght.ttf') format('truetype');
@@ -188,5 +168,29 @@ select:focus {
     /* More space for easier selection */
     margin-bottom: 12px;
     font-size: 1.1em;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    color: #000;
+    background-color: #FFF;
+  }
+  .logo {
+    background-image: url(/icon.svg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #c9d1d9;
+    background-color: #000;
+  }
+  .logo {
+    background-image: url(/icon-white.svg);
+  }
+  select {
+    background-color: #2b2a33;
+    border: 1px solid #8f8f9d;
   }
 }

@@ -29,10 +29,10 @@ class ApplicationController < ActionController::Base
     return @current_decision_participant if defined?(@current_decision_participant)
     if current_resource_model == DecisionParticipant
       @current_decision_participant = current_resource
-    elsif params[:decision_participant_id].present?
-      @current_decision_participant = current_decision.participants.find_by(id: params[:decision_participant_id])
-    elsif params[:participant_id].present?
-      @current_decision_participant = current_decision.participants.find_by(id: params[:participant_id])
+    # elsif params[:decision_participant_id].present?
+    #   @current_decision_participant = current_decision.participants.find_by(id: params[:decision_participant_id])
+    # elsif params[:participant_id].present?
+    #   @current_decision_participant = current_decision.participants.find_by(id: params[:participant_id])
     elsif current_decision
       @current_decision_participant = DecisionParticipantManager.new(
         decision: current_decision,
@@ -69,5 +69,17 @@ class ApplicationController < ActionController::Base
 
   def clear_participant_uid_cookie
     cookies.delete(:decision_participant_uid)
+  end
+
+  def encryptor
+    @encryptor ||= ActiveSupport::MessageEncryptor.new(Rails.application.secret_key_base[0..31])
+  end
+
+  def encrypt(data)
+    encryptor.encrypt_and_sign(data.to_json)
+  end
+
+  def decrypt(data)
+    JSON.parse(encryptor.decrypt_and_verify(data))
   end
 end

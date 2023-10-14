@@ -162,6 +162,27 @@ select:focus {
   border-color: #007bff;
 }
 
+.clipboard-button {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.clipboard-button:hover {
+  text-decoration: underline;
+}
+
+.auth-required-message {
+  border: 1px solid #aaa;
+  height: auto;
+  display: block;
+  padding: 8px;
+  text-align: center;
+}
+
+.auth-required-message form {
+  display: inline-block;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {  
   .option-item {

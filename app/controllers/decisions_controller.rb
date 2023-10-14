@@ -14,7 +14,7 @@ class DecisionsController < ApplicationController
       description: decision_params[:description],
       options_open: decision_params[:options_open],
       deadline: Time.now + duration_param,
-      auth_required: @current_user && decision_params[:auth_required].to_s == 'true',
+      auth_required: decision_params[:auth_required].to_s == 'true',
     )
     begin
       ActiveRecord::Base.transaction do
@@ -34,6 +34,7 @@ class DecisionsController < ApplicationController
     @decision = current_decision
     return render '404', status: 404 unless @decision
     @participant = current_decision_participant
+    session[:encrypted_participant_id] = encrypt(@participant.id)
     @page_title = @decision.question
     @page_description = "Decide as a group with Decisive Team"
 

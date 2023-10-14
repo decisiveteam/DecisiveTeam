@@ -9,7 +9,7 @@
   <% end %>
   Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <button type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy link to clipboard</button>
+    <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
   </span><br/>
 </p>
 <% if @decision.description && @decision.description.length > 0 %>

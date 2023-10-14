@@ -21,7 +21,7 @@
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
-  <fieldset style="display:<%= @current_user ? 'block' : 'none' %>;">
+  <fieldset>
     <legend><strong>Authentication</strong></legend>
     <%= form.radio_button :auth_required, 'true', checked: true %> 
     <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>

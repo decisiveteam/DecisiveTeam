@@ -10,7 +10,7 @@ class Auth0Controller < ApplicationController
     # Upsert the user record using the Auth0 ID, and update other fields.
     user = User.find_or_create_by(auth0_id: raw_info['sub']) do |new_user|
       new_user.email = email
-      new_user.name = raw_info['name']
+      new_user.name = raw_info['name'] # Should this be email?
       new_user.picture_url = raw_info['picture']
     end
     user.update(
@@ -22,10 +22,38 @@ class Auth0Controller < ApplicationController
     # Attach the user record to the session.
     session[:user_id] = user.id
 
-    # Forget anonymous participant_uid
-    clear_participant_uid_cookie
-
-    redirect_to '/'
+    if session[:encrypted_participant_id]
+      # In this case, the user was prompted to login from a decision page,
+      # so we need to update the participant record with the user and redirect back to the decision page.
+      begin
+        participant_id = decrypt(session[:encrypted_participant_id])
+        participant = DecisionParticipant.find_by(id: participant_id)
+      end
+      if participant
+        decision = participant.decision
+        decision_path = decision.path
+        participant_has_user = participant.user.present?
+        user_has_participant = decision.participants.where(user: user).first.present?
+        if participant_has_user && user_has_participant && participant.user == user
+          # noop
+        elsif participant_has_user && participant.user != user
+          # Unlikely scenario. User is trying to log in as someone else maybe? or might have multiple logins?
+          Rails.logger.info("User #{user.id} is trying to login as #{participant.user.id} for decision #{decision.id}")
+        elsif !participant_has_user && user_has_participant
+          participant.destroy unless participant.approvals.any?
+        elsif !participant_has_user && !user_has_participant
+          # Common case
+          participant.update(user: user)
+        end
+      end
+      clear_participant_uid_cookie
+      session.delete(:encrypted_participant_id)
+    else
+      # Forget anonymous participant_uid
+      clear_participant_uid_cookie
+    end
+    
+    redirect_to decision_path || '/'
   end
 
   def failure

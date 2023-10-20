@@ -97,6 +97,10 @@ ul.options-list {
   padding-left: 16px;
 }
 
+table.results-table {
+  word-break: break-word;
+}
+
 table.results-table, table.results-table thead tr {
   border-top: none;
 }

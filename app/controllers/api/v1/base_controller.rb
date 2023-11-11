@@ -1,4 +1,6 @@
 class Api::V1::BaseController < ApplicationController
+  skip_before_action :verify_authenticity_token, if: :api_token_present?
+  before_action :api_authorize!, if: :api_token_present?
   before_action :validate_can_write, if: :is_write_request?
 
   # Read actions are allowed by default
@@ -27,6 +29,20 @@ class Api::V1::BaseController < ApplicationController
 
   def render_404
     render json: { error: 'Not found' }, status: 404
+  end
+
+  def api_token_present?
+    request.headers['Authorization'].present?
+  end
+
+  def api_authorize!
+    return render json: { error: 'API not enabled' }, status: 403 unless ENV['API_TOKEN'].present?
+    prefix, api_token = request.headers['Authorization'].split(' ')
+    if prefix == 'Bearer' && api_token == ENV['API_TOKEN'] # TODO - Implement API tokens system
+      true
+    else
+      render json: { error: 'Unauthorized' }, status: 401
+    end
   end
 
   def is_write_request?

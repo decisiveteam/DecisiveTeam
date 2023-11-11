@@ -15,8 +15,11 @@ module Api::V1
         @current_decision = decision
         @current_decision.created_by = current_decision_participant
         @current_decision.save!
+        render json: decision
+      rescue ActiveRecord::RecordInvalid => e
+        # TODO - Detect specific validation errors and return helpful error messages
+        render json: { error: 'There was an error creating the decision. Please try again.' }, status: 400
       end
-      render json: decision
     end
 
     def update

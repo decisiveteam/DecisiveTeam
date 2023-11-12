@@ -10,7 +10,9 @@ module Api::V1
           question: params[:question],
           description: params[:description],
           options_open: params[:options_open] || true,
-          other_attributes: {} # TODO
+          auth_required: params[:auth_required] || false,
+          deadline: params[:deadline],
+          other_attributes: params[:other_attributes] || {},
         )
         @current_decision = decision
         @current_decision.created_by = current_decision_participant
@@ -35,7 +37,7 @@ module Api::V1
     private
 
     def updatable_attributes
-      [:other_attributes, :description]
+      [:question, :description, :options_open, :auth_required, :deadline, :other_attributes]
     end
   end
 end

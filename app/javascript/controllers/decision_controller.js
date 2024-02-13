@@ -27,6 +27,18 @@ export default class extends Controller {
     return document.querySelector("meta[name='csrf-token']").content;
   }
 
+  get decisionIsClosed() {
+    if (!this.optionsSectionTarget.dataset.deadline) return false;
+    try {
+      const deadlineDate = new Date(this.optionsSectionTarget.dataset.deadline);
+      const now = new Date();
+      return now > deadlineDate;
+    } catch (error) {
+      console.error("Error determining if decision is closed:", error);
+      return false;
+    }
+  }
+
   async createOption(title) {
     const url = this.optionsSectionTarget.dataset.url;
     const response = await fetch(url, {
@@ -113,12 +125,18 @@ export default class extends Controller {
       if (html !== this.previousOptionsListHtml) {
         this.listTarget.innerHTML = html;
         this.previousOptionsListHtml = html;
+      } else if (this.decisionIsClosed) {
+        this.hideOptions();
       }
       this.refreshing = false;
     } else {
       console.error("Error refreshing options:", response);
       this.refreshing = false;
     }
+  }
+
+  hideOptions() {
+    this.optionsSectionTarget.style.display = 'none';
   }
   
 }

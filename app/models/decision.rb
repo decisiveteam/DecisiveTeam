@@ -13,6 +13,14 @@ class Decision < ApplicationRecord
     super || self.id.to_s[0..7]
   end
 
+  def deadline_iso8601
+    if deadline
+      deadline.iso8601
+    else
+      ""
+    end
+  end
+
   def participants
     decision_participants
   end

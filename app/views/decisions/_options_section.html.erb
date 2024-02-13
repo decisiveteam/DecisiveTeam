@@ -1,4 +1,4 @@
-<span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html">
+<span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html" data-deadline="<%= @decision.deadline_iso8601 %>">
 <h2>Options</h2>
 <% if @decision.auth_required? && !@participant.authenticated? %>
   <div class="auth-required-message">

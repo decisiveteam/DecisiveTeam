@@ -67,7 +67,7 @@ class Decision < ApplicationRecord
   end
 
   def path
-    "/decisions/#{self.truncated_id}"
+    "/d/#{self.truncated_id}"
   end
 
   def shareable_link

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   root 'home#index'
 
   get '/decide' => 'decisions#new'
+  get '/d/:id' => 'decisions#show'
   get '/decision/:id' => 'decisions#show'
   resources :decisions, only: [:create, :show] do
     get '/results.html' => 'decisions#results_partial'

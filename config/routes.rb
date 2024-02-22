@@ -23,11 +23,12 @@ Rails.application.routes.draw do
   root 'home#index'
 
   get '/decide' => 'decisions#new'
-  get '/d/:id' => 'decisions#show'
   get '/decision/:id' => 'decisions#show'
-  resources :decisions, only: [:create, :show] do
-    get '/results.html' => 'decisions#results_partial'
-    get '/options.html' => 'decisions#options_partial'
-    post '/options.html' => 'decisions#create_option_and_return_options_partial'
-  end
+  ['decisions', 'd'].each do |path_prefix|
+    resources :decisions, only: [:create, :show], path: path_prefix do
+      get '/results.html' => 'decisions#results_partial'
+      get '/options.html' => 'decisions#options_partial'
+      post '/options.html' => 'decisions#create_option_and_return_options_partial'
+    end
+  end  
 end

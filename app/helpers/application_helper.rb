@@ -24,4 +24,9 @@ module ApplicationHelper
     MarkdownRenderer.render(text).html_safe
   end
 
+  def markdown_inline(text)
+    return "" unless text
+    MarkdownRenderer.render_inline(text).html_safe
+  end
+
 end

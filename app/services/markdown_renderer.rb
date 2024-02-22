@@ -26,6 +26,12 @@ class MarkdownRenderer
     shifted_header_html
   end
 
+  def self.render_inline(content)
+    raw_html = @@markdown.render(content.to_s)
+    sanitized_html = sanitize(raw_html)
+    sanitized_html.gsub(/<p>(.*)<\/p>/, '\1')
+  end
+
   private
 
   def self.sanitize(html)
@@ -60,13 +66,13 @@ class MarkdownRenderer
     doc.to_html
   end
 
-  def self.shift_headers(html)
+  def self.shift_headers(html, shift_by: 2)
     # We want to shift the headers down by two because on the decision page
     # h1 is used for the decision question and h2 for the description, options, and results
     doc = Nokogiri::HTML.fragment(html)
     (1..6).reverse_each do |i|
       doc.search("h#{i}").each do |header|
-        header.name = "h#{i + 2}"
+        header.name = "h#{i + shift_by}"
       end
     end
     doc.to_html

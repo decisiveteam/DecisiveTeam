@@ -19,7 +19,7 @@
       <% ([nil] + @decision.results + [nil]).each_cons(3).with_index do |(prev_result, result, next_result), index| %>
         <tr style="<%= index == 0 ? 'box-shadow: inset 0 0 5px yellow;font-weight:bold;' : '' %>">
           <td><%= index + 1 %></td>
-          <td><%= result.option_title %></td>
+          <td><%= markdown_inline(result.option_title) %></td>
           <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.2 %>;"><%= (result.approved_yes || 0) %></td>
           <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.2 %>;"><%= (result.stars || 0) %></td>
           <% random_id_is_relevant = result.is_sorting_factor?(prev_result, 'random_id') || result.is_sorting_factor?(next_result, 'random_id') %>

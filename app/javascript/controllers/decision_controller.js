@@ -70,15 +70,16 @@ export default class extends Controller {
 
   async toggleApprovalValues(event) {
     const decisionId = this.inputTarget.dataset.decisionId;
-    const optionItem = event.target.parentElement;
+    const optionItem = event.target.closest('.option-item');
     const checkbox = optionItem.querySelector('input.approval-button');
     const starButton = optionItem.querySelector('input.star-button');
+    const isToggleClick = event.target === checkbox || event.target === starButton;
 
     const optionId = optionItem.dataset.optionId;
     let approved = checkbox.checked;
     let stars = starButton.checked;
 
-    if (event.target.id.startsWith('option-label')) {
+    if (!isToggleClick) {
       // Cycle approval state
       [approved, stars] = this.nextApprovalState(approved, stars);
       checkbox.checked = approved;
@@ -101,6 +102,8 @@ export default class extends Controller {
   }
 
   async cycleApprovalState(event) {
+    // If the target is a link, allow the default action
+    if (event.target.tagName === 'A') return;
     event.preventDefault();
     return this.toggleApprovalValues(event);
   }

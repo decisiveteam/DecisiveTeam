@@ -5,7 +5,7 @@ module ApplicationHelper
       data-controller='timeago'
       data-timeago-datetime-value='#{datetime.iso8601}'
       data-refresh-interval='#{60 * 1000}'
-      title='#{datetime.to_s(:long)}'
+      title='#{datetime.to_s}'
     >#{time_ago_in_words(datetime)}</time> #{ago_or_from_now}".html_safe
   end
 

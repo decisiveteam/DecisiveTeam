@@ -10,8 +10,8 @@ class CommitmentsController < ApplicationController
 
   def create
     @commitment = Commitment.new(
-      title: params[:title],
-      description: params[:description],
+      title: model_params[:title],
+      description: model_params[:description],
       deadline: Time.now + duration_param,
     )
     begin

@@ -74,8 +74,8 @@ class ApplicationController < ActionController::Base
   end
 
   def duration_param
-    duration = params[:duration].to_i
-    duration_unit = params[:duration_unit] || 'hour(s)'
+    duration = model_params[:duration].to_i
+    duration_unit = model_params[:duration_unit] || 'hour(s)'
     case duration_unit
     when 'minute(s)'
       duration.minutes
@@ -88,6 +88,10 @@ class ApplicationController < ActionController::Base
     else
       raise "Unknown duration_unit: #{duration_unit}"
     end
+  end
+
+  def model_params
+    params[current_resource_model.name.underscore.to_sym]
   end
 
   def reset_session

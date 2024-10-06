@@ -63,6 +63,7 @@ CREATE TABLE public.commitments (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     title text,
     description text,
+    critical_mass integer,
     deadline timestamp(6) without time zone,
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,

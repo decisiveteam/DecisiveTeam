@@ -1,20 +1,54 @@
 <span data-controller="commitment" data-commitment-id="<%= @commitment.id %>">
+<h4 style="margin-top:0px;">Commitment</h4>
 <h1 style="margin-top:0;"><%= @commitment.title %></h1>
 <p style="font-size:0.8em;">
-  Created <strong><%= timeago(@commitment.created_at) %></strong><br/>
   <% if @commitment.deadline && !@commitment.closed? %>
     Closing in <strong><%= countdown(@commitment.deadline) %></strong><br/>
   <% elsif @commitment.deadline && @commitment.closed? %>
     Closed <strong><%= timeago(@commitment.deadline) %></strong><br/>
   <% end %>
+  Status: <%= @commitment.status_message %><br/>
   Share this commitment: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @commitment.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
     <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
   </span><br/>
 </p>
+<% if @commitment.critical_mass > 0 %>
+  <% progress_bar_width = [(@commitment.participant_count.to_f / @commitment.critical_mass.to_f) * 100, 100].min %>
+  <div class="progress-bar-container" style="width:100%;height:16px;background-color:rgba(100,100,100,0.5);">
+    <div class="progress-bar" style="width:<%= progress_bar_width %>%;height:16px;background-color:#4CAF50;"></div>
+  </div>
+  <br/>
+  <p>
+    <% s_or_no_s = @commitment.critical_mass == 1 ? '' : 's' %>
+    <% person_or_people = @commitment.participant_count == 1 ? 'person' : 'people' %>
+    <% has_or_have = @commitment.participant_count == 1 ? 'has' : 'have' %>
+    <%= @commitment.participant_count %> <%= person_or_people %> <%= has_or_have %> committed to participate<% @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
+    Critical mass = <%= @commitment.critical_mass %> participant<%= s_or_no_s %>.
+  </p>
+  <% if @commitment.critical_mass_achieved? %>
+    <p>
+      Critical mass achieved! 🎉
+    </p>
+  <% end %>
+<% end %>
 <% if @commitment.description && @commitment.description.length > 0 %>
   <h2>Description</h2>
   <p><%= markdown(@commitment.description) %></p>
+<% end %>
+<h2>Join</h2>
+<% if false #if @commitment.participants.include?(current_user) %>
+  <p>
+    You are participating in this commitment.
+  </p>
+<% elsif @commitment.closed? %>
+  <p>
+    This commitment is closed.
+  </p>
+<% else %>
+  <p>
+    <span data-action="click->commitment#join" data-commitment-id="<%= @commitment.id %>">Join this commitment</span>.
+  </p>
 <% end %>
 
 </span>

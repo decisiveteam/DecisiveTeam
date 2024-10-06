@@ -12,6 +12,7 @@ class CommitmentsController < ApplicationController
     @commitment = Commitment.new(
       title: model_params[:title],
       description: model_params[:description],
+      critical_mass: model_params[:critical_mass],
       deadline: Time.now + duration_param,
     )
     begin

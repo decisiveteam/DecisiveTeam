@@ -56,6 +56,21 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: commitments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.commitments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    title text,
+    description text,
+    deadline timestamp(6) without time zone,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: decision_participants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -164,6 +179,14 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 
 --
+-- Name: commitments commitments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitments
+    ADD CONSTRAINT commitments_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: decision_participants decision_participants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -229,6 +252,13 @@ CREATE INDEX index_approvals_on_option_id ON public.approvals USING btree (optio
 --
 
 CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON public.approvals USING btree (option_id, decision_participant_id);
+
+
+--
+-- Name: index_commitments_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_commitments_on_truncated_id ON public.commitments USING btree (truncated_id);
 
 
 --
@@ -421,6 +451,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230827190826'),
 ('20230908024626'),
 ('20230913025720'),
-('20231005010534');
+('20231005010534'),
+('20241003023146');
 
 

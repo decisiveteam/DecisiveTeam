@@ -30,5 +30,10 @@ Rails.application.routes.draw do
       get '/options.html' => 'decisions#options_partial'
       post '/options.html' => 'decisions#create_option_and_return_options_partial'
     end
-  end  
+  end
+
+  get 'coordinate' => 'commitments#new'
+  ['commitments', 'c'].each do |path_prefix|
+    resources :commitments, only: [:create, :show], path: path_prefix
+  end
 end

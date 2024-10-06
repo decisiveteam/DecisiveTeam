@@ -62,6 +62,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def current_commitment
+    return @current_commitment if defined?(@current_commitment)
+    if current_resource_model == Commitment
+      commitment_id = params[:id] || params[:commitment_id]
+    else
+      commitment_id = params[:commitment_id]
+    end
+    column_name = commitment_id.to_s.length == 8 ? :truncated_id : :id
+    @current_commitment = Commitment.find_by(column_name => commitment_id)
+  end
+
+  def duration_param
+    duration = params[:duration].to_i
+    duration_unit = params[:duration_unit] || 'hour(s)'
+    case duration_unit
+    when 'minute(s)'
+      duration.minutes
+    when 'hour(s)'
+      duration.hours
+    when 'day(s)'
+      duration.days
+    when 'week(s)'
+      duration.weeks
+    else
+      raise "Unknown duration_unit: #{duration_unit}"
+    end
+  end
+
   def reset_session
     clear_participant_uid_cookie
     super

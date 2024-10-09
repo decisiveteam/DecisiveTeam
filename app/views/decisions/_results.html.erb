@@ -33,11 +33,11 @@
     </tbody>
   </table>
   <p>
-    Results are sorted first by approvals ✅, then by favorites ⭐, then by random digits 🎲.
+    Results are sorted first by acceptance ✅, then by preference ⭐, then by random digits 🎲.
   </p>
   <span data-decision-results-target="message" style="font-size:0.8em;">
     <!-- Views: <%= @decision.view_count %><br/> -->
-    Participants: 
+    Participants:
     <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>,
     <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
   </span>

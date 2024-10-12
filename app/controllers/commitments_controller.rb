@@ -33,4 +33,17 @@ class CommitmentsController < ApplicationController
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"
   end
+
+  def status_partial
+    @commitment = current_commitment
+    return render '404', status: 404 unless @commitment
+    render partial: 'status'
+  end
+
+  def create_option_and_return_status_partial
+    @commitment = current_commitment
+    return render '404', status: 404 unless @commitment
+    # TODO: Implement this
+    render partial: 'status'
+  end
 end

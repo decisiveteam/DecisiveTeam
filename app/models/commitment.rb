@@ -17,7 +17,7 @@ class Commitment < ApplicationRecord
     # critical mass not achieved
     return 'Failed to reach critical mass.' if closed?
     # critical mass not achieved yet
-    return "Pending. #{remaining_needed_for_critical_mass} more participant#{'s' if remaining_needed_for_critical_mass != 1} needed to reach critical mass."
+    return "Pending"
   end
 
 
@@ -32,7 +32,7 @@ class Commitment < ApplicationRecord
   end
 
   def remaining_needed_for_critical_mass
-    critical_mass - participant_count
+    [critical_mass - participant_count, 0].max
   end
 
   def critical_mass_achieved?

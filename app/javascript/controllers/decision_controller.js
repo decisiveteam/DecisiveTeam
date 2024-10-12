@@ -85,7 +85,7 @@ export default class extends Controller {
       checkbox.checked = approved;
       starButton.checked = stars;
     }
-  
+
     this.updatingApprovals = true;
     await fetch(`/api/v1/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
@@ -141,5 +141,5 @@ export default class extends Controller {
   hideOptions() {
     this.optionsSectionTarget.style.display = 'none';
   }
-  
+
 }

@@ -13,25 +13,9 @@
     <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
   </span><br/>
 </p>
-<% if @commitment.critical_mass > 0 %>
-  <% progress_bar_width = [(@commitment.participant_count.to_f / @commitment.critical_mass.to_f) * 100, 100].min %>
-  <div class="progress-bar-container" style="width:100%;height:16px;background-color:rgba(100,100,100,0.5);">
-    <div class="progress-bar" style="width:<%= progress_bar_width %>%;height:16px;background-color:#4CAF50;"></div>
-  </div>
-  <br/>
-  <p>
-    <% s_or_no_s = @commitment.critical_mass == 1 ? '' : 's' %>
-    <% person_or_people = @commitment.participant_count == 1 ? 'person' : 'people' %>
-    <% has_or_have = @commitment.participant_count == 1 ? 'has' : 'have' %>
-    <%= @commitment.participant_count %> <%= person_or_people %> <%= has_or_have %> committed to participate<% @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
-    Critical mass = <%= @commitment.critical_mass %> participant<%= s_or_no_s %>.
-  </p>
-  <% if @commitment.critical_mass_achieved? %>
-    <p>
-      Critical mass achieved! 🎉
-    </p>
-  <% end %>
-<% end %>
+<span data-commitment-target="statusSection">
+<%= render 'status' %>
+</span>
 <% if @commitment.description && @commitment.description.length > 0 %>
   <h2>Description</h2>
   <p><%= markdown(@commitment.description) %></p>
@@ -47,7 +31,11 @@
   </p>
 <% else %>
   <p>
-    <span data-action="click->commitment#join" data-commitment-id="<%= @commitment.id %>">Join this commitment</span>.
+    <span
+      data-action="click->commitment#join"
+      data-commitment-target="joinButton"
+      data-url="<%= @commitment.path + '/join.html' %>"
+    >Commit to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.</span>
   </p>
 <% end %>
 

@@ -34,6 +34,9 @@ Rails.application.routes.draw do
 
   get 'coordinate' => 'commitments#new'
   ['commitments', 'c'].each do |path_prefix|
-    resources :commitments, only: [:create, :show], path: path_prefix
+    resources :commitments, only: [:create, :show], path: path_prefix do
+      get '/status.html' => 'commitments#status_partial'
+      post '/join.html' => 'commitments#create_option_and_return_status_partial'
+    end
   end
 end

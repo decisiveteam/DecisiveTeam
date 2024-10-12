@@ -22,6 +22,9 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": this.csrfToken,
       },
+      body: JSON.stringify({
+        committed: true,
+      }),
     })
       .then(response => response.text())
       .then((html) => {

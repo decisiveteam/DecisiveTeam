@@ -73,6 +73,30 @@ class ApplicationController < ActionController::Base
     @current_commitment = Commitment.find_by(column_name => commitment_id)
   end
 
+  def current_commitment_participant
+    return @current_commitment_participant if defined?(@current_commitment_participant)
+    if current_resource_model == CommitmentParticipant
+      @current_commitment_participant = current_resource
+    elsif current_commitment
+      @current_commitment_participant = CommitmentParticipantManager.new(
+        commitment: current_commitment,
+        user: current_user,
+        participant_uid: cookies[:commitment_participant_uid],
+      ).find_or_create_participant
+      unless current_user
+        # Cookie is only needed if user is not logged in.
+        cookies[:commitment_participant_uid] = {
+          value: @current_commitment_participant.participant_uid,
+          expires: 30.days.from_now,
+          httponly: true,
+        }
+      end
+    else
+      @current_commitment_participant = nil
+    end
+    @current_commitment_participant
+  end
+
   def duration_param
     duration = model_params[:duration].to_i
     duration_unit = model_params[:duration_unit] || 'hour(s)'

@@ -1,6 +1,7 @@
 class Commitment < ApplicationRecord
   include Tracked
   self.implicit_order_column = "created_at"
+  has_many :participants, class_name: 'CommitmentParticipant'
 
   def truncated_id
     # TODO Fix the bug that causes this to be nil on first save
@@ -20,15 +21,8 @@ class Commitment < ApplicationRecord
     return "Pending"
   end
 
-
-  # def critical_mass
-  #   # temp debug
-  #   20
-  # end
-
   def participant_count
-    #participants.count
-    2
+    participants.where(committed: true).count
   end
 
   def remaining_needed_for_critical_mass

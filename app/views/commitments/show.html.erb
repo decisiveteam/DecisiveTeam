@@ -21,13 +21,13 @@
   <p><%= markdown(@commitment.description) %></p>
 <% end %>
 <h2>Join</h2>
-<% if false #if @commitment.participants.include?(current_user) %>
-  <p>
-    You are participating in this commitment.
-  </p>
-<% elsif @commitment.closed? %>
+<% if @commitment.closed? %>
   <p>
     This commitment is closed.
+  </p>
+<% elsif @commitment_participant.committed? %>
+  <p>
+    You are committed to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
   </p>
 <% else %>
   <p>

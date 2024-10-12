@@ -29,6 +29,7 @@ class CommitmentsController < ApplicationController
 
   def show
     @commitment = current_commitment
+    @commitment_participant = current_commitment_participant
     return render '404', status: 404 unless @commitment
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"
@@ -40,10 +41,12 @@ class CommitmentsController < ApplicationController
     render partial: 'status'
   end
 
-  def create_option_and_return_status_partial
+  def join_and_return_status_partial
     @commitment = current_commitment
-    return render '404', status: 404 unless @commitment
-    # TODO: Implement this
+    @commitment_participant = current_commitment_participant
+    return render '404', status: 404 unless @commitment && @commitment_participant
+    @commitment_participant.committed = true if params[:committed].to_s == 'true'
+    @commitment_participant.save!
     render partial: 'status'
   end
 end

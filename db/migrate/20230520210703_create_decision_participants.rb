@@ -5,7 +5,7 @@ class CreateDecisionParticipants < ActiveRecord::Migration[7.0]
       t.references :entity, polymorphic: true, null: true
       t.string :name
       t.references :invite, null: true, foreign_key: { to_table: :decision_invites }
-      
+
       t.timestamps
     end
   end

@@ -5,7 +5,7 @@ class CreateCommitmentParticipants < ActiveRecord::Migration[7.0]
       t.references :user, null: true, type: :uuid, foreign_key: true
       t.string :participant_uid, null: false, default: "", index: true
       t.string :name
-      t.boolean :committed, null: false, default: false
+      t.datetime :committed_at, null: true
 
       t.timestamps
     end

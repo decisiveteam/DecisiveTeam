@@ -1,0 +1,12 @@
+<% @commitment.committed_participants.order(committed_at: :desc).limit(@participants_list_limit).each do |participant| %>
+  <li><strong><%= participant.name || 'Anonymous' %></strong> committed <%= timeago(participant.committed_at) %></li>
+<% end %>
+<% if @commitment.participant_count > @participants_list_limit %>
+  <li
+    data-action="click->commitment#showMoreParticipants"
+    data-commitment-target="moreParticipants"
+    style="cursor:pointer;"
+    >
+    <span style="color:blue;">+ <%= @commitment.participant_count - @participants_list_limit %> more</span>
+  </li>
+<% end %>

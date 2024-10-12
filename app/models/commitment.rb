@@ -21,8 +21,12 @@ class Commitment < ApplicationRecord
     return "Pending"
   end
 
+  def committed_participants
+    participants.where.not(committed_at: nil)
+  end
+
   def participant_count
-    participants.where(committed: true).count
+    committed_participants.count
   end
 
   def remaining_needed_for_critical_mass

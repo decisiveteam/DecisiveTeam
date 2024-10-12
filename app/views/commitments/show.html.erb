@@ -30,13 +30,22 @@
     You are committed to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
   </p>
 <% else %>
-  <p>
-    <span
+  <div data-commitment-target="joinSection">
+    <p>Commitments only take effect if critical mass is achieved.</p>
+    <p>
+      <input type="text" data-commitment-target="nameInput" placeholder="Your name" style="min-width: 10px; width:240px;"/>
+      <button
       data-action="click->commitment#join"
       data-commitment-target="joinButton"
       data-url="<%= @commitment.path + '/join.html' %>"
-    >Commit to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.</span>
-  </p>
+        >
+        Commit to participating
+      </button>
+      <br/>(Your name will be displayed publicly. Leave blank to remain anonymous.)
+    </p>
+  </div>
 <% end %>
+<h2>Participants</h2>
+<%= render 'participants' %>
 
 </span>

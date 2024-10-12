@@ -9,4 +9,22 @@ class CommitmentParticipant < ApplicationRecord
     # If there is a user association, then we know the participant is authenticated
     user.present?
   end
+
+  def committed?
+    committed_at.present?
+  end
+
+  def committed
+    committed?
+  end
+
+  def committed=(value)
+    if value == '1' || value == 'true' || value == true
+      self.committed_at = Time.current unless committed?
+    elsif value == '0' || value == 'false' || value == false
+      self.committed_at = nil
+    else
+      raise 'Invalid value for committed'
+    end
+  end
 end

@@ -30,6 +30,7 @@ class CommitmentsController < ApplicationController
   def show
     @commitment = current_commitment
     @commitment_participant = current_commitment_participant
+    @participants_list_limit = 10
     return render '404', status: 404 unless @commitment
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"
@@ -46,7 +47,16 @@ class CommitmentsController < ApplicationController
     @commitment_participant = current_commitment_participant
     return render '404', status: 404 unless @commitment && @commitment_participant
     @commitment_participant.committed = true if params[:committed].to_s == 'true'
+    @commitment_participant.name = params[:name]
     @commitment_participant.save!
     render partial: 'status'
+  end
+
+  def participants_list_items_partial
+    @commitment = current_commitment
+    return render '404', status: 404 unless @commitment
+    @participants_list_limit = params[:limit].to_i if params[:limit].present?
+    @participants_list_limit = 20 if @participants_list_limit < 1
+    render partial: 'participants_list_items'
   end
 end

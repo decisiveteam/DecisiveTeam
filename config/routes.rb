@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   ['commitments', 'c'].each do |path_prefix|
     resources :commitments, only: [:create, :show], path: path_prefix do
       get '/status.html' => 'commitments#status_partial'
+      get '/participants.html' => 'commitments#participants_list_items_partial'
       post '/join.html' => 'commitments#join_and_return_status_partial'
     end
   end

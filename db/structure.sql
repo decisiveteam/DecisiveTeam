@@ -65,7 +65,7 @@ CREATE TABLE public.commitment_participants (
     user_id uuid,
     participant_uid character varying DEFAULT ''::character varying NOT NULL,
     name character varying,
-    committed boolean DEFAULT false NOT NULL,
+    committed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );

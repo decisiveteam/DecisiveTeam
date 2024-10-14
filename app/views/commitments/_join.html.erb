@@ -1,0 +1,33 @@
+<% if @commitment.closed? %>
+  <p>
+    This commitment is closed.
+  </p>
+<% elsif @current_user %>
+  <p>
+    Logged in as <strong><%= @commitment_participant_name %></strong>.
+  </p>
+  <% if @commitment_participant.committed? %>
+    <p>
+      <button style="background:#dfdfdf;color:#9f9f9f;cursor:default;">
+        Committed
+      </button>
+      <span style="font-style:italic;">Your commitment has been recorded.</span>
+    </p>
+  <% else %>
+    <p>
+      <button
+      data-action="click->commitment#join"
+      data-commitment-target="joinButton"
+      data-url="<%= @commitment.path + '/join.html' %>"
+        >
+        Commit to participating
+      </button>
+      <span style="font-style:italic;">Your name and commitment will be displayed publicly.</span>
+    </p>
+  <% end %>
+  <p>Commitments only take effect if critical mass is achieved.</p>
+<% else %>
+  <div class="auth-required-message">
+    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to join this commitment.
+  </div>
+<% end %>

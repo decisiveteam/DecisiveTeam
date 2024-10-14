@@ -13,38 +13,17 @@
     <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
   </span><br/>
 </p>
-<span data-commitment-target="statusSection">
-<%= render 'status' %>
+<span data-commitment-target="statusSection" data-url="<%= @commitment.path + '/status.html' %>">
+  <%= render 'status' %>
 </span>
 <% if @commitment.description && @commitment.description.length > 0 %>
   <h2>Description</h2>
   <p><%= markdown(@commitment.description) %></p>
 <% end %>
 <h2>Join</h2>
-<% if @commitment.closed? %>
-  <p>
-    This commitment is closed.
-  </p>
-<% elsif @commitment_participant.committed? %>
-  <p>
-    You are committed to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
-  </p>
-<% else %>
-  <div data-commitment-target="joinSection">
-    <p>Commitments only take effect if critical mass is achieved.</p>
-    <p>
-      <input type="text" data-commitment-target="nameInput" placeholder="Your name" style="min-width: 10px; width:240px;"/>
-      <button
-      data-action="click->commitment#join"
-      data-commitment-target="joinButton"
-      data-url="<%= @commitment.path + '/join.html' %>"
-        >
-        Commit to participating
-      </button>
-      <br/>(Your name will be displayed publicly. Leave blank to remain anonymous.)
-    </p>
-  </div>
-<% end %>
+<div data-commitment-target="joinSection">
+  <%= render 'join' %>
+</div>
 <h2>Participants</h2>
 <%= render 'participants' %>
 

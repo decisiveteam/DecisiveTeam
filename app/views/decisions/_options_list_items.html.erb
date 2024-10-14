@@ -1,4 +1,4 @@
-<% @decision.options.each do |option| %>
+<% @decision.options.order(:created_at).each do |option| %>
   <% approval = @approvals.where(option: option).first || Approval.new(value: 0) %>
   <li class="option-item" data-option-id="<%= option.id %>">
     <input type="checkbox" class="approval-button" id="option<%= option.id %>" data-action="click->decision#toggleApprovalValues" <%= approval.value == 1 ? 'checked' : '' %>/>

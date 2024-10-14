@@ -30,6 +30,7 @@ class CommitmentsController < ApplicationController
   def show
     @commitment = current_commitment
     @commitment_participant = current_commitment_participant
+    @commitment_participant_name = @commitment_participant.name || (current_user ? current_user.name : '')
     @participants_list_limit = 10
     return render '404', status: 404 unless @commitment
     @page_title = @commitment.title
@@ -42,14 +43,21 @@ class CommitmentsController < ApplicationController
     render partial: 'status'
   end
 
-  def join_and_return_status_partial
+  def join_and_return_partial
+    # Must be logged in to join
+    unless current_user
+      return render message: 'You must be logged in to join.', status: 401
+    end
     @commitment = current_commitment
+    if @commitment.closed?
+      return render message: 'This commitment is closed.', status: 400
+    end
     @commitment_participant = current_commitment_participant
-    return render '404', status: 404 unless @commitment && @commitment_participant
+    @commitment_participant_name = @commitment_participant.name || current_user.name
     @commitment_participant.committed = true if params[:committed].to_s == 'true'
-    @commitment_participant.name = params[:name]
+    @commitment_participant.name = @commitment_participant_name
     @commitment_participant.save!
-    render partial: 'status'
+    render partial: 'join'
   end
 
   def participants_list_items_partial

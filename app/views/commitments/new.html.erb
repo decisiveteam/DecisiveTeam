@@ -1,0 +1,27 @@
+<h1>Coordinate</h1>
+<p>Coordinate with others by starting a reciprocal commitment.</p>
+<%= form_with(model: [@commitment]) do |form| %>
+  <p style="margin-bottom:2px;">Give this commitment a title.</p>
+  <div>
+    <%= form.text_field :title, placeholder: 'Title' %>
+  </div>
+  <p style="margin-bottom:2px;margin-top:16px;">Add a description to provide context. (optional)</p>
+  <div>
+    <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
+  </div>
+  <h2>Critical Mass</h2>
+  <p style="margin-bottom:2px;margin-top:16px;">Set the minimum number of participants required for this commitment to take effect.</p>
+  <div>
+    <%= form.number_field :critical_mass, value: 0, style: 'width:48px;' %>
+  </div>
+  <h2>Deadline</h2>
+  <p style="margin-bottom:2px;margin-top:16px;">Set the deadline.</p>
+  <p>
+    <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
+    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
+    will be given to reach critical mass.
+  </p>
+  <hr style="height:1px;" />
+  <p>Go to the commitment page and share the link with others.</p>
+  <%= form.submit 'Go to commitment page' %>
+<% end %>

@@ -52,7 +52,7 @@ class Auth0Controller < ApplicationController
       # Forget anonymous participant_uid
       clear_participant_uid_cookie
     end
-    
+
     redirect_to decision_path || '/'
   end
 
@@ -88,7 +88,7 @@ class Auth0Controller < ApplicationController
   def auth0_callback_url
     request.protocol + request.host_with_port + '/auth/auth0/callback'
   end
-   
+
   def logout_url
     request_params = {
       returnTo: root_url,

@@ -1,0 +1,30 @@
+<span data-controller="commitment" data-commitment-id="<%= @commitment.id %>">
+<h4 style="margin-top:0px;">Commitment</h4>
+<h1 style="margin-top:0;"><%= @commitment.title %></h1>
+<p style="font-size:0.8em;">
+  <% if @commitment.deadline && !@commitment.closed? %>
+    Closing in <strong><%= countdown(@commitment.deadline) %></strong><br/>
+  <% elsif @commitment.deadline && @commitment.closed? %>
+    Closed <strong><%= timeago(@commitment.deadline) %></strong><br/>
+  <% end %>
+  Status: <%= @commitment.status_message %><br/>
+  Share this commitment: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+    <input type="text" value="<%= @commitment.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
+    <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
+  </span><br/>
+</p>
+<span data-commitment-target="statusSection" data-url="<%= @commitment.path + '/status.html' %>">
+  <%= render 'status' %>
+</span>
+<% if @commitment.description && @commitment.description.length > 0 %>
+  <h2>Description</h2>
+  <p><%= markdown(@commitment.description) %></p>
+<% end %>
+<h2>Join</h2>
+<div data-commitment-target="joinSection">
+  <%= render 'join' %>
+</div>
+<h2>Participants</h2>
+<%= render 'participants' %>
+
+</span>

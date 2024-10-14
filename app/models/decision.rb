@@ -13,14 +13,6 @@ class Decision < ApplicationRecord
     super || self.id.to_s[0..7]
   end
 
-  def deadline_iso8601
-    if deadline
-      deadline.iso8601
-    else
-      ""
-    end
-  end
-
   def participants
     decision_participants
   end
@@ -39,10 +31,6 @@ class Decision < ApplicationRecord
 
   def can_delete_options?(participant)
     can_add_options?(participant)
-  end
-
-  def closed?
-    deadline && deadline < Time.now
   end
 
   def public?
@@ -66,11 +54,8 @@ class Decision < ApplicationRecord
     approvals.distinct.count(:decision_participant_id)
   end
 
-  def path
-    "/d/#{self.truncated_id}"
+  def path_prefix
+    'd'
   end
 
-  def shareable_link
-    "https://#{ENV['HOSTNAME']}#{path}"
-  end
 end

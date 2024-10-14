@@ -1,0 +1,31 @@
+<% if @commitment.critical_mass > 0 %>
+  <% progress_bar_width = [(@commitment.participant_count.to_f / @commitment.critical_mass.to_f) * 100, 100].min %>
+  <div class="progress-bar-container" style="width:100%;height:16px;background-color:rgba(100,100,100,0.2);">
+    <div class="progress-bar" style="width:<%= progress_bar_width %>%;height:16px;background-color:#5ACE5E;"></div>
+  </div>
+  <br/>
+  <p>
+    <% s_or_no_s = @commitment.critical_mass == 1 ? '' : 's' %>
+    <% person_or_people = @commitment.participant_count == 1 ? 'person' : 'people' %>
+    <% is_or_are = @commitment.participant_count == 1 ? 'is' : 'are' %>
+    <strong><%= @commitment.critical_mass %></strong> participant<%= s_or_no_s %> needed to reach critical mass.
+    <br/>
+    <strong><%= @commitment.participant_count %></strong> <%= person_or_people %> <%= is_or_are %> committed to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
+    <% unless @commitment.critical_mass_achieved? %>
+      <br/>
+      <% s_or_no_s = @commitment.remaining_needed_for_critical_mass == 1 ? '' : 's' %>
+      <strong><%= @commitment.remaining_needed_for_critical_mass %></strong> more participant<%= s_or_no_s %> needed to reach critical mass.
+    <% end %>
+  </p>
+  <% if @commitment.critical_mass_achieved? %>
+    <p>
+      Critical mass achieved! 🎉
+    </p>
+  <% end %>
+<% else %>
+  <p>
+    <% person_or_people = @commitment.participant_count == 1 ? 'person' : 'people' %>
+    <% is_or_are = @commitment.participant_count == 1 ? 'is' : 'are' %>
+    <strong><%= @commitment.participant_count %></strong> <%= person_or_people %> <%= is_or_are %> committed to participating.
+  </p>
+<% end %>

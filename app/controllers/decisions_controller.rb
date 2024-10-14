@@ -68,23 +68,6 @@ class DecisionsController < ApplicationController
 
   private
 
-  def duration_param
-    duration = decision_params[:duration].to_i
-    duration_unit = decision_params[:duration_unit] || 'hour(s)'
-    case duration_unit
-    when 'minute(s)'
-      duration.minutes
-    when 'hour(s)'
-      duration.hours
-    when 'day(s)'
-      duration.days
-    when 'week(s)'
-      duration.weeks
-    else
-      raise "Unknown duration_unit: #{duration_unit}"
-    end
-  end
-
   def decision_params
     params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit, :auth_required)
   end

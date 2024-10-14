@@ -56,6 +56,38 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: commitment_participants; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.commitment_participants (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    commitment_id uuid NOT NULL,
+    user_id uuid,
+    participant_uid character varying DEFAULT ''::character varying NOT NULL,
+    name character varying,
+    committed_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: commitments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.commitments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    title text,
+    description text,
+    critical_mass integer,
+    deadline timestamp(6) without time zone,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: decision_participants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -164,6 +196,22 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 
 --
+-- Name: commitment_participants commitment_participants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitment_participants
+    ADD CONSTRAINT commitment_participants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commitments commitments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitments
+    ADD CONSTRAINT commitments_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: decision_participants decision_participants_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -229,6 +277,41 @@ CREATE INDEX index_approvals_on_option_id ON public.approvals USING btree (optio
 --
 
 CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON public.approvals USING btree (option_id, decision_participant_id);
+
+
+--
+-- Name: index_commitment_participants_on_commitment_and_uid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_commitment_participants_on_commitment_and_uid ON public.commitment_participants USING btree (commitment_id, participant_uid);
+
+
+--
+-- Name: index_commitment_participants_on_commitment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitment_participants_on_commitment_id ON public.commitment_participants USING btree (commitment_id);
+
+
+--
+-- Name: index_commitment_participants_on_participant_uid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitment_participants_on_participant_uid ON public.commitment_participants USING btree (participant_uid);
+
+
+--
+-- Name: index_commitment_participants_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitment_participants_on_user_id ON public.commitment_participants USING btree (user_id);
+
+
+--
+-- Name: index_commitments_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_commitments_on_truncated_id ON public.commitments USING btree (truncated_id);
 
 
 --
@@ -355,6 +438,14 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: commitment_participants fk_rails_ca2dcc834c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitment_participants
+    ADD CONSTRAINT fk_rails_ca2dcc834c FOREIGN KEY (commitment_id) REFERENCES public.commitments(id);
+
+
+--
 -- Name: decisions fk_rails_db126ea214; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -368,6 +459,14 @@ ALTER TABLE ONLY public.decisions
 
 ALTER TABLE ONLY public.options
     ADD CONSTRAINT fk_rails_df3bc80da2 FOREIGN KEY (decision_id) REFERENCES public.decisions(id);
+
+
+--
+-- Name: commitment_participants fk_rails_f0bea833a7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitment_participants
+    ADD CONSTRAINT fk_rails_f0bea833a7 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -421,6 +520,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230827190826'),
 ('20230908024626'),
 ('20230913025720'),
-('20231005010534');
+('20231005010534'),
+('20241003023146'),
+('20241012185630');
 
 

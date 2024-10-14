@@ -20,11 +20,11 @@ class Api::V1::BaseController < ApplicationController
   def update
     render_404
   end
-  
+
   def destroy
     render_404
   end
-  
+
   private
 
   def render_404
@@ -64,7 +64,7 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def current_resource
-    return @current_resource if defined?(@current_resource)  
+    return @current_resource if defined?(@current_resource)
     @current_resource = if current_resource_model == Decision
       current_decision
     else

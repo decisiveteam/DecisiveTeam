@@ -16,7 +16,7 @@ export default class extends Controller {
   async editDisplayName(event) {
     event.preventDefault();
     if (this.savingName) return;
-    if (this.edittingName) {
+    if (this.editingName) {
       const url = this.editDisplayNameButtonTarget.dataset.url;
       const displayName = this.displayNameInputTarget.value;
       // TODO validate display name (cannot be blank)
@@ -36,7 +36,7 @@ export default class extends Controller {
         const html = await response.text();
         this.joinSectionTarget.innerHTML = html;
         this.savingName = false;
-        this.edittingName = false;
+        this.editingName = false;
       } catch (error) {
         console.error("Error saving display name:", error);
       }
@@ -47,7 +47,7 @@ export default class extends Controller {
       this.joinButtonTarget.style.opacity = 0.3;
       this.joinButtonTarget.style.cursor = "not-allowed";
       this.displayNameInputTarget.focus();
-      this.edittingName = true;
+      this.editingName = true;
     }
   }
 
@@ -59,7 +59,7 @@ export default class extends Controller {
 
   async join(event) {
     event.preventDefault();
-    if (this.edittingName) return;
+    if (this.editingName) return;
     console.log("Joining commitment... " + this.joinButtonTarget.dataset.url);
     this.joinButtonTarget.innerHTML = "Joining...";
     const url = this.joinButtonTarget.dataset.url;
@@ -86,7 +86,7 @@ export default class extends Controller {
   }
 
   joinButtonMouseEnter(event) {
-    if (this.edittingName) return;
+    if (this.editingName) return;
     this.joinButtonMessageTarget.style.textDecoration = "underline";
   }
 

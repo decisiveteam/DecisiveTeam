@@ -4,7 +4,7 @@
   </p>
 <% elsif @current_user %>
   <p>
-    Logged in as <strong><%= @commitment_participant_name %></strong>.
+    <%= render 'logged_in_as' %>
   </p>
   <% if @commitment_participant.committed? %>
     <p>
@@ -16,13 +16,20 @@
   <% else %>
     <p>
       <button
-      data-action="click->commitment#join"
-      data-commitment-target="joinButton"
-      data-url="<%= @commitment.path + '/join.html' %>"
+        data-action="click->commitment#join mouseenter->commitment#joinButtonMouseEnter mouseleave->commitment#joinButtonMouseLeave"
+        data-commitment-target="joinButton"
+        data-url="<%= @commitment.path + '/join.html' %>"
         >
         Commit to participating
       </button>
-      <span style="font-style:italic;">Your name and commitment will be displayed publicly.</span>
+      <span
+        style="font-style:italic;"
+        data-commitment-target="joinButtonMessage"
+        >Your name and commitment will be
+        <span style="background:yellow;">
+          publicly visible.
+        </span>
+      </span>
     </p>
   <% end %>
   <p>Commitments only take effect if critical mass is achieved.</p>

@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       get '/status.html' => 'commitments#status_partial'
       get '/participants.html' => 'commitments#participants_list_items_partial'
       post '/join.html' => 'commitments#join_and_return_partial'
+      put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
     end
   end
 end

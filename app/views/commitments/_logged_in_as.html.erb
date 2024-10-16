@@ -1,0 +1,24 @@
+Logged in as
+<span data-commitment-target="displayName">
+  <strong
+    <% unless @commitment_participant.committed? || @commitment.closed? %>
+      style="background:yellow;"
+    <% end %>
+  ><%= @commitment_participant_name %></strong>.
+</span>
+<% unless @commitment_participant.committed? || @commitment.closed? %>
+  <input type="text"
+    data-commitment-target="displayNameInput"
+    data-action="keydown->commitment#updateDisplayName"
+    value="<%= @commitment_participant_name %>"
+    style="display:none;min-width:10px;width:200px;"/>
+  <span
+    class="text-only-button"
+    style="font-size:0.8em;"
+    data-action="click->commitment#editDisplayName"
+    data-commitment-target="editDisplayNameButton"
+    data-url="<%= @commitment.path + '/edit_display_name.html' %>"
+    >
+    edit display name
+  </span>
+<% end %>

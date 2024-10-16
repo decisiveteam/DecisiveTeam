@@ -166,12 +166,12 @@ select:focus {
   border-color: #007bff;
 }
 
-.clipboard-button {
+.text-only-button {
   color: #007bff;
   cursor: pointer;
 }
 
-.clipboard-button:hover {
+.text-only-button:hover {
   text-decoration: underline;
 }
 
@@ -188,7 +188,7 @@ select:focus {
 }
 
 /* Mobile-only styles */
-@media only screen and (max-width: 768px) {  
+@media only screen and (max-width: 768px) {
   .option-item {
     /* More space for easier selection */
     margin-bottom: 12px;

@@ -10,7 +10,7 @@
   Status: <%= @commitment.status_message %><br/>
   Share this commitment: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @commitment.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <span class="clipboard-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
+    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
   </span><br/>
 </p>
 <span data-commitment-target="statusSection" data-url="<%= @commitment.path + '/status.html' %>">

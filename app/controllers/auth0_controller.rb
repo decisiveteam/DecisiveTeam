@@ -5,17 +5,20 @@ class Auth0Controller < ApplicationController
     # Refer to https://github.com/auth0/omniauth-auth0/blob/master/EXAMPLES.md#example-of-the-resulting-authentication-hash for complete information on 'omniauth.auth' contents.
     auth_info = request.env['omniauth.auth']
     raw_info = auth_info['extra']['raw_info']
-    email = raw_info['email'] || auth_info['info']['email'] || "#{raw_info['sub']}@#{AUTH0_CONFIG['auth0_domain']}"
+    email = raw_info['email'] ||
+            auth_info['info']['email'] ||
+            (is_email?(raw_info['name']) ? raw_info['name'] : nil) ||
+            "#{raw_info['sub']}@#{AUTH0_CONFIG['auth0_domain']}"
 
     # Upsert the user record using the Auth0 ID, and update other fields.
     user = User.find_or_create_by(auth0_id: raw_info['sub']) do |new_user|
       new_user.email = email
-      new_user.name = raw_info['name'] # Should this be email?
+      new_user.name = raw_info['name']
       new_user.picture_url = raw_info['picture']
     end
     user.update(
       email: email,
-      name: raw_info['name'],
+      name: user.name || raw_info['name'],
       picture_url: raw_info['picture']
     )
 
@@ -96,5 +99,10 @@ class Auth0Controller < ApplicationController
     }
 
     URI::HTTPS.build(host: AUTH0_CONFIG['auth0_domain'], path: '/v2/logout', query: request_params.to_query).to_s
+  end
+
+  def is_email?(str)
+    return false unless str.is_a?(String)
+    str.match?(URI::MailTo::EMAIL_REGEXP)
   end
 end

@@ -1,5 +1,21 @@
 class ApplicationController < ActionController::Base
-  before_action :current_user
+  before_action :current_app, :current_user
+
+  def current_app
+    # This method should be overridden in the app-specific controllers.
+    return @current_app if defined?(@current_app)
+    @current_app = ENV['APPS_ENABLED'].split(',')[0]
+    @current_app_title = @current_app.titleize + ' Team'
+    @current_app_description = case @current_app
+    when 'decisive'
+      'fast group decision-making'
+    when 'coordinated'
+      'fast group coordination'
+    else
+      raise "Unknown app: #{@current_app}"
+    end
+    @current_app
+  end
 
   def current_user
     return @current_user if defined?(@current_user)

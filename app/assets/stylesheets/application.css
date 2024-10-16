@@ -19,7 +19,7 @@ body {
 }
 
 .logo {
-  background-image: url(/icon.svg);
+  /*background-image: url(/icon.svg); // set in application_controller.rb */
   background-size: 40px;
   background-repeat: no-repeat;
   height: 40px;
@@ -187,6 +187,10 @@ select:focus {
   display: inline-block;
 }
 
+.highlighted {
+  background-color: #ff0;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {
@@ -217,5 +221,12 @@ select:focus {
   select {
     background-color: #2b2a33;
     border: 1px solid #8f8f9d;
+  }
+  .highlighted {
+    background-color: rgba(255, 255, 0, 0.2);
+    text-shadow: -1px -1px 0 #000,
+                  1px -1px 0 #000,
+                  -1px 1px 0 #000,
+                  1px 1px 0 #000;
   }
 }

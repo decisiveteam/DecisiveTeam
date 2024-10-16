@@ -2,7 +2,7 @@ Logged in as
 <span data-commitment-target="displayName">
   <strong
     <% unless @commitment_participant.committed? || @commitment.closed? %>
-      style="background:yellow;"
+      class="highlighted"
     <% end %>
   ><%= @commitment_participant_name %></strong>.
 </span>

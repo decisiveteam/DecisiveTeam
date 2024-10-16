@@ -81,4 +81,14 @@ class CommitmentsController < ApplicationController
     @commitment_participant_name = @commitment_participant.name
     render partial: 'join'
   end
+
+  private
+
+  def current_app
+    return @current_app if defined?(@current_app)
+    @current_app = 'coordinated'
+    @current_app_title = 'Coordinated Team'
+    @current_app_description = 'fast group coordination'
+    @current_app
+  end
 end

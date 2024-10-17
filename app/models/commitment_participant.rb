@@ -10,6 +10,10 @@ class CommitmentParticipant < ApplicationRecord
     user.present?
   end
 
+  def has_dependent_resources?
+    false
+  end
+
   def committed?
     committed_at.present?
   end

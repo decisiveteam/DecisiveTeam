@@ -11,4 +11,8 @@ class DecisionParticipant < ApplicationRecord
     # If there is a user association, then we know the participant is authenticated
     user.present?
   end
+
+  def has_dependent_resources?
+    approvals.any? || options.any?
+  end
 end

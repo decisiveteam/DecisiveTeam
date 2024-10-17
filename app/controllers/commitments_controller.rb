@@ -31,7 +31,13 @@ class CommitmentsController < ApplicationController
     @commitment = current_commitment
     return render '404', status: 404 unless @commitment
     @commitment_participant = current_commitment_participant
-    @commitment_participant_name = @commitment_participant.name || (current_user ? current_user.name : '')
+    if current_user
+      @commitment_participant_name = @commitment_participant.name || current_user.name
+    else
+      @commitment_participant_name = @commitment_participant.name
+      # ID used in login redirect
+      session[:encrypted_participant_id] = encrypt(@commitment_participant.id)
+    end
     @participants_list_limit = 10
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"

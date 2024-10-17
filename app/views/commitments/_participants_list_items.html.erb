@@ -9,4 +9,6 @@
     >
     <span style="color:blue;">+ <%= @commitment.participant_count - @participants_list_limit %> more</span>
   </li>
+<% elsif @commitment.participant_count == 0 %>
+  <li>No participants yet.</li>
 <% end %>

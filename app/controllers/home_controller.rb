@@ -1,8 +1,14 @@
 class HomeController < ApplicationController
 
   def index
-    # TODO show recent decisions for current participant ID
-    redirect_to '/decide'
+    case @current_app
+    when 'decisive'
+      redirect_to '/decide'
+    when 'coordinated'
+      redirect_to '/coordinate'
+    else
+      raise "Unknown app: #{@current_app}"
+    end
   end
 
 end

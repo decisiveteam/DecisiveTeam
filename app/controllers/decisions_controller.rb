@@ -77,4 +77,12 @@ class DecisionsController < ApplicationController
     @option_contributor_count = @decision.option_contributor_count
     @voter_count = @decision.voter_count
   end
+
+  def current_app
+    return @current_app if defined?(@current_app)
+    @current_app = 'decisive'
+    @current_app_title = 'Decisive Team'
+    @current_app_description = 'fast group decision-making'
+    @current_app
+  end
 end

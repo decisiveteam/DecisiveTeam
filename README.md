@@ -1,6 +1,6 @@
 # Decisive Team
 
-<img src="public/icon.svg" width="33%"/>
+<img src="public/decisive-icon.svg" width="33%"/>
 
 Decisive Team is a group decision-making tool that uses a 3 step decision-making protocol:
 1. Ask a question.

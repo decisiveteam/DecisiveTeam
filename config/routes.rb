@@ -8,37 +8,46 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/', to: 'info#index'
-      resources :decisions do
-        get :results, to: 'results#index'
-        resources :participants do
-          resources :approvals
+      if ENV['APPS_ENABLED'].include?('decisive')
+        resources :decisions do
+          get :results, to: 'results#index'
+          resources :participants do
+            resources :approvals
+          end
+          resources :options do
+            resources :approvals
+          end
         end
-        resources :options do
-          resources :approvals
-        end
+      end
+      if ENV['APPS_ENABLED'].include?('coordinated')
+        # TODO
       end
     end
   end
   # Defines the root path route ("/")
   root 'home#index'
 
-  get '/decide' => 'decisions#new'
-  get '/decision/:id' => 'decisions#show'
-  ['decisions', 'd'].each do |path_prefix|
-    resources :decisions, only: [:create, :show], path: path_prefix do
-      get '/results.html' => 'decisions#results_partial'
-      get '/options.html' => 'decisions#options_partial'
-      post '/options.html' => 'decisions#create_option_and_return_options_partial'
+  if ENV['APPS_ENABLED'].include?('decisive')
+    get '/decide' => 'decisions#new'
+    get '/decision/:id' => 'decisions#show'
+    ['decisions', 'd'].each do |path_prefix|
+      resources :decisions, only: [:create, :show], path: path_prefix do
+        get '/results.html' => 'decisions#results_partial'
+        get '/options.html' => 'decisions#options_partial'
+        post '/options.html' => 'decisions#create_option_and_return_options_partial'
+      end
     end
   end
 
-  get 'coordinate' => 'commitments#new'
-  ['c'].each do |path_prefix|
-    resources :commitments, only: [:create, :show], path: path_prefix do
-      get '/status.html' => 'commitments#status_partial'
-      get '/participants.html' => 'commitments#participants_list_items_partial'
-      post '/join.html' => 'commitments#join_and_return_partial'
-      put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
+  if ENV['APPS_ENABLED'].include?('coordinated')
+    get 'coordinate' => 'commitments#new'
+    ['c'].each do |path_prefix|
+      resources :commitments, only: [:create, :show], path: path_prefix do
+        get '/status.html' => 'commitments#status_partial'
+        get '/participants.html' => 'commitments#participants_list_items_partial'
+        post '/join.html' => 'commitments#join_and_return_partial'
+        put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
+      end
     end
   end
 end

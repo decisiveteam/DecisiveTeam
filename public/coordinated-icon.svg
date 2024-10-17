@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg:svg
+   id="svg2880"
+   sodipodi:version="0.32"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   width="280"
+   height="280"
+   version="1.0"
+   sodipodi:docname="Penrose_triangle_coordinated-team-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <script />
+  <svg:metadata
+     id="metadata2885">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </svg:metadata>
+  <svg:defs
+     id="defs2883" />
+  <svg:path
+     sodipodi:type="star"
+     style="fill:#000000"
+     id="path1"
+     inkscape:flatsided="true"
+     sodipodi:sides="3"
+     sodipodi:cx="4.9497471"
+     sodipodi:cy="226.27415"
+     sodipodi:r1="282.41547"
+     sodipodi:r2="141.20773"
+     sodipodi:arg1="-0.58036386"
+     sodipodi:arg2="0.46683369"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="M 241.12341,71.417775 20.972477,508.23473 -247.24664,99.169956 Z"
+     inkscape:transform-center-x="-2.6966989"
+     inkscape:transform-center-y="-18.300973"
+     transform="matrix(-0.33660863,0,0,-0.28796804,141.17875,211.57661)" />
+  <sodipodi:namedview
+     inkscape:window-height="916"
+     inkscape:window-width="1512"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="148.49242"
+     inkscape:cy="81.670831"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:current-layer="svg2880"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:window-maximized="0" />
+  <svg:path
+     style="opacity:1;fill:#000;fill-opacity:1;stroke:#fff;stroke-width:3;stroke-linecap:square;stroke-linejoin:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.1248;stroke-opacity:1"
+     d="M 55.0625,182.4375 L 80.6875,182.5625 L 151.21875,59.84375 L 252.21615,228.15076 L 264.76729,205.25818 L 151.5625,13.25 L 55.0625,182.4375 z "
+     id="path2909" />
+  <svg:path
+     style="opacity:1;fill:#000;fill-opacity:1;stroke:#fff;stroke-width:3;stroke-linecap:square;stroke-linejoin:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.1248;stroke-opacity:1"
+     d="M 15.625,206.0625 L 27.5,228.4375 L 252.30454,228.28334 L 151.23246,59.859344 L 138.54873,81.934334 L 211.73429,205.92661 L 15.625,206.0625 z "
+     id="path2911" />
+  <svg:path
+     style="opacity:1;fill:#000;fill-opacity:1;stroke:#fff;stroke-width:3;stroke-linecap:square;stroke-linejoin:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.1248;stroke-opacity:1"
+     d="M 124.05609,12.990601 L 15.638759,206.0253 L 211.76418,205.96833 L 197.88064,182.51185 L 54.948939,182.532 L 151.67357,13.253813 L 124.05609,12.990601 z "
+     id="path2899" />
+  <svg:circle
+     style="fill:#ffffff"
+     id="path2"
+     cx="139.30003"
+     cy="150.61374"
+     r="23" />
+</svg:svg>

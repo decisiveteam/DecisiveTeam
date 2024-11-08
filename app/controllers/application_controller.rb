@@ -113,6 +113,17 @@ class ApplicationController < ActionController::Base
     @current_commitment_participant
   end
 
+  def current_note
+    return @current_note if defined?(@current_note)
+    if current_resource_model == Note
+      note_id = params[:id] || params[:note_id]
+    else
+      note_id = params[:note_id]
+    end
+    column_name = note_id.to_s.length == 8 ? :truncated_id : :id
+    @current_note = Note.find_by(column_name => note_id)
+  end
+
   def duration_param
     duration = model_params[:duration].to_i
     duration_unit = model_params[:duration_unit] || 'hour(s)'

@@ -138,6 +138,20 @@ CREATE TABLE public.decisions (
 
 
 --
+-- Name: notes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.notes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    title text,
+    text text,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: options; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -225,6 +239,14 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.decisions
     ADD CONSTRAINT decisions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notes notes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT notes_pkey PRIMARY KEY (id);
 
 
 --
@@ -333,6 +355,13 @@ CREATE UNIQUE INDEX index_decision_participants_on_decision_id_and_participant_u
 --
 
 CREATE UNIQUE INDEX index_decisions_on_truncated_id ON public.decisions USING btree (truncated_id);
+
+
+--
+-- Name: index_notes_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_notes_on_truncated_id ON public.notes USING btree (truncated_id);
 
 
 --
@@ -522,6 +551,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230913025720'),
 ('20231005010534'),
 ('20241003023146'),
-('20241012185630');
+('20241012185630'),
+('20241108202425');
 
 

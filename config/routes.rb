@@ -50,4 +50,9 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  get 'note' => 'notes#new'
+  ['n'].each do |path_prefix|
+    resources :notes, only: [:create, :show], path: path_prefix
+  end
 end

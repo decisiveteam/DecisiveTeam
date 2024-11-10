@@ -191,6 +191,28 @@ select:focus {
   background-color: #ff0;
 }
 
+.resource-link-commitment, .resource-link-decision, .resource-link-note {
+  font-weight: bold;
+}
+
+.resource-link-commitment::before, .resource-link-decision::before, .resource-link-note::before {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: var(--color-fg-default);
+}
+
+.resource-link-commitment::before {
+  content: "Commitment ";
+}
+
+.resource-link-decision::before {
+  content: "Decision ";
+}
+
+.resource-link-note::before {
+  content: "Note ";
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

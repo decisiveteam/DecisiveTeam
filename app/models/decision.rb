@@ -13,6 +13,10 @@ class Decision < ApplicationRecord
     super || self.id.to_s[0..7]
   end
 
+  def title
+    question
+  end
+
   def participants
     decision_participants
   end

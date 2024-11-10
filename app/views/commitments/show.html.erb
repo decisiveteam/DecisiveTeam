@@ -18,7 +18,7 @@
 </span>
 <% if @commitment.description && @commitment.description.length > 0 %>
   <h2>Description</h2>
-  <p><%= markdown(@commitment.description) %></p>
+  <div class="user-generated-markdown"><%= markdown(@commitment.description) %></div>
 <% end %>
 <h2>Join</h2>
 <div data-commitment-target="joinSection">

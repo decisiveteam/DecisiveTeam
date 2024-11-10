@@ -1,5 +1,9 @@
 <span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html" data-deadline="<%= @decision.deadline_iso8601 %>">
-<h2>Options</h2>
+<% if @decision.can_add_options?(@participant) %>
+  <h2>Add Options & Vote</h2>
+<% else %>
+  <h2>Vote</h2>
+<% end %>
 <% if @decision.auth_required? && !@participant.authenticated? %>
   <div class="auth-required-message">
     <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to participate.

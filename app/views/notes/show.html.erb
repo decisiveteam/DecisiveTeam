@@ -1,3 +1,4 @@
+<span data-controller="note" data-note-id="<%= @note.id %>">
 <h4 style="margin-top:0px;">Note</h4>
 <h1 style="margin-top:0;"><%= @note.title %></h1>
 <p style="font-size:0.8em;">
@@ -10,3 +11,10 @@
 <div class="user-generated-markdown">
   <%= markdown(@note.text) %>
 </div>
+<h2>Confirm</h2>
+<div data-note-target="confirmSection">
+  <%= render 'confirm' %>
+</div>
+<h2>History</h2>
+<%= render 'history' %>
+</span>

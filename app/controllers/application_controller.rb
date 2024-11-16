@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :current_app, :current_user
+  before_action :current_app, :current_tenant, :current_user
 
   def current_app
     # This method should be overridden in the app-specific controllers.
@@ -17,6 +17,20 @@ class ApplicationController < ActionController::Base
     @current_app
   end
 
+  def current_tenant
+    return @current_tenant if defined?(@current_tenant)
+    begin
+      # Tenant.scope_thread_to_tenant sets the current tenant based on the subdomain
+      # and raises an error if the subdomain is not found.
+      # Default scope is configured in ApplicationRecord to scope all queries to Tenant.current_tenant_id
+      # and automatically set tenant_id on any new records.
+      @current_tenant = Tenant.scope_thread_to_tenant(subdomain: request.subdomain)
+    rescue
+      raise ActionController::RoutingError.new('Not Found')
+    end
+    @current_tenant
+  end
+
   def current_user
     return @current_user if defined?(@current_user)
     if session[:user_id].present?
@@ -24,6 +38,8 @@ class ApplicationController < ActionController::Base
     else
       @current_user = nil
     end
+    # redirect_to login unless current_user.can_access_tenant?(current_tenant)
+    @current_user
   end
 
   def current_resource_model

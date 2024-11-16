@@ -1,6 +1,8 @@
 class Commitment < ApplicationRecord
   include Tracked
   self.implicit_order_column = "created_at"
+  belongs_to :tenant
+  before_validation :set_tenant_id
   has_many :participants, class_name: 'CommitmentParticipant'
   validates :title, presence: true
   validates :critical_mass, presence: true, numericality: { greater_than: 0 }

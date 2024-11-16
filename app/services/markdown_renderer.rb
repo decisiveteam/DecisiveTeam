@@ -80,7 +80,7 @@ class MarkdownRenderer
 
   def self.display_refereces(html)
     models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
-    domain = ENV['HOSTNAME']
+    domain = "#{Tenant.current_subdomain}.#{ENV['HOSTNAME']}"
     pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
     doc = Nokogiri::HTML.fragment(html)
     doc.search('a').each do |a|

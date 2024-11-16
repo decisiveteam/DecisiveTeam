@@ -71,5 +71,5 @@ Rails.application.configure do
   # Add Docker container IP subnet to the list of allowed networks
   config.web_console.allowed_ips = ['127.0.0.0/8', '::1', '172.16.0.0/12']
 
-  config.hosts << ENV["HOSTNAME"]
+  config.hosts << Regexp.new(".*\.#{ENV['HOSTNAME']}")
 end

@@ -1,6 +1,8 @@
 class Decision < ApplicationRecord
   include Tracked
   self.implicit_order_column = "created_at"
+  belongs_to :tenant
+  before_validation :set_tenant_id
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
@@ -43,7 +45,10 @@ class Decision < ApplicationRecord
 
   def results
     return @results if @results
-    @results = DecisionResult.where(decision_id: self.id)
+    @results = DecisionResult.where(
+      tenant_id: tenant_id,
+      decision_id: self.id
+    )
   end
 
   def view_count

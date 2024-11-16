@@ -36,7 +36,7 @@ services:
       - redis_data:/data
   caddy:
     image: caddy:2-alpine
-    command: /bin/sh -c "caddy reverse-proxy --from ${HOSTNAME} --to web:3000"
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
     ports:
       - "80:80"
       - "443:443"
@@ -49,6 +49,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
 
 volumes:
   pg_data:

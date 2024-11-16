@@ -1,6 +1,8 @@
 class Note < ApplicationRecord
   include Tracked
   self.implicit_order_column = "created_at"
+  belongs_to :tenant
+  before_validation :set_tenant_id
   has_many :note_history_events, dependent: :destroy
   validates :title, presence: true
 

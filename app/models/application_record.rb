@@ -1,6 +1,22 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
+  default_scope do
+    if belongs_to_tenant? && Tenant.current_id
+      where(tenant_id: Tenant.current_id)
+    else
+      all
+    end
+  end
+
+  def self.belongs_to_tenant?
+    self.column_names.include?("tenant_id")
+  end
+
+  def set_tenant_id
+    self.tenant_id ||= Tenant.current_id
+  end
+
   def self.is_tracked?
     false
   end
@@ -26,6 +42,10 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def shareable_link
-    "https://#{ENV['HOSTNAME']}#{path}"
+    subdomain = self.tenant.subdomain
+    domain = ENV['HOSTNAME']
+    fulldomain = subdomain.present? ? "#{subdomain}.#{domain}" : domain
+    "https://#{fulldomain}#{path}"
   end
+
 end

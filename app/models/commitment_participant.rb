@@ -1,9 +1,15 @@
 class CommitmentParticipant < ApplicationRecord
   self.implicit_order_column = "created_at"
+  belongs_to :tenant
+  before_validation :set_tenant_id
   belongs_to :commitment
   belongs_to :user, optional: true
   # TODO
   # has_one :created_decision, class_name: 'Commitment', foreign_key: 'created_by_id'
+
+  def set_tenant_id
+    self.tenant_id ||= commitment.tenant_id
+  end
 
   def authenticated?
     # If there is a user association, then we know the participant is authenticated

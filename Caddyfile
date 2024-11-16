@@ -1,0 +1,4 @@
+{$PRIMARY_SUBDOMAIN}.{$HOSTNAME} {
+    # Reverse proxy to the web service
+    reverse_proxy web:3000
+}

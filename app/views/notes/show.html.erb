@@ -1,0 +1,20 @@
+<span data-controller="note" data-note-id="<%= @note.id %>">
+<h4 style="margin-top:0px;">Note</h4>
+<h1 style="margin-top:0;"><%= @note.title %></h1>
+<p style="font-size:0.8em;">
+  Created <strong><%= timeago(@note.created_at) %></strong><br/>
+  Share this note: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+    <input type="text" value="<%= @note.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
+    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
+  </span><br/>
+</p>
+<div class="user-generated-markdown">
+  <%= markdown(@note.text) %>
+</div>
+<h2>Confirm</h2>
+<div data-note-target="confirmSection">
+  <%= render 'confirm' %>
+</div>
+<h2>History</h2>
+<%= render 'history' %>
+</span>

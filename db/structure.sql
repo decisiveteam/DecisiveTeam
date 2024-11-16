@@ -138,6 +138,35 @@ CREATE TABLE public.decisions (
 
 
 --
+-- Name: note_history_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.note_history_events (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    note_id uuid NOT NULL,
+    user_id uuid,
+    event_type character varying,
+    happened_at timestamp without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: notes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.notes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    title text,
+    text text,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: options; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -225,6 +254,22 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.decisions
     ADD CONSTRAINT decisions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: note_history_events note_history_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.note_history_events
+    ADD CONSTRAINT note_history_events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notes notes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT notes_pkey PRIMARY KEY (id);
 
 
 --
@@ -336,6 +381,27 @@ CREATE UNIQUE INDEX index_decisions_on_truncated_id ON public.decisions USING bt
 
 
 --
+-- Name: index_note_history_events_on_note_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_note_history_events_on_note_id ON public.note_history_events USING btree (note_id);
+
+
+--
+-- Name: index_note_history_events_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_note_history_events_on_user_id ON public.note_history_events USING btree (user_id);
+
+
+--
+-- Name: index_notes_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_notes_on_truncated_id ON public.notes USING btree (truncated_id);
+
+
+--
 -- Name: index_options_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -390,6 +456,14 @@ CREATE OR REPLACE VIEW public.decision_results AS
 
 
 --
+-- Name: note_history_events fk_rails_0a4621d4f9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.note_history_events
+    ADD CONSTRAINT fk_rails_0a4621d4f9 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: approvals fk_rails_23f31e4409; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -411,6 +485,14 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.approvals
     ADD CONSTRAINT fk_rails_387fb9c532 FOREIGN KEY (decision_id) REFERENCES public.decisions(id);
+
+
+--
+-- Name: note_history_events fk_rails_601d54357c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.note_history_events
+    ADD CONSTRAINT fk_rails_601d54357c FOREIGN KEY (note_id) REFERENCES public.notes(id);
 
 
 --
@@ -522,6 +604,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230913025720'),
 ('20231005010534'),
 ('20241003023146'),
-('20241012185630');
+('20241012185630'),
+('20241108202425'),
+('20241110205225');
 
 

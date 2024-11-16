@@ -1,0 +1,5 @@
+<% @note.history_events.order(happened_at: :desc).each do |event| %>
+  <li>
+    <%= event.description %> <strong><%= timeago(event.happened_at) %></strong>
+  </li>
+<% end %>

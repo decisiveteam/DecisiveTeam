@@ -1,0 +1,20 @@
+Logged in as
+<span data-note-target="displayName">
+  <strong><%= @note_reader.name %></strong>.
+</span>
+<% unless @note_reader.confirmed_read? %>
+  <input type="text"
+    data-note-target="displayNameInput"
+    data-action="keydown->note#updateDisplayName"
+    value="<%= @note_reader.name %>"
+    style="display:none;min-width:10px;width:200px;"/>
+  <span
+    class="text-only-button"
+    style="font-size:0.8em;"
+    data-action="click->note#editDisplayName"
+    data-note-target="editDisplayNameButton"
+    data-url="<%= @note.path + '/edit_display_name.html' %>"
+    >
+    edit display name
+  </span>
+<% end %>

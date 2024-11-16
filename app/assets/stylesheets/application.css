@@ -40,6 +40,19 @@ pre, code, .markdown-body {
   border: 1px solid #AAA;
 }
 
+.user-generated-markdown {
+  border: 1px solid #AAA;
+  padding: 8px 12px;
+}
+
+.user-generated-markdown > * {
+  margin-top: 0 !important;
+}
+
+.user-generated-markdown > *:last-child {
+  margin-bottom: 0 !important;
+}
+
 pre, code {
   width: auto;
   white-space: pre-wrap;
@@ -189,6 +202,28 @@ select:focus {
 
 .highlighted {
   background-color: #ff0;
+}
+
+.resource-link-commitment, .resource-link-decision, .resource-link-note {
+  font-weight: bold;
+}
+
+.resource-link-commitment::before, .resource-link-decision::before, .resource-link-note::before {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: var(--color-fg-default);
+}
+
+.resource-link-commitment::before {
+  content: "Commitment ";
+}
+
+.resource-link-decision::before {
+  content: "Decision ";
+}
+
+.resource-link-note::before {
+  content: "Note ";
 }
 
 /* Mobile-only styles */

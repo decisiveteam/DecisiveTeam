@@ -23,7 +23,7 @@ class MarkdownRenderer
     raw_html = @@markdown.render(content.to_s)
     sanitized_html = sanitize(raw_html)
     shifted_header_html = shift_headers(sanitized_html)
-    shifted_header_html
+    display_refereces(shifted_header_html)
   end
 
   def self.render_inline(content)
@@ -37,7 +37,7 @@ class MarkdownRenderer
   def self.sanitize(html)
     sanitized_html = ActionController::Base.helpers.sanitize(html)
     doc = Nokogiri::HTML.fragment(sanitized_html)
-    
+
     # Remove dangerous protocols from URLs
     doc.search('a').each do |a|
       if a['href']
@@ -73,6 +73,29 @@ class MarkdownRenderer
     (1..6).reverse_each do |i|
       doc.search("h#{i}").each do |header|
         header.name = "h#{i + shift_by}"
+      end
+    end
+    doc.to_html
+  end
+
+  def self.display_refereces(html)
+    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
+    domain = ENV['HOSTNAME']
+    pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
+    doc = Nokogiri::HTML.fragment(html)
+    doc.search('a').each do |a|
+      if a['href'] && a['href'].match?(pattern)
+        matches = a.content.scan(pattern)
+        matches.each do |m, id|
+          model = models[m]
+          column_name = id.length == 8 ? :truncated_id : :id
+          resource = model.find_by(column_name => id)
+          a['title'] = resource.title if resource
+          if resource && a.content == a['href']
+            a['class'] = "resource-link-#{model.name.downcase}"
+            a.content = id
+          end
+        end
       end
     end
     doc.to_html

@@ -50,4 +50,13 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  get 'note' => 'notes#new'
+  ['n'].each do |path_prefix|
+    resources :notes, only: [:create, :show], path: path_prefix do
+      get '/history.html' => 'notes#history_log_partial'
+      post '/confirm.html' => 'notes#confirm_and_return_partial'
+      put '/edit_display_name.html' => 'notes#edit_display_name_and_return_partial'
+    end
+  end
 end

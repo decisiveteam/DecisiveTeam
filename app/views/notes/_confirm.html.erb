@@ -1,0 +1,32 @@
+<% if @current_user %>
+  <p>
+    <%= render 'logged_in_as' %>
+  </p>
+  <% if @note_reader.confirmed_read? %>
+    <p>
+      <button style="background:#dfdfdf;color:#9f9f9f;cursor:default;">
+        Confirmed
+      </button>
+      <span style="font-style:italic;">You have confirmed reading this note.</span>
+    </p>
+  <% else %>
+    <p>
+      <button
+        data-action="click->note#confirm mouseenter->note#confirmButtonMouseEnter mouseleave->note#confirmButtonMouseLeave"
+        data-note-target="confirmButton"
+        data-url="<%= @note.path + '/confirm.html' %>"
+        >
+        Confirm
+      </button>
+      <span
+        style="font-style:italic;"
+        data-note-target="confirmButtonMessage"
+        >Click this button to confirm that you have read this note.
+      </span>
+    </p>
+  <% end %>
+<% else %>
+  <div class="auth-required-message">
+    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to confirm reading this note.
+  </div>
+<% end %>

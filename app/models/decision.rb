@@ -1,5 +1,6 @@
 class Decision < ApplicationRecord
   include Tracked
+  include Linkable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id

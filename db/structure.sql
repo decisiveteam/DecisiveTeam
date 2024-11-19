@@ -144,6 +144,22 @@ CREATE TABLE public.decisions (
 
 
 --
+-- Name: links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.links (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    from_linkable_type character varying NOT NULL,
+    from_linkable_id uuid NOT NULL,
+    to_linkable_type character varying NOT NULL,
+    to_linkable_id uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: note_history_events; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -276,6 +292,14 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.decisions
     ADD CONSTRAINT decisions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: links links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT links_pkey PRIMARY KEY (id);
 
 
 --
@@ -443,6 +467,27 @@ CREATE INDEX index_decisions_on_tenant_id ON public.decisions USING btree (tenan
 --
 
 CREATE UNIQUE INDEX index_decisions_on_truncated_id ON public.decisions USING btree (truncated_id);
+
+
+--
+-- Name: index_links_on_from_linkable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_from_linkable ON public.links USING btree (from_linkable_type, from_linkable_id);
+
+
+--
+-- Name: index_links_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_tenant_id ON public.links USING btree (tenant_id);
+
+
+--
+-- Name: index_links_on_to_linkable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_to_linkable ON public.links USING btree (to_linkable_type, to_linkable_id);
 
 
 --
@@ -662,6 +707,14 @@ ALTER TABLE ONLY public.commitment_participants
 
 
 --
+-- Name: links fk_rails_cd7c2a63d7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_cd7c2a63d7 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: decisions fk_rails_db126ea214; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -767,6 +820,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241110205225'),
 ('20241112212624'),
 ('20241112214416'),
-('20241115022429');
+('20241115022429'),
+('20241119182930');
 
 

@@ -79,22 +79,15 @@ class MarkdownRenderer
   end
 
   def self.display_refereces(html)
-    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
-    domain = "#{Tenant.current_subdomain}.#{ENV['HOSTNAME']}"
-    pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
+    link_parser = LinkParser.new(subdomain: Tenant.current_subdomain)
     doc = Nokogiri::HTML.fragment(html)
     doc.search('a').each do |a|
-      if a['href'] && a['href'].match?(pattern)
-        matches = a.content.scan(pattern)
-        matches.each do |m, id|
-          model = models[m]
-          column_name = id.length == 8 ? :truncated_id : :id
-          resource = model.find_by(column_name => id)
-          a['title'] = resource.title if resource
-          if resource && a.content == a['href']
-            a['class'] = "resource-link-#{model.name.downcase}"
-            a.content = id
-          end
+      a['href'] && link_parser.parse(a['href']) do |resource|
+        a['title'] = resource.title
+        if a.content == a['href']
+          model_name = resource.class.name.downcase
+          a['class'] = "resource-link-#{model_name}"
+          a.content = resource.truncated_id
         end
       end
     end

@@ -143,21 +143,22 @@ table.results-table thead tr th:first-of-type, table.results-table thead tr th:n
 button,
 .input[type="submit"],
 .input[type="button"] {
-  background-color: #007bff;
+  /* background-color: #007bff; */
+  background-color: #000;
   color: #fff;
   padding: 5px 10px;
-  border: none;
+  border: 1px solid #fff;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
 }
 
-button:hover,
+/* button:hover,
 .input[type="submit"]:hover,
 .input[type="button"]:hover {
   background-color: #0056b3;
-}
+} */
 
 button:disabled,
 .input[type="submit"]:disabled,
@@ -224,6 +225,40 @@ select:focus {
 
 .resource-link-note::before {
   content: "Note ";
+}
+
+.note-icon, .decision-icon, .commitment-icon {
+  background-size: 16px;
+  background-repeat: no-repeat;
+  height: 14px;
+  width: 16px;
+  display: inline-block;
+}
+
+.decision-icon {
+  height: 15px;
+}
+
+.note-icon.large-icon, .decision-icon.large-icon, .commitment-icon.large-icon {
+  background-size: 36px;
+  height: 31px;
+  width: 36px;
+}
+
+.decision-icon.large-icon {
+  height: 33px;
+}
+
+.note-icon {
+  background-image: url(/resource-icons/note-icon.svg);
+}
+
+.decision-icon {
+  background-image: url(/resource-icons/decision-icon.svg);
+}
+
+.commitment-icon {
+  background-image: url(/resource-icons/commitment-icon.svg);
 }
 
 /* Mobile-only styles */

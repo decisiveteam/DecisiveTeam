@@ -27,36 +27,25 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root 'home#index'
 
-  if ENV['APPS_ENABLED'].include?('decisive')
-    get '/decide' => 'decisions#new'
-    get '/decision/:id' => 'decisions#show'
-    ['decisions', 'd'].each do |path_prefix|
-      resources :decisions, only: [:create, :show], path: path_prefix do
-        get '/results.html' => 'decisions#results_partial'
-        get '/options.html' => 'decisions#options_partial'
-        post '/options.html' => 'decisions#create_option_and_return_options_partial'
-      end
-    end
-  end
-
-  if ENV['APPS_ENABLED'].include?('coordinated')
-    get 'coordinate' => 'commitments#new'
-    ['c'].each do |path_prefix|
-      resources :commitments, only: [:create, :show], path: path_prefix do
-        get '/status.html' => 'commitments#status_partial'
-        get '/participants.html' => 'commitments#participants_list_items_partial'
-        post '/join.html' => 'commitments#join_and_return_partial'
-        put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
-      end
-    end
-  end
-
   get 'note' => 'notes#new'
-  ['n'].each do |path_prefix|
-    resources :notes, only: [:create, :show], path: path_prefix do
-      get '/history.html' => 'notes#history_log_partial'
-      post '/confirm.html' => 'notes#confirm_and_return_partial'
-      put '/edit_display_name.html' => 'notes#edit_display_name_and_return_partial'
-    end
+  resources :notes, only: [:create, :show], path: 'n' do
+    get '/history.html' => 'notes#history_log_partial'
+    post '/confirm.html' => 'notes#confirm_and_return_partial'
+    put '/edit_display_name.html' => 'notes#edit_display_name_and_return_partial'
+  end
+
+  get '/decide' => 'decisions#new'
+  resources :decisions, only: [:create, :show], path: 'd' do
+    get '/results.html' => 'decisions#results_partial'
+    get '/options.html' => 'decisions#options_partial'
+    post '/options.html' => 'decisions#create_option_and_return_options_partial'
+  end
+
+  get 'commit' => 'commitments#new'
+  resources :commitments, only: [:create, :show], path: 'c' do
+    get '/status.html' => 'commitments#status_partial'
+    get '/participants.html' => 'commitments#participants_list_items_partial'
+    post '/join.html' => 'commitments#join_and_return_partial'
+    put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
   end
 end

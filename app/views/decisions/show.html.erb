@@ -1,11 +1,12 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<h4 style="margin-top:0px;">Decision</h4>
+<h4 style="margin-top:0px;"><i class="decision-icon"></i> Decision</h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
-  Created <strong><%= timeago(@decision.created_at) %></strong><br/>
-  <% if @decision.deadline && !@decision.closed? %>
+  <% if @decision.deadline.nil? %>
+    Created <strong><%= timeago(@decision.created_at) %></strong><br/>
+  <% elsif !@decision.closed? %>
     Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
-  <% elsif @decision.deadline && @decision.closed? %>
+  <% elsif @decision.closed? %>
     Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
   <% end %>
   Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">

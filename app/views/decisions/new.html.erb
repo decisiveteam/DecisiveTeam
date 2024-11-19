@@ -1,34 +1,34 @@
-<h1>Make a Decision</h1>
-<p>Making a group decision with Decisive Team is a 3 step process:</p>
+<h1><i class="decision-icon large-icon"></i> Decision</h1>
 <%= form_with(model: [@decision]) do |form| %>
-  <h2>1. Ask a question</h2>
   <p style="margin-bottom:2px;">Type the <strong>question</strong> that this decision will answer.</p>
   <div>
     <%= form.text_field :question, placeholder: 'Question' %>
-  </div> 
+  </div>
   <p style="margin-bottom:2px;margin-top:16px;">Add a <strong>description</strong> to provide context. (optional)</p>
   <div>
     <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
-  </div> 
-  <h2>2. Gather options</h2>
+  </div>
+  <h2>Options</h2>
   <p>
     <%= form.select :options_open, options_for_select([['Everyone', true], ['Just you', false]], selected: 'Everyone') %>
     will be able to add options on the decision page.
   </p>
-  <h2>3. Make a decision</h2>
+  <h2>Deadline</h2>
   <p>
     <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
-  <fieldset>
-    <legend><strong>Authentication</strong></legend>
-    <%= form.radio_button :auth_required, 'true', checked: true %> 
-    <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>
+  <% if true # check if tenant is public %>
+    <h2>Authentication</h2>
+    <fieldset>
+      <%= form.radio_button :auth_required, 'true', checked: true %>
+      <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>
 
-    <%= form.radio_button :auth_required, 'false', checked: false %> 
-    <%= form.label :auth_required, 'Allow anonymous participation (more convenient, less secure)', value: false %><br/>
-  </fieldset>
+      <%= form.radio_button :auth_required, 'false', checked: false %>
+      <%= form.label :auth_required, 'Allow anonymous participation (more convenient, less secure)', value: false %><br/>
+    </fieldset>
+  <% end %>
   <hr style="height:1px;" />
   <p>Go to the decision page and share the link with your team.</p>
   <%= form.submit 'Go to decision page' %>

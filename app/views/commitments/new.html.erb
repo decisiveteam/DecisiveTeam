@@ -1,5 +1,4 @@
-<h1>Coordinate</h1>
-<p>Coordinate with others by starting a reciprocal commitment.</p>
+<h1><i class="commitment-icon large-icon"></i> Commitment</h1>
 <%= form_with(model: [@commitment]) do |form| %>
   <p style="margin-bottom:2px;">Give this commitment a title.</p>
   <div>
@@ -12,7 +11,7 @@
   <h2>Critical Mass</h2>
   <p style="margin-bottom:2px;margin-top:16px;">Set the minimum number of participants required for this commitment to take effect.</p>
   <div>
-    <%= form.number_field :critical_mass, value: 0, style: 'width:48px;' %>
+    <%= form.number_field :critical_mass, value: 1, style: 'width:48px;' %>
   </div>
   <h2>Deadline</h2>
   <p style="margin-bottom:2px;margin-top:16px;">Set the deadline.</p>

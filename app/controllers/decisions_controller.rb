@@ -1,8 +1,8 @@
 class DecisionsController < ApplicationController
 
   def new
-    @page_title = "Make a Decision"
-    @page_description = "Decide as a group with Decisive Team"
+    @page_title = "Decide"
+    @page_description = "Make a group decision with Harmonic Team"
     @decision = Decision.new(
       question: params[:question],
     )
@@ -36,7 +36,7 @@ class DecisionsController < ApplicationController
     @participant = current_decision_participant
     session[:encrypted_participant_id] = encrypt(@participant.id)
     @page_title = @decision.question
-    @page_description = "Decide as a group with Decisive Team"
+    @page_description = "Decide as a group with Harmonic Team"
 
     @approvals = current_approvals
     set_results_view_vars
@@ -81,7 +81,7 @@ class DecisionsController < ApplicationController
   def current_app
     return @current_app if defined?(@current_app)
     @current_app = 'decisive'
-    @current_app_title = 'Decisive Team'
+    @current_app_title = 'Harmonic Team'
     @current_app_description = 'fast group decision-making'
     @current_app
   end

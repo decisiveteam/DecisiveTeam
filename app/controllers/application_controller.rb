@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :current_app, :current_tenant, :current_user
+  before_action :current_app, :current_tenant, :current_user, :current_resource
 
   def current_app
     # This method should be overridden in the app-specific controllers.
@@ -28,6 +28,8 @@ class ApplicationController < ActionController::Base
     rescue
       raise ActionController::RoutingError.new('Not Found')
     end
+    @breadcrumb_path ||= []
+    @breadcrumb_path << @current_tenant.name
     @current_tenant
   end
 
@@ -43,8 +45,31 @@ class ApplicationController < ActionController::Base
   end
 
   def current_resource_model
-    self.class.name.sub('Controller', '').singularize.constantize
+    return @current_resource_model if defined?(@current_resource_model)
+    if controller_name == 'home'
+      @current_resource_model = nil
+    else
+      @current_resource_model = controller_name.classify.constantize
+    end
+    @current_resource_model
   end
+
+  def current_resource
+    return @current_resource if defined?(@current_resource)
+    return nil unless current_resource_model
+    case current_resource_model.name
+    when 'Decision'
+      @current_resource = current_decision
+    when 'Commitment'
+      @current_resource = current_commitment
+    when 'Note'
+      @current_resource = current_note
+    else
+      @current_resource = nil
+    end
+    @current_resource
+  end
+
 
   def current_decision
     return @current_decision if defined?(@current_decision)

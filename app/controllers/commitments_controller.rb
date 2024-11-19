@@ -1,8 +1,8 @@
 class CommitmentsController < ApplicationController
 
   def new
-    @page_title = "Coordinate"
-    @page_description = "Coordinate with your team"
+    @page_title = "Commit"
+    @page_description = "Start a group commitment"
     @commitment = Commitment.new(
       title: params[:title],
     )

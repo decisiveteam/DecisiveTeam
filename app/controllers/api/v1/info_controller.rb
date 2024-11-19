@@ -4,7 +4,7 @@ module Api::V1
     def index
       # TODO Use routes to generate this (or swagger spec)
       render json: {
-        name: 'Decisive Team API',
+        name: 'Harmonic Team API',
         version: '1.0.0', # TODO: Use config variable to track version
         routes: [
           {

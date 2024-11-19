@@ -31,7 +31,10 @@
   </head>
 
   <body>
-    <a href="/"><i alt="decisive team" class="logo"></i></a>
+    <a href="/"><%= @current_tenant.name %></a>
+    <% if @current_resource %>
+      > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
+    <% end %>
     <div style="float:right;">
       <% if @current_user %>
         <img src="<%= @current_user.picture_url %>" title="<%= @current_user.name %>" style="height: 2em; border-radius: 50%; margin: 0.5em;">

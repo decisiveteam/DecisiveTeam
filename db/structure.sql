@@ -218,6 +218,22 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: tenant_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tenant_users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    handle character varying NOT NULL,
+    display_name character varying NOT NULL,
+    settings jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: tenants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -226,7 +242,8 @@ CREATE TABLE public.tenants (
     subdomain character varying NOT NULL,
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    settings jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -332,6 +349,14 @@ ALTER TABLE ONLY public.options
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: tenant_users tenant_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tenant_users
+    ADD CONSTRAINT tenant_users_pkey PRIMARY KEY (id);
 
 
 --
@@ -554,6 +579,34 @@ CREATE INDEX index_options_on_tenant_id ON public.options USING btree (tenant_id
 
 
 --
+-- Name: index_tenant_users_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tenant_users_on_tenant_id ON public.tenant_users USING btree (tenant_id);
+
+
+--
+-- Name: index_tenant_users_on_tenant_id_and_handle; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_tenant_users_on_tenant_id_and_handle ON public.tenant_users USING btree (tenant_id, handle);
+
+
+--
+-- Name: index_tenant_users_on_tenant_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_tenant_users_on_tenant_id_and_user_id ON public.tenant_users USING btree (tenant_id, user_id);
+
+
+--
+-- Name: index_tenant_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tenant_users_on_user_id ON public.tenant_users USING btree (user_id);
+
+
+--
 -- Name: index_tenants_on_subdomain; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -731,6 +784,22 @@ ALTER TABLE ONLY public.options
 
 
 --
+-- Name: tenant_users fk_rails_e15916f8bf; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tenant_users
+    ADD CONSTRAINT fk_rails_e15916f8bf FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: tenant_users fk_rails_e3b237e564; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tenant_users
+    ADD CONSTRAINT fk_rails_e3b237e564 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: notes fk_rails_e420fccb7e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -821,6 +890,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241112212624'),
 ('20241112214416'),
 ('20241115022429'),
-('20241119182930');
+('20241119182930'),
+('20241120025254'),
+('20241120183533');
 
 

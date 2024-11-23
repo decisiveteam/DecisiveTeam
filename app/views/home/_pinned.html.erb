@@ -1,0 +1,11 @@
+<% if @pinned_items.length > 0 %>
+  <ul>
+    <% @pinned_items.each do |item| %>
+      <li>
+        <a href="<%= item.path %>"><i class="<%= item.class.name.downcase %>-icon"></i> <%= item.title %></a>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No pinned notes.</p>
+<% end %>

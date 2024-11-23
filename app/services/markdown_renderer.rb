@@ -83,11 +83,10 @@ class MarkdownRenderer
     doc = Nokogiri::HTML.fragment(html)
     doc.search('a').each do |a|
       a['href'] && link_parser.parse(a['href']) do |resource|
-        a['title'] = resource.title
         if a.content == a['href']
           model_name = resource.class.name.downcase
-          a['class'] = "resource-link-#{model_name}"
-          a.content = resource.truncated_id
+          # a['class'] = "resource-link-#{model_name}"
+          a.inner_html = "<i class='#{model_name}-icon'></i> #{resource.title}"
         end
       end
     end

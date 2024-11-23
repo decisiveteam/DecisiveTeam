@@ -1,0 +1,7 @@
+<ul>
+<% @team.each do |tu| %>
+  <li>
+    <a href="/u/<%= tu.handle %>"><%= tu.display_name %></a>
+  </li>
+<% end %>
+</ul>

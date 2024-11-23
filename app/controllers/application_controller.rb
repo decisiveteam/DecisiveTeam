@@ -37,10 +37,17 @@ class ApplicationController < ActionController::Base
     return @current_user if defined?(@current_user)
     if session[:user_id].present?
       @current_user = User.find_by(id: session[:user_id])
+      if @current_user
+        tu = current_tenant.tenant_users.find_by(user: @current_user)
+        if tu.nil?
+          # DEBUG: This should not happen in production.
+          # tu = current_tenant.add_user!(@current_user)
+        end
+        @current_user.tenant_user = tu
+      end
     else
       @current_user = nil
     end
-    # redirect_to login unless current_user.can_access_tenant?(current_tenant)
     @current_user
   end
 

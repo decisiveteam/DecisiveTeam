@@ -7,6 +7,9 @@ class Tenant < ApplicationRecord
   tables.each do |table|
     has_many table.to_sym
   end
+  # has_many :users, through: :tenant_users
+  before_create :set_defaults
+  after_create :create_welcome_note
 
   def self.scope_thread_to_tenant(subdomain:)
     tenant = find_by(subdomain: subdomain)
@@ -25,6 +28,69 @@ class Tenant < ApplicationRecord
 
   def self.current_id
     Thread.current[:tenant_id]
+  end
+
+  def set_defaults
+    self.settings ||= {}
+    self.settings['pinned'] ||= []
+  end
+
+  def create_welcome_note!
+    note = Note.create!(
+      tenant: self,
+      title: 'Welcome to Harmonic Team',
+      text: 'This is a system generated note.'
+    )
+    pin_item!(note)
+  end
+
+  def pin_item!(item)
+    pin_items!([item])
+  end
+
+  def pin_items!(items)
+    self.settings['pinned'] += items.map do |item|
+      {
+        type: item.class.to_s,
+        id: item.id
+      }
+    end
+    save!
+  end
+
+  def add_user!(user)
+    tenant_users.create!(
+      user: user,
+      display_name: user.name,
+      handle: user.name.parameterize
+    )
+  end
+
+  def is_admin?(user)
+    # TODO - implement
+    tenant_users.find_by(user: user).present?
+  end
+
+  def pinned_items
+    settings['pinned'].map do |item|
+      item['type'].constantize.find_by(id: item['id'])
+    end
+  end
+
+  def open_items
+    open_decisions = decisions.where('deadline > ?', Time.current)
+    open_commitments = commitments.where('deadline > ?', Time.current)
+    (open_decisions + open_commitments).sort_by(&:deadline)
+  end
+
+  def recently_closed_items(time_window: 1.week)
+    closed_decisions = decisions.where('deadline < ?', Time.current).where('deadline > ?', time_window.ago)
+    closed_commitments = commitments.where('deadline < ?', Time.current).where('deadline > ?', time_window.ago)
+    (closed_decisions + closed_commitments).sort_by(&:deadline).reverse
+  end
+
+  def backlink_leaderboard(start_date: nil, end_date: nil, limit: 10)
+    Link.backlink_leaderboard(tenant_id: self.id)
   end
 
   private

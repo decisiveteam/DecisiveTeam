@@ -1,0 +1,12 @@
+<h1><%= @showing_user.display_name %></h1>
+<p><%= @showing_user.handle %></p>
+
+<h2>Pinned</h2>
+<%= render 'pinned' %>
+
+<% if @showing_user.user_id == @current_user.id %>
+  <!-- <h2>Only visible to you</h2>
+  <p style="font-style:italic;">Evenrything below is only visible to you.</p>
+
+  <p><%= @showing_user.settings.to_json %></p> -->
+<% end %>

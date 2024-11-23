@@ -1,4 +1,5 @@
-<h1>Harmonic Team</h1>
+<h1><%= @current_tenant.name %></h1>
+<h2>Create</h2>
 <p>
   <img src="/resource-icons/note-icon.svg" style="height:2em;float:left;margin-right:12px"/>
   <a href="/note"><button>New Note</button></a>
@@ -11,3 +12,11 @@
   <img src="/resource-icons/commitment-icon.svg" style="height:2em;float:left;margin-right:12px"/>
   <a href="/commit"><button>New Commitment</button></a>
 </p>
+<h2>Pinned</h2>
+<%= render 'pinned' %>
+
+<h2>Team</h2>
+<%= render 'team' %>
+
+<h2>Backlinks</h2>
+<%= render 'backlinks' %>

@@ -180,6 +180,19 @@ select:focus {
   border-color: #007bff;
 }
 
+.top-right-display {
+  float: right;
+}
+
+.top-right-display form {
+  display: inline-block;
+}
+
+.top-right-display form button {
+  position: relative;
+  top: -9px;
+}
+
 .text-only-button {
   color: #007bff;
   cursor: pointer;
@@ -203,6 +216,12 @@ select:focus {
 
 .highlighted {
   background-color: #ff0;
+}
+
+.user-profile-link img {
+  height: 1.5em;
+  position: relative;
+  bottom: -0.35em;
 }
 
 .resource-link-commitment, .resource-link-decision, .resource-link-note {

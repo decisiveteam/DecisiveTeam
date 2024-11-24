@@ -40,20 +40,32 @@ class ApplicationController < ActionController::Base
       if @current_user
         tu = current_tenant.tenant_users.find_by(user: @current_user)
         if tu.nil?
-          # DEBUG: This should not happen in production.
-          # tu = current_tenant.add_user!(@current_user)
+          # Sessions controller should have already handled this case.
+          raise 'User is not a member of this tenant'
+        else
+          # This assignment prevents unnecessary reloading.
+          @current_user.tenant_user = tu
         end
-        @current_user.tenant_user = tu
       end
+    elsif @current_tenant.require_login? && controller_name != 'sessions'
+      if current_resource
+        path = current_resource.path
+        query_string = "?redirect_to_resource=#{path}"
+      end
+      redirect_to '/login' + (query_string || '')
     else
       @current_user = nil
     end
     @current_user
   end
 
+  def authenticate_user!
+    redirect_to root_path unless current_user
+  end
+
   def current_resource_model
     return @current_resource_model if defined?(@current_resource_model)
-    if controller_name == 'home'
+    if controller_name == 'home' || controller_name == 'sessions'
       @current_resource_model = nil
     else
       @current_resource_model = controller_name.classify.constantize

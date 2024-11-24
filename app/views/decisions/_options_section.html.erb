@@ -4,9 +4,9 @@
 <% else %>
   <h2>Vote</h2>
 <% end %>
-<% if @decision.auth_required? && !@participant.authenticated? %>
+<% if !@participant.authenticated? %>
   <div class="auth-required-message">
-    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to participate.
+    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @decision.path } %> to participate.
   </div>
 <% else %>
   <span>Check all options you would accept. Star options you prefer.</span>
@@ -25,10 +25,5 @@
       </form>
     </li>
   </ul>
-  <% unless @participant.authenticated? %>
-    <div class="auth-required-message">
-      <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to retain access to your vote.
-    </div>
-  <% end %>
 <% end %>
 </span>

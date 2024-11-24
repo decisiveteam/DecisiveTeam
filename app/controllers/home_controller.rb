@@ -6,7 +6,7 @@ class HomeController < ApplicationController
     # @open_items = @current_tenant.open_items
     # @recently_closed_items = @current_tenant.recently_closed_items
     @backlinks = @current_tenant.backlink_leaderboard
-    @team = @current_tenant.tenant_users
+    @team = @current_tenant.team
   end
 
   def settings
@@ -18,7 +18,7 @@ class HomeController < ApplicationController
       redirect_to root_path
     end
     @page_title = 'Admin'
-    @team = @current_tenant.tenant_users
+    @team = @current_tenant.team
   end
 
 end

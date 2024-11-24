@@ -35,6 +35,6 @@
   <p>Commitments only take effect if critical mass is achieved.</p>
 <% else %>
   <div class="auth-required-message">
-    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to join this commitment.
+    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @commitment.path } %> to join this commitment.
   </div>
 <% end %>

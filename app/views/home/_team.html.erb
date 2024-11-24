@@ -1,7 +1,9 @@
 <ul>
-<% @team.each do |tu| %>
+<% @team.each do |u| %>
   <li>
-    <a href="/u/<%= tu.handle %>"><%= tu.display_name %></a>
+    <a href="/u/<%= u.handle %>" class="user-profile-link">
+      <img src="<%= u.image_url %>"/> <%= u.display_name %>
+    </a>
   </li>
 <% end %>
 </ul>

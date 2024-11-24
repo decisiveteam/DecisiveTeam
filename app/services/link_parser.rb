@@ -4,15 +4,23 @@ class LinkParser
     domain = "#{subdomain}.#{ENV['HOSTNAME']}"
     pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
     text.gsub(pattern) do |match|
-      type = $1
+      prefix = $1
       id = $2
-      model = models[type]
+      model = models[prefix]
       column_name = id.length == 8 ? :truncated_id : :id
       record = model.find_by(column_name => id)
       if record
         yield record
       end
     end
+  end
+
+  def self.parse_path(path)
+    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
+    x, prefix, id = path.split('/')
+    model = models[prefix]
+    column_name = id.length == 8 ? :truncated_id : :id
+    record = model.find_by(column_name => id)
   end
 
   def initialize(from_record: nil, subdomain: nil)

@@ -12,13 +12,14 @@ class NoteHistoryEvent < ApplicationRecord
   end
 
   def description
+    # TODO refactor this
     case event_type
     when 'create'
       'Note created'
     when 'update'
       'Note updated'
     when 'read_confirmation'
-      "#{user.name} confirmed reading this note"
+      "confirmed reading this note"
     else
       raise 'Unknown event type'
     end

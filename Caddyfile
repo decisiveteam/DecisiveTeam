@@ -2,3 +2,7 @@
     # Reverse proxy to the web service
     reverse_proxy web:3000
 }
+{$AUTH_SUBDOMAIN}.{$HOSTNAME} {
+    # Reverse proxy to the web service
+    reverse_proxy web:3000
+}

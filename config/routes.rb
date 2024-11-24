@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
-  get '/auth/auth0/callback' => 'auth0#callback'
-  get '/auth/failure' => 'auth0#failure'
-  get '/auth/logout' => 'auth0#logout'
-  get '/auth/redirect' => 'auth0#redirect'
-  # get '/signup' => 'auth0#signup'
+  get '/auth/:provider/callback', to: 'sessions#create'
+  delete '/logout', to: 'sessions#destroy'
+
+  get 'login' => 'sessions#new'
+  get 'login/callback' => 'sessions#internal_callback'
+  get 'logout-success' => 'sessions#logout_success'
 
   namespace :api do
     namespace :v1 do

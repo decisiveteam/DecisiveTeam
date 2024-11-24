@@ -27,6 +27,6 @@
   <% end %>
 <% else %>
   <div class="auth-required-message">
-    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to confirm reading this note.
+    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @note.path } %> to confirm reading this note.
   </div>
 <% end %>

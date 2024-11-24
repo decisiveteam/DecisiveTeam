@@ -14,7 +14,7 @@ class DecisionsController < ApplicationController
       description: decision_params[:description],
       options_open: decision_params[:options_open],
       deadline: Time.now + duration_param,
-      auth_required: decision_params[:auth_required].to_s == 'true',
+      auth_required: true, # TODO - remove this column
     )
     begin
       ActiveRecord::Base.transaction do
@@ -25,6 +25,7 @@ class DecisionsController < ApplicationController
       end
       redirect_to @decision.path
     rescue ActiveRecord::RecordInvalid => e
+      # TODO - Detect specific validation errors and return helpful error messages
       flash.now[:alert] = 'There was an error creating the decision. Please try again.'
       render :new
     end
@@ -34,7 +35,6 @@ class DecisionsController < ApplicationController
     @decision = current_decision
     return render '404', status: 404 unless @decision
     @participant = current_decision_participant
-    session[:encrypted_participant_id] = encrypt(@participant.id)
     @page_title = @decision.question
     @page_description = "Decide as a group with Harmonic Team"
 
@@ -69,7 +69,7 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit, :auth_required)
+    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit)
   end
 
   def set_results_view_vars

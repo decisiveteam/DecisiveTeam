@@ -3,14 +3,14 @@ module Api::V1
     def index
       render_404
     end
-  
+
     def create
       ActiveRecord::Base.transaction do
         decision = Decision.create!(
           question: params[:question],
           description: params[:description],
           options_open: params[:options_open] || true,
-          auth_required: params[:auth_required] || false,
+          auth_required: true,
           deadline: params[:deadline],
           other_attributes: params[:other_attributes] || {},
         )
@@ -37,7 +37,7 @@ module Api::V1
     private
 
     def updatable_attributes
-      [:question, :description, :options_open, :auth_required, :deadline, :other_attributes]
+      [:question, :description, :options_open, :deadline, :other_attributes]
     end
   end
 end

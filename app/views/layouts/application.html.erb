@@ -31,20 +31,22 @@
   </head>
 
   <body>
-    <a href="/"><%= @current_tenant.name %></a>
+    <a href="/"><%= controller_name == 'sessions' ? '' : @current_tenant.name %></a>
     <% if @current_resource %>
       > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
     <% end %>
-    <div style="float:right;">
+    <div class="top-right-display">
       <% if @current_user %>
-        <img src="<%= @current_user.picture_url %>" title="<%= @current_user.name %>" style="height: 2em; border-radius: 50%; margin: 0.5em;">
-        <%= button_to 'Logout', '/auth/logout', method: :get, data: { turbo: false } %>
-      <% else %>
-        <div style="display:none;">
-          <%= button_to 'Login', '/auth/auth0', method: :post, data: { turbo: false } %>
+        <div>
+          <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
+          <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
         </div>
+      <% elsif controller_name != 'sessions' %>
+        <%= button_to "Log in", "/login", method: :get %>
       <% end %>
     </div>
+    <div class="notice"><%= notice %></div>
+    <div class="alert"><%= alert %></div>
     <div class="markdown-body">
       <%= yield %>
     </div>

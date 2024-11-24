@@ -66,6 +66,13 @@ class Tenant < ApplicationRecord
     )
   end
 
+  def team(limit: 100)
+    tenant_users.includes(:user).limit(limit).map do |tu|
+      tu.user.tenant_user = tu
+      tu.user
+    end
+  end
+
   def is_admin?(user)
     # TODO - implement
     tenant_users.find_by(user: user).present?
@@ -91,6 +98,18 @@ class Tenant < ApplicationRecord
 
   def backlink_leaderboard(start_date: nil, end_date: nil, limit: 10)
     Link.backlink_leaderboard(tenant_id: self.id)
+  end
+
+  def auth_providers
+    settings['auth_providers'] || ['github']
+  end
+
+  def require_login?
+    settings['require_login'].to_s == 'false' ? false : true
+  end
+
+  def url
+    "https://#{subdomain}.#{ENV['HOSTNAME']}"
   end
 
   private

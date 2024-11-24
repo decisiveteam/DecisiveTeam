@@ -36,4 +36,16 @@ class TenantUser < ApplicationRecord
     end
   end
 
+  def path
+    "/u/#{handle}"
+  end
+
+  def confirmed_read_note_events(limit: 10)
+    NoteHistoryEvent.where(
+      tenant_id: tenant_id,
+      user_id: user_id,
+      event_type: 'read_confirmation',
+    ).includes(:note).order(happened_at: :desc).limit(limit)
+  end
+
 end

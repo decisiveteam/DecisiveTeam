@@ -19,16 +19,6 @@
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
     will be given for everyone to vote.
   </p>
-  <% if true # check if tenant is public %>
-    <h2>Authentication</h2>
-    <fieldset>
-      <%= form.radio_button :auth_required, 'true', checked: true %>
-      <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>
-
-      <%= form.radio_button :auth_required, 'false', checked: false %>
-      <%= form.label :auth_required, 'Allow anonymous participation (more convenient, less secure)', value: false %><br/>
-    </fieldset>
-  <% end %>
   <hr style="height:1px;" />
   <p>Go to the decision page and share the link with your team.</p>
   <%= form.submit 'Go to decision page' %>

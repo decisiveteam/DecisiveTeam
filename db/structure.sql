@@ -191,6 +191,25 @@ CREATE TABLE public.notes (
 
 
 --
+-- Name: oauth_identities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.oauth_identities (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    provider character varying,
+    uid character varying,
+    last_sign_in_at timestamp(6) without time zone,
+    url character varying,
+    username character varying,
+    image_url character varying,
+    auth_data jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: options; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -259,7 +278,8 @@ CREATE TABLE public.users (
     picture_url character varying,
     metadata json,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    image_url character varying
 );
 
 
@@ -333,6 +353,14 @@ ALTER TABLE ONLY public.note_history_events
 
 ALTER TABLE ONLY public.notes
     ADD CONSTRAINT notes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: oauth_identities oauth_identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.oauth_identities
+    ADD CONSTRAINT oauth_identities_pkey PRIMARY KEY (id);
 
 
 --
@@ -551,6 +579,20 @@ CREATE UNIQUE INDEX index_notes_on_truncated_id ON public.notes USING btree (tru
 
 
 --
+-- Name: index_oauth_identities_on_provider_and_uid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_oauth_identities_on_provider_and_uid ON public.oauth_identities USING btree (provider, uid);
+
+
+--
+-- Name: index_oauth_identities_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_identities_on_user_id ON public.oauth_identities USING btree (user_id);
+
+
+--
 -- Name: index_options_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -685,6 +727,14 @@ ALTER TABLE ONLY public.approvals
 
 ALTER TABLE ONLY public.commitments
     ADD CONSTRAINT fk_rails_2b0260c142 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: oauth_identities fk_rails_2f75762ff1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.oauth_identities
+    ADD CONSTRAINT fk_rails_2f75762ff1 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -892,6 +942,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241115022429'),
 ('20241119182930'),
 ('20241120025254'),
-('20241120183533');
+('20241120183533'),
+('20241123230912'),
+('20241124001646');
 
 

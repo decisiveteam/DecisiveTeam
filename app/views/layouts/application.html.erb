@@ -31,20 +31,22 @@
   </head>
 
   <body>
-    <a href="/"><%= controller_name == 'sessions' ? '' : @current_tenant.name %></a>
-    <% if @current_resource %>
-      > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
-    <% end %>
-    <div class="top-right-display">
-      <% if @current_user %>
-        <div>
-          <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
-          <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
-        </div>
-      <% elsif controller_name != 'sessions' %>
-        <%= button_to "Log in", "/login", method: :get %>
+    <% if controller_name != 'sessions' %>
+      <a href="/"><%= @current_tenant.name %></a>
+      <% if @current_resource %>
+        > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
       <% end %>
-    </div>
+      <div class="top-right-display">
+        <% if @current_user %>
+          <div>
+            <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
+            <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
+          </div>
+        <% else %>
+          <%= button_to "Log in", "/login", method: :get %>
+        <% end %>
+      </div>
+    <% end %>
     <div class="notice"><%= notice %></div>
     <div class="alert"><%= alert %></div>
     <div class="markdown-body">

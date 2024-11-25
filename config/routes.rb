@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
-  get '/auth/:provider/callback', to: 'sessions#create'
-  delete '/logout', to: 'sessions#destroy'
-
   get 'login' => 'sessions#new'
+  get 'auth/:provider/callback' => 'sessions#oauth_callback'
+  get 'login/return' => 'sessions#return'
   get 'login/callback' => 'sessions#internal_callback'
+  delete '/logout' => 'sessions#destroy'
   get 'logout-success' => 'sessions#logout_success'
 
   namespace :api do

@@ -1,5 +1,11 @@
-<h1>Log in to <code><%= "#{@current_tenant.subdomain}.#{ENV['HOSTNAME']}" %></code></h1>
-<% @current_tenant.auth_providers.each do |provider| %>
+<h1>Login</h1>
+<p>
+  Log in to <code><%= "#{@original_tenant.subdomain}.#{ENV['HOSTNAME']}" %></code>
+  <% if @redirect_to_resource %>
+    to view <code><%= @redirect_to_resource %></code>
+  <% end %>
+</p>
+<% @original_tenant.auth_providers.each do |provider| %>
   <% provider = provider.downcase %>
   <% if provider == "github" %>
     <%= button_to "Log in with GitHub", "/auth/github", method: :post %>

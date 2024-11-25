@@ -1,7 +1,14 @@
 class ApplicationController < ActionController::Base
-  before_action :current_app, :current_tenant, :current_user, :current_resource
+  before_action :check_auth_subdomain, :current_app, :current_tenant, :current_user, :current_resource
+
+  def check_auth_subdomain
+    if request.subdomain == auth_subdomain && controller_name != 'sessions'
+      redirect_to '/login'
+    end
+  end
 
   def current_app
+    # TODO Remove this method.
     # This method should be overridden in the app-specific controllers.
     return @current_app if defined?(@current_app)
     @current_app = ENV['APPS_ENABLED'].split(',')[0]
@@ -41,7 +48,7 @@ class ApplicationController < ActionController::Base
         tu = current_tenant.tenant_users.find_by(user: @current_user)
         if tu.nil?
           # Sessions controller should have already handled this case.
-          raise 'User is not a member of this tenant'
+          raise 'User is not a member of this tenant' if current_tenant.require_login?
         else
           # This assignment prevents unnecessary reloading.
           @current_user.tenant_user = tu
@@ -224,5 +231,13 @@ class ApplicationController < ActionController::Base
 
   def decrypt(data)
     JSON.parse(encryptor.decrypt_and_verify(data))
+  end
+
+  def auth_subdomain
+    ENV['AUTH_SUBDOMAIN']
+  end
+
+  def auth_domain_login_url
+    "https://#{auth_subdomain}.#{ENV['HOSTNAME']}/login"
   end
 end

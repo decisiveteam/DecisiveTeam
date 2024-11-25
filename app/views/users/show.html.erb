@@ -9,8 +9,22 @@
 <%= render 'confirmed_read_notes' %>
 
 <h2>Decisions</h2>
+<ul>
+<% @decision_participants.each do |p| %>
+  <li>
+    <a href="<%= p.decision.path %>"><i class="decision-icon"></i> <%= p.decision.question %></a>
+  </li>
+<% end %>
+</ul>
 
 <h2>Commitments</h2>
+<ul>
+<% @commitment_participants.each do |p| %>
+  <li>
+    <a href="<%= p.commitment.path %>"><i class="commitment-icon"></i> <%= p.commitment.title %></a>
+  </li>
+<% end %>
+</ul>
 
 <% if @showing_user.id == @current_user.id %>
   <h2>Only visible to you</h2>

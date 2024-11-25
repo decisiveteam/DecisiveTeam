@@ -12,7 +12,16 @@ class Tenant < ApplicationRecord
   after_create :create_welcome_note
 
   def self.scope_thread_to_tenant(subdomain:)
-    tenant = find_by(subdomain: subdomain)
+    if subdomain == ENV['AUTH_SUBDOMAIN']
+      tenant = Tenant.new(
+        id: SecureRandom.uuid,
+        name: 'Harmonic Team',
+        subdomain: ENV['AUTH_SUBDOMAIN'],
+        settings: { 'require_login' => false }
+      )
+    else
+      tenant = find_by(subdomain: subdomain)
+    end
     if tenant
       self.current_subdomain = tenant.subdomain
       self.current_id = tenant.id

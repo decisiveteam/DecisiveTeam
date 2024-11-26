@@ -6,5 +6,12 @@
   <div>
     <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;' %>
   </div>
+  <h2>Relevance Duration</h2>
+  <p>
+    This note will be relevant for approximately
+    <%= form.number_field :duration, value: 1, style: 'width:48px;' %>
+    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'day(s)') %>
+  </p>
+  <hr style="height:1px;" />
   <%= form.submit 'Save note' %>
 <% end %>

@@ -48,4 +48,11 @@ class Note < ApplicationRecord
       happened_at: Time.current
     )
   end
+
+  def user_has_read?(user)
+    note_history_events.where(
+      user: user,
+      event_type: 'read_confirmation'
+    ).exists?
+  end
 end

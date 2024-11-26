@@ -7,6 +7,12 @@ class HomeController < ApplicationController
     # @recently_closed_items = @current_tenant.recently_closed_items
     @backlinks = @current_tenant.backlink_leaderboard
     @team = @current_tenant.team
+    @current_cycles = [
+      Cycle.new(name: 'today', tenant_id: @current_tenant.id),
+      Cycle.new(name: 'this-week', tenant_id: @current_tenant.id),
+      Cycle.new(name: 'this-month', tenant_id: @current_tenant.id),
+      Cycle.new(name: 'this-year', tenant_id: @current_tenant.id),
+    ]
   end
 
   def settings

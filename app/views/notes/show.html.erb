@@ -4,6 +4,11 @@
 <h1 style="margin-top:0;"><%= @note.title %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@note.created_at) %></strong><br/>
+  <% if @note.deadline > Time.now %>
+    Relevant until <strong><%= timeago(@note.deadline) %></strong><br/>
+  <% else %>
+    Relevance expired <strong><%= timeago(@note.deadline) %></strong><br/>
+  <% end %>
   Share this note: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
     <input type="text" value="<%= @note.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
     <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>

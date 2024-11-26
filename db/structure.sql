@@ -186,7 +186,8 @@ CREATE TABLE public.notes (
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    deadline timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -944,6 +945,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241120025254'),
 ('20241120183533'),
 ('20241123230912'),
-('20241124001646');
+('20241124001646'),
+('20241125235008');
 
 

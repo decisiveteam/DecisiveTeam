@@ -1,0 +1,54 @@
+<h1>Cycle: <%= @cycle.display_name %></h1>
+
+<p>
+  <strong><%= @cycle.display_window %></strong>
+  <br/>
+  <span style="font-size: 0.8em;">
+    <%= @cycle.display_duration %>,
+    <% if @cycle.start_date > Date.today %>
+      starting <%= timeago(@cycle.start_date) %>
+    <% elsif @cycle.end_date < Date.today %>
+      ended <%= timeago(@cycle.end_date) %>
+    <% else %>
+      ending in <strong><%= countdown(@cycle.end_date) %></strong>
+    <% end %>
+  </span>
+</p>
+
+<h2>Notes</h2>
+<ul>
+<% @notes.each do |note| %>
+  <li style="<%= note.user_has_read?(@current_user) ? 'opacity:0.5;' : '' %>">
+    <a href="<%= note.path %>"><i class="note-icon"></i> <%= note.title %></a>
+  </li>
+<% end %>
+</ul>
+
+<h2>Decisions</h2>
+<ul>
+<% @decisions.each do |decision| %>
+  <li>
+    <a href="<%= decision.path %>"><i class="decision-icon"></i> <%= decision.question %></a>
+  </li>
+<% end %>
+</ul>
+
+<h2>Commitments</h2>
+<ul>
+<% @commitments.each do |commitment| %>
+  <li>
+    <a href="<%= commitment.path %>"><i class="commitment-icon"></i> <%= commitment.title %></a>
+  </li>
+<% end %>
+</ul>
+
+<h2>Backlinks</h2>
+<p>Items that are linked to by the items above.</p>
+<ul>
+<% @backlinks.each do |backlink| %>
+  <% type = backlink['type'].downcase %>
+  <li>
+    <a href="/<%= type[0] + '/' + backlink['id'].slice(0, 8) %>"><i class="<%= type %>-icon"></i> <%= backlink['title'] %></a>
+  </li>
+<% end %>
+</ul>

@@ -33,14 +33,20 @@
   <body>
     <% if controller_name != 'sessions' %>
       <a href="/"><%= @current_tenant.name %></a>
-      <% if @current_resource %>
+      <% if @current_resource && @current_resource.class.to_s == 'Cycle' %>
+        > <a href="/cycles">Cycles</a> > <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
+      <% elsif @current_resource %>
         > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
+      <% elsif @showing_user %>
+        > <span class="resource-link-user"><%= @showing_user.handle %></span>
       <% end %>
       <div class="top-right-display">
         <% if @current_user %>
           <div>
             <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
-            <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
+            <% if @showing_user && @showing_user == @current_user %>
+              <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
+            <% end %>
           </div>
         <% else %>
           <%= button_to "Log in", "/login", method: :get %>

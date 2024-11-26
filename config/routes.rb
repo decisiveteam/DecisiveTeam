@@ -31,6 +31,8 @@ Rails.application.routes.draw do
   get 'admin' => 'home#admin'
   # get 'team' => 'users#index'
   get 'u/:handle' => 'users#show'
+  get 'cycles' => 'cycles#index'
+  get 'cycles/:cycle' => 'cycles#show'
 
   get 'note' => 'notes#new'
   resources :notes, only: [:create, :show], path: 'n' do

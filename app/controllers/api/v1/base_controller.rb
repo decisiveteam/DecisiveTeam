@@ -1,15 +1,18 @@
 class Api::V1::BaseController < ApplicationController
   skip_before_action :verify_authenticity_token, if: :api_token_present?
   before_action :api_authorize!, if: :api_token_present?
-  before_action :validate_can_write, if: :is_write_request?
+  before_action :validate_scope
 
   # Read actions are allowed by default
   def index
-    render json: current_scope
+    response = current_scope.map do |resource|
+      resource.api_json(include: includes_param)
+    end
+    render json: response
   end
 
   def show
-    render json: current_resource
+    render json: current_resource.api_json(include: includes_param)
   end
 
   # Write actions are not allowed by default
@@ -31,45 +34,49 @@ class Api::V1::BaseController < ApplicationController
     render json: { error: 'Not found' }, status: 404
   end
 
+  def index_not_supported_404
+    render status: 404, json: {
+      message: 'The index action is not supported for notes, decisions, or commitments. Please use the /api/v1/cycles/today endpoint to get a collection of notes, decisions, and commitments.',
+    }
+  end
+
   def api_token_present?
     request.headers['Authorization'].present?
   end
 
+  def current_user
+    return @current_user if defined?(@current_user)
+    if api_token_present?
+      api_authorize!
+      @current_user = @current_token.user
+    else
+      super
+    end
+  end
+
   def api_authorize!
-    return render json: { error: 'API not enabled' }, status: 403 unless ENV['API_TOKEN'].present?
-    prefix, api_token = request.headers['Authorization'].split(' ')
-    if prefix == 'Bearer' && api_token == ENV['API_TOKEN'] # TODO - Implement API tokens system
+    return true if @current_token
+    api_enabled = true # TODO add to .env
+    return render json: { error: 'API not enabled' }, status: 403 unless api_enabled
+    prefix, token_string = request.headers['Authorization'].split(' ')
+    @current_token = ApiToken.find_by(token: token_string)
+    if prefix == 'Bearer' && @current_token&.active? && @current_token&.tenant_id == current_tenant.id
+      @current_token.token_used!
       true
     else
       render json: { error: 'Unauthorized' }, status: 401
     end
   end
 
-  def is_write_request?
-    ['POST', 'PUT', 'PATCH', 'DELETE'].include?(request.method)
-  end
-
-  def validate_can_write
-    if current_decision && current_resource_model != Decision # is Option, Approval, or DecisionParticipant
-      if current_decision.closed?
-        render json: { error: 'Decision is closed' }, status: 403
-      elsif current_decision.auth_required? && (!current_decision_participant || !current_decision_participant.authenticated?)
-        render json: { error: 'Decision requires authentication' }, status: 403
-      end
+  def validate_scope
+    return true if @current_user && !@current_token # Allow all actions for logged in users
+    unless @current_token.can?(request.method, current_resource_model)
+      render json: { error: 'Unauthorized' }, status: 401
     end
   end
 
   def current_resource_model
     self.class.name.sub('Api::V1::', '').sub('Controller', '').singularize.constantize
-  end
-
-  def current_resource
-    return @current_resource if defined?(@current_resource)
-    @current_resource = if current_resource_model == Decision
-      current_decision
-    else
-      current_scope.find_by(id: params[:id])
-    end
   end
 
   def current_scope
@@ -87,5 +94,9 @@ class Api::V1::BaseController < ApplicationController
       @current_option = nil
     end
     @current_option
+  end
+
+  def includes_param
+    params[:include].to_s.split(',')
   end
 end

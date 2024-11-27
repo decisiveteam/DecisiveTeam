@@ -1,5 +1,5 @@
 module Api::V1
-  class OptionsController < BaseController    
+  class OptionsController < BaseController
     def create
       if current_decision.can_add_options?(current_decision_participant)
         option = Option.create!(
@@ -7,7 +7,6 @@ module Api::V1
           decision_participant: current_decision_participant,
           title: params[:title],
           description: params[:description],
-          other_attributes: {} # TODO
         )
         render json: option
       else
@@ -21,14 +20,13 @@ module Api::V1
         option = current_resource
         option.title = params[:title] if params[:title].present?
         option.description = params[:description] if params[:description].present?
-        # option.other_attributes # TODO
         option.save!
         render json: option
       else
         render json: { error: 'Cannot update options' }, status: 403
       end
     end
-    
+
     def destroy
       if current_decision.can_delete_options?(current_decision_participant)
         # TODO Check for approvals first

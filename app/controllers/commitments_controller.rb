@@ -14,6 +14,7 @@ class CommitmentsController < ApplicationController
       description: model_params[:description],
       critical_mass: model_params[:critical_mass],
       deadline: Time.now + duration_param,
+      created_by: current_user,
     )
     begin
       ActiveRecord::Base.transaction do

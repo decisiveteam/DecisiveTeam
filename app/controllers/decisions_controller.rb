@@ -9,19 +9,15 @@ class DecisionsController < ApplicationController
   end
 
   def create
-    @decision = Decision.new(
-      question: decision_params[:question],
-      description: decision_params[:description],
-      options_open: decision_params[:options_open],
-      deadline: Time.now + duration_param,
-      auth_required: true, # TODO - remove this column
-    )
     begin
       ActiveRecord::Base.transaction do
-        @decision.save!
-        @current_decision = @decision
-        @current_decision.created_by = current_decision_participant
-        @current_decision.save!
+        @decision = @current_decision = Decision.create!(
+          question: decision_params[:question],
+          description: decision_params[:description],
+          options_open: decision_params[:options_open],
+          deadline: Time.now + duration_param,
+          created_by: current_user,
+        )
       end
       redirect_to @decision.path
     rescue ActiveRecord::RecordInvalid => e
@@ -55,7 +51,6 @@ class DecisionsController < ApplicationController
       decision_participant: current_decision_participant,
       title: params[:title],
       description: params[:description],
-      other_attributes: {} # TODO
     )
     options_partial
   end

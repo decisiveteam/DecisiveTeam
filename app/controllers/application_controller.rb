@@ -66,10 +66,6 @@ class ApplicationController < ActionController::Base
     @current_user
   end
 
-  def authenticate_user!
-    redirect_to root_path unless current_user
-  end
-
   def current_resource_model
     return @current_resource_model if defined?(@current_resource_model)
     if controller_name == 'home' || controller_name == 'sessions'

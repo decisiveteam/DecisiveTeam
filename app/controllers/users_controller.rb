@@ -13,4 +13,12 @@ class UsersController < ApplicationController
     @decision_participants = @showing_user.decision_participants.includes(:decision).order(created_at: :desc)
     @commitment_participants = @showing_user.commitment_participants.includes(:commitment).order(created_at: :desc)
   end
+
+  def settings
+    tu = current_tenant.tenant_users.find_by(handle: params[:handle])
+    return render '404' if tu.nil?
+    return render text: '403 Unauthorized' unless tu.user == current_user
+    @current_user.tenant_user = tu
+  end
+
 end

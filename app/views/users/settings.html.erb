@@ -1,0 +1,37 @@
+<h1>Your Settings</h1>
+<h2>Connected Accounts</h2>
+<ul>
+<% @current_user.oauth_identities.each do |identity| %>
+  <li>
+    <%= identity.provider.titleize %> (<a href="<%= identity.url %>"><%= identity.username %></a>)
+    Connected <%= time_ago_in_words(identity.created_at) %> ago
+  </li>
+<% end %>
+</ul>
+
+<h2>API Tokens</h2>
+<% if @current_user.api_tokens.any? %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Token</th>
+      <th>Created</th>
+      <th>Last Used</th>
+      <th>Expires</th>
+      <th>Active</th>
+    </tr>
+    <% @current_user.api_tokens.each do |token| %>
+      <tr>
+        <td><%= token.name || 'Unnamed' %></td>
+        <td><%= token.obfuscated_token %></td>
+        <td><%= timeago(token.created_at) %></td>
+        <td><%= timeago(token.last_used_at) %></td>
+        <td><%= timeago(token.expires_at) %></td>
+        <td><%= token.active? ? 'Yes' : 'No' %></td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>No API tokens.</p>
+<% end %>
+

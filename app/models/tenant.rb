@@ -7,7 +7,7 @@ class Tenant < ApplicationRecord
   tables.each do |table|
     has_many table.to_sym
   end
-  # has_many :users, through: :tenant_users
+  has_many :users, through: :tenant_users
   before_create :set_defaults
   after_create :create_welcome_note
 

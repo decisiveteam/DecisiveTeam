@@ -1,6 +1,9 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
+  before_validation :set_tenant_id
+  before_validation :set_updated_by
+
   default_scope do
     if belongs_to_tenant? && Tenant.current_id
       where(tenant_id: Tenant.current_id)
@@ -14,7 +17,9 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def set_tenant_id
-    self.tenant_id ||= Tenant.current_id
+    if self.class.belongs_to_tenant?
+      self.tenant_id ||= Tenant.current_id
+    end
   end
 
   def self.is_tracked?
@@ -23,6 +28,12 @@ class ApplicationRecord < ActiveRecord::Base
 
   def is_tracked?
     self.class.is_tracked?
+  end
+
+  def set_updated_by
+    if self.class.column_names.include?("updated_by_id")
+      self.updated_by_id ||= created_by_id
+    end
   end
 
   def deadline_iso8601

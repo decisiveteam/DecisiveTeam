@@ -14,6 +14,7 @@ class NotesController < ApplicationController
       title: model_params[:title],
       text: model_params[:text],
       deadline: Time.now + duration_param,
+      created_by: current_user,
     )
     begin
       ActiveRecord::Base.transaction do

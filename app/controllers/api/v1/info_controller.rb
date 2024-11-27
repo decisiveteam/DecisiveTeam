@@ -2,7 +2,7 @@ module Api::V1
   class InfoController < BaseController
 
     def index
-      # TODO Use routes to generate this (or swagger spec)
+      # TODO Use token scopes to determine what to show
       render json: {
         name: 'Harmonic Team API',
         version: '1.0.0', # TODO: Use config variable to track version
@@ -60,5 +60,18 @@ module Api::V1
     def current_resource_model
       nil
     end
+
+    def validate_scope
+      return true
+    end
+
+    def current_scope
+      nil
+    end
+
+    def current_resource
+      nil
+    end
+
   end
 end

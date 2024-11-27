@@ -3,17 +3,57 @@ class Decision < ApplicationRecord
   include Linkable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
   before_validation :set_tenant_id
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
-  belongs_to :created_by, class_name: 'DecisionParticipant', foreign_key: 'created_by_id', optional: true
 
   validates :question, presence: true
+
+  def self.api_json
+    map { |decision| decision.api_json }
+  end
 
   def truncated_id
     # TODO Fix the bug that causes this to be nil on first save
     super || self.id.to_s[0..7]
+  end
+
+  def api_json(include: [])
+    response = {
+      id: id,
+      truncated_id: truncated_id,
+      question: question,
+      description: description,
+      options_open: options_open,
+      deadline: deadline,
+      created_at: created_at,
+      updated_at: updated_at,
+      # participants: decision_participants.map(&:api_json),
+      # options: options.map(&:api_json),
+      # approvals: approvals.map(&:api_json),
+      # results: results.map(&:api_json),
+      # history_events: history_events.map(&:api_json),
+      # backlinks: backlinks.map(&:api_json),
+    }
+    if include.include?('participants')
+      response.merge!({ participants: participants.map(&:api_json) })
+    end
+    if include.include?('options')
+      response.merge!({ options: options.map(&:api_json) })
+    end
+    if include.include?('approvals')
+      response.merge!({ approvals: approvals.map(&:api_json) })
+    end
+    if include.include?('results')
+      response.merge!({ results: results.map(&:api_json) })
+    end
+    if include.include?('backlinks')
+      response.merge!({ backlinks: backlinks.map(&:api_json) })
+    end
+    response
   end
 
   def title
@@ -26,7 +66,7 @@ class Decision < ApplicationRecord
 
   def can_add_options?(participant)
     return false if closed?
-    return false if auth_required? && !participant.authenticated?
+    return false if !participant.authenticated?
     return true if options_open?
     return true if participant == created_by
     return false if participant.nil?
@@ -49,7 +89,10 @@ class Decision < ApplicationRecord
     @results = DecisionResult.where(
       tenant_id: tenant_id,
       decision_id: self.id
-    )
+    ).map.with_index do |result, index|
+      result.position = index + 1
+      result
+    end
   end
 
   def view_count

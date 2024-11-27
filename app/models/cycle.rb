@@ -7,6 +7,31 @@ class Cycle
     raise "Invalid tenant_id" if @tenant_id.nil?
   end
 
+  def api_json(include: [])
+    response = {
+      name: name,
+      display_name: display_name,
+      time_window: display_window,
+      unit: unit,
+      start_date: start_date,
+      end_date: end_date,
+      counts: counts,
+    }
+    if include.include?('notes')
+      response.merge!({ notes: notes.map(&:api_json) })
+    end
+    if include.include?('decisions')
+      response.merge!({ decisions: decisions.map(&:api_json) })
+    end
+    if include.include?('commitments')
+      response.merge!({ commitments: commitments.map(&:api_json) })
+    end
+    if include.include?('backlinks')
+      response.merge!({ backlinks: backlinks.map(&:api_json) })
+    end
+    response
+  end
+
   def display_name
     @name.titleize
   end

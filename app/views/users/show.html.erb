@@ -1,6 +1,9 @@
 <img src="<%= @showing_user.image_url %>" style="height:64px;float:left;margin-right:12px;" />
 <h1><%= @showing_user.display_name %></h1>
 <p><%= @showing_user.handle %></p>
+<% if @showing_user.id == @current_user.id %>
+  <p><a href="<%= @current_user.path %>/settings">Settings</a></p>
+<% end %>
 
 <h2>Pinned</h2>
 <%= render 'pinned' %>
@@ -25,19 +28,3 @@
   </li>
 <% end %>
 </ul>
-
-<% if @showing_user.id == @current_user.id %>
-  <h2>Only visible to you</h2>
-  <p style="font-style:italic;">Everything below is only visible to you.</p>
-  <h3>Connected Accounts</h3>
-  <ul>
-  <% @current_user.oauth_identities.each do |identity| %>
-    <li>
-      <%= identity.provider.titleize %> (<a href="<%= identity.url %>"><%= identity.username %></a>)
-      Connected <%= time_ago_in_words(identity.created_at) %> ago
-    </li>
-  <% end %>
-  </ul>
-
-  <!-- <p><%= @showing_user.settings.to_json %></p> -->
-<% end %>

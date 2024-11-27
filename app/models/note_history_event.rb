@@ -3,7 +3,7 @@ class NoteHistoryEvent < ApplicationRecord
   belongs_to :tenant
   before_validation :set_tenant_id
   belongs_to :note
-  belongs_to :user, optional: true
+  belongs_to :user
   validates :event_type, presence: true, inclusion: { in: %w(create update read_confirmation) }
   validates :happened_at, presence: true
 
@@ -11,13 +11,24 @@ class NoteHistoryEvent < ApplicationRecord
     self.tenant_id ||= note.tenant_id
   end
 
+  def api_json
+    {
+      id: id,
+      note_id: note_id,
+      user_id: user_id,
+      event_type: event_type,
+      description: description,
+      happened_at: happened_at,
+    }
+  end
+
   def description
     # TODO refactor this
     case event_type
     when 'create'
-      'Note created'
+      'created this note'
     when 'update'
-      'Note updated'
+      'updated this note'
     when 'read_confirmation'
       "confirmed reading this note"
     else

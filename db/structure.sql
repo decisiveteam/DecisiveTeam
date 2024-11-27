@@ -28,6 +28,25 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: api_tokens; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.api_tokens (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    name character varying,
+    token character varying NOT NULL,
+    last_used_at timestamp(6) without time zone,
+    expires_at timestamp(6) without time zone DEFAULT (CURRENT_TIMESTAMP + '1 year'::interval),
+    active boolean DEFAULT true,
+    scopes jsonb DEFAULT '[]'::jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: approvals; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -86,7 +105,9 @@ CREATE TABLE public.commitments (
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    created_by_id uuid,
+    updated_by_id uuid
 );
 
 
@@ -131,15 +152,14 @@ CREATE TABLE public.decisions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     question text,
     description text,
-    other_attributes jsonb,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     deadline timestamp(6) without time zone,
-    created_by_id uuid,
     options_open boolean DEFAULT true NOT NULL,
-    auth_required boolean DEFAULT false,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    created_by_id uuid,
+    updated_by_id uuid
 );
 
 
@@ -187,7 +207,9 @@ CREATE TABLE public.notes (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     tenant_id uuid NOT NULL,
-    deadline timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP
+    deadline timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by_id uuid,
+    updated_by_id uuid
 );
 
 
@@ -220,7 +242,6 @@ CREATE TABLE public.options (
     decision_participant_id uuid,
     title text NOT NULL,
     description text,
-    other_attributes jsonb,
     random_id integer DEFAULT (floor((random() * (1000000000)::double precision)))::integer NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -273,15 +294,21 @@ CREATE TABLE public.tenants (
 
 CREATE TABLE public.users (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    auth0_id character varying NOT NULL,
     email character varying DEFAULT ''::character varying NOT NULL,
     name character varying DEFAULT ''::character varying NOT NULL,
     picture_url character varying,
-    metadata json,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     image_url character varying
 );
+
+
+--
+-- Name: api_tokens api_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.api_tokens
+    ADD CONSTRAINT api_tokens_pkey PRIMARY KEY (id);
 
 
 --
@@ -405,6 +432,34 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: index_api_tokens_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_api_tokens_on_tenant_id ON public.api_tokens USING btree (tenant_id);
+
+
+--
+-- Name: index_api_tokens_on_tenant_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_api_tokens_on_tenant_id_and_user_id ON public.api_tokens USING btree (tenant_id, user_id);
+
+
+--
+-- Name: index_api_tokens_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_api_tokens_on_token ON public.api_tokens USING btree (token);
+
+
+--
+-- Name: index_api_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_api_tokens_on_user_id ON public.api_tokens USING btree (user_id);
+
+
+--
 -- Name: index_approvals_on_decision_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -475,6 +530,13 @@ CREATE INDEX index_commitment_participants_on_user_id ON public.commitment_parti
 
 
 --
+-- Name: index_commitments_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitments_on_created_by_id ON public.commitments USING btree (created_by_id);
+
+
+--
 -- Name: index_commitments_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -486,6 +548,13 @@ CREATE INDEX index_commitments_on_tenant_id ON public.commitments USING btree (t
 --
 
 CREATE UNIQUE INDEX index_commitments_on_truncated_id ON public.commitments USING btree (truncated_id);
+
+
+--
+-- Name: index_commitments_on_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitments_on_updated_by_id ON public.commitments USING btree (updated_by_id);
 
 
 --
@@ -510,6 +579,13 @@ CREATE INDEX index_decision_participants_on_tenant_id ON public.decision_partici
 
 
 --
+-- Name: index_decisions_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decisions_on_created_by_id ON public.decisions USING btree (created_by_id);
+
+
+--
 -- Name: index_decisions_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -521,6 +597,13 @@ CREATE INDEX index_decisions_on_tenant_id ON public.decisions USING btree (tenan
 --
 
 CREATE UNIQUE INDEX index_decisions_on_truncated_id ON public.decisions USING btree (truncated_id);
+
+
+--
+-- Name: index_decisions_on_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decisions_on_updated_by_id ON public.decisions USING btree (updated_by_id);
 
 
 --
@@ -566,6 +649,13 @@ CREATE INDEX index_note_history_events_on_user_id ON public.note_history_events 
 
 
 --
+-- Name: index_notes_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_notes_on_created_by_id ON public.notes USING btree (created_by_id);
+
+
+--
 -- Name: index_notes_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -577,6 +667,13 @@ CREATE INDEX index_notes_on_tenant_id ON public.notes USING btree (tenant_id);
 --
 
 CREATE UNIQUE INDEX index_notes_on_truncated_id ON public.notes USING btree (truncated_id);
+
+
+--
+-- Name: index_notes_on_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_notes_on_updated_by_id ON public.notes USING btree (updated_by_id);
 
 
 --
@@ -657,13 +754,6 @@ CREATE UNIQUE INDEX index_tenants_on_subdomain ON public.tenants USING btree (su
 
 
 --
--- Name: index_users_on_auth0_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_users_on_auth0_id ON public.users USING btree (auth0_id);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -715,6 +805,14 @@ ALTER TABLE ONLY public.options
 
 
 --
+-- Name: decisions fk_rails_148841bc6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decisions
+    ADD CONSTRAINT fk_rails_148841bc6d FOREIGN KEY (updated_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: approvals fk_rails_23f31e4409; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -763,6 +861,22 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: notes fk_rails_492bbd23f7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT fk_rails_492bbd23f7 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
+-- Name: commitments fk_rails_4bd2b4721e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitments
+    ADD CONSTRAINT fk_rails_4bd2b4721e FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: note_history_events fk_rails_601d54357c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -776,6 +890,14 @@ ALTER TABLE ONLY public.note_history_events
 
 ALTER TABLE ONLY public.note_history_events
     ADD CONSTRAINT fk_rails_63e2a8744d FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: notes fk_rails_6e1963e950; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT fk_rails_6e1963e950 FOREIGN KEY (updated_by_id) REFERENCES public.users(id);
 
 
 --
@@ -819,11 +941,19 @@ ALTER TABLE ONLY public.links
 
 
 --
+-- Name: api_tokens fk_rails_ce1100e505; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.api_tokens
+    ADD CONSTRAINT fk_rails_ce1100e505 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: decisions fk_rails_db126ea214; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.decisions
-    ADD CONSTRAINT fk_rails_db126ea214 FOREIGN KEY (created_by_id) REFERENCES public.decision_participants(id);
+    ADD CONSTRAINT fk_rails_db126ea214 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
 
 
 --
@@ -859,6 +989,14 @@ ALTER TABLE ONLY public.notes
 
 
 --
+-- Name: commitments fk_rails_e4837f1e6d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitments
+    ADD CONSTRAINT fk_rails_e4837f1e6d FOREIGN KEY (updated_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: decision_participants fk_rails_ef2bebed7c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -872,6 +1010,14 @@ ALTER TABLE ONLY public.decision_participants
 
 ALTER TABLE ONLY public.commitment_participants
     ADD CONSTRAINT fk_rails_f0bea833a7 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: api_tokens fk_rails_f16b5e0447; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.api_tokens
+    ADD CONSTRAINT fk_rails_f16b5e0447 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -946,6 +1092,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241120183533'),
 ('20241123230912'),
 ('20241124001646'),
-('20241125235008');
+('20241125235008'),
+('20241126215856'),
+('20241127005322'),
+('20241127011437');
 
 

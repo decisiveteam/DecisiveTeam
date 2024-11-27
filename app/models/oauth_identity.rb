@@ -18,8 +18,6 @@ class OauthIdentity < ApplicationRecord
       email: auth.info.email,
       name: auth.info.name,
       image_url: auth.info.image,
-      # TODO remove auth0
-      auth0_id: auth.provider == 'auth0' ? auth.uid : "not-auth0-#{auth.uid}"
     )
 
     # Link identity to user

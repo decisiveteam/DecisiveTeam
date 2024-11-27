@@ -3,6 +3,8 @@ class Note < ApplicationRecord
   include Linkable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
   before_validation :set_tenant_id
   has_many :note_history_events, dependent: :destroy
   validates :title, presence: true
@@ -11,9 +13,9 @@ class Note < ApplicationRecord
     # TODO Reference user who created the note
     NoteHistoryEvent.create!(
       note: self,
-      user: nil,
+      user: self.created_by,
       event_type: 'create',
-      happened_at: self.created_at
+      happened_at: self.created_at,
     )
   end
 
@@ -21,7 +23,7 @@ class Note < ApplicationRecord
     # TODO Reference user who updated the note and include versioning
     NoteHistoryEvent.create!(
       note: self,
-      user: nil,
+      user: self.updated_by,
       event_type: 'update',
       happened_at: self.updated_at
     )
@@ -30,6 +32,28 @@ class Note < ApplicationRecord
   def truncated_id
     # TODO Fix the bug that causes this to be nil on first save
     super || self.id.to_s[0..7]
+  end
+
+  def api_json(include: [])
+    response = {
+      id: id,
+      truncated_id: truncated_id,
+      title: title,
+      text: text,
+      deadline: deadline,
+      confirmed_reads: note_history_events.where(event_type: 'read_confirmation').count,
+      created_at: created_at,
+      updated_at: updated_at,
+      created_by_id: created_by_id,
+      updated_by_id: updated_by_id,
+    }
+    if include.include?('history_events')
+      response.merge!({ history_events: history_events.map(&:api_json) })
+    end
+    if include.include?('backlinks')
+      response.merge!({ backlinks: backlinks.map(&:api_json)})
+    end
+    response
   end
 
   def path_prefix

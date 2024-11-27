@@ -13,4 +13,17 @@ class Approval < ApplicationRecord
   def set_tenant_id
     self.tenant_id ||= option.tenant_id
   end
+
+  def api_json(include: [])
+    {
+      id: id,
+      option_id: option_id,
+      decision_id: decision_id,
+      decision_participant_id: decision_participant_id,
+      value: value,
+      stars: stars,
+      created_at: created_at,
+      updated_at: updated_at,
+    }
+  end
 end

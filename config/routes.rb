@@ -9,19 +9,25 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/', to: 'info#index'
-      if ENV['APPS_ENABLED'].include?('decisive')
-        resources :decisions do
-          get :results, to: 'results#index'
-          resources :participants do
-            resources :approvals
-          end
-          resources :options do
-            resources :approvals
-          end
+      resources :decisions do
+        get :results, to: 'results#index'
+        resources :participants do
+          resources :approvals
         end
+        resources :options do
+          resources :approvals
+        end
+        resources :approvals
       end
-      if ENV['APPS_ENABLED'].include?('coordinated')
-        # TODO
+      resources :notes do
+        post :confirm, to: 'note#confirm'
+      end
+      resources :commitments do
+        resources :participants
+      end
+      resources :cycles
+      resources :users do
+        resources :api_tokens, path: 'tokens'
       end
     end
   end
@@ -31,6 +37,7 @@ Rails.application.routes.draw do
   get 'admin' => 'home#admin'
   # get 'team' => 'users#index'
   get 'u/:handle' => 'users#show'
+  get 'u/:handle/settings' => 'users#settings'
   get 'cycles' => 'cycles#index'
   get 'cycles/:cycle' => 'cycles#show'
 

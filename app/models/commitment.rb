@@ -3,6 +3,8 @@ class Commitment < ApplicationRecord
   include Linkable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
   before_validation :set_tenant_id
   has_many :participants, class_name: 'CommitmentParticipant'
   validates :title, presence: true
@@ -12,6 +14,29 @@ class Commitment < ApplicationRecord
   def truncated_id
     # TODO Fix the bug that causes this to be nil on first save
     super || self.id.to_s[0..7]
+  end
+
+  def api_json(include: [])
+    response = {
+      id: id,
+      truncated_id: truncated_id,
+      title: title,
+      description: description,
+      deadline: deadline,
+      critical_mass: critical_mass,
+      participant_count: participant_count,
+      created_at: created_at,
+      updated_at: updated_at,
+      created_by_id: created_by_id,
+      updated_by_id: updated_by_id,
+    }
+    if include.include?('participants')
+      response.merge!({ participants: participants.map(&:api_json) })
+    end
+    if include.include?('backlinks')
+      response.merge!({ backlinks: backlinks.map(&:api_json) })
+    end
+    response
   end
 
   def path_prefix

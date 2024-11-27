@@ -1,7 +1,7 @@
 module Api::V1
   class DecisionsController < BaseController
     def index
-      render_404
+      index_not_supported_404
     end
 
     def create
@@ -10,13 +10,9 @@ module Api::V1
           question: params[:question],
           description: params[:description],
           options_open: params[:options_open] || true,
-          auth_required: true,
           deadline: params[:deadline],
-          other_attributes: params[:other_attributes] || {},
+          created_by: current_user,
         )
-        @current_decision = decision
-        @current_decision.created_by = current_decision_participant
-        @current_decision.save!
         render json: decision
       rescue ActiveRecord::RecordInvalid => e
         # TODO - Detect specific validation errors and return helpful error messages
@@ -25,11 +21,12 @@ module Api::V1
     end
 
     def update
-      decision = Decision.find_by(id: params[:id])
+      decision = current_decision
       return render json: { error: 'Decision not found' }, status: 404 unless decision
       updatable_attributes.each do |attribute|
         decision[attribute] = params[attribute] if params.has_key?(attribute)
       end
+      decision.updated_by = current_user
       decision.save!
       render json: decision
     end
@@ -37,7 +34,7 @@ module Api::V1
     private
 
     def updatable_attributes
-      [:question, :description, :options_open, :deadline, :other_attributes]
+      [:question, :description, :options_open, :deadline]
     end
   end
 end

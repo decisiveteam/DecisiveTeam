@@ -39,10 +39,10 @@ CREATE TABLE public.api_tokens (
     token character varying NOT NULL,
     last_used_at timestamp(6) without time zone,
     expires_at timestamp(6) without time zone DEFAULT (CURRENT_TIMESTAMP + '1 year'::interval),
-    active boolean DEFAULT true,
     scopes jsonb DEFAULT '[]'::jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    deleted_at timestamp(6) without time zone
 );
 
 
@@ -270,7 +270,8 @@ CREATE TABLE public.tenant_users (
     display_name character varying NOT NULL,
     settings jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    archived_at timestamp(6) without time zone
 );
 
 
@@ -299,7 +300,9 @@ CREATE TABLE public.users (
     picture_url character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    image_url character varying
+    image_url character varying,
+    simulated boolean DEFAULT false,
+    parent_id uuid
 );
 
 
@@ -761,6 +764,13 @@ CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
+-- Name: index_users_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_parent_id ON public.users USING btree (parent_id);
+
+
+--
 -- Name: decision_results _RETURN; Type: RULE; Schema: public; Owner: -
 --
 
@@ -1095,6 +1105,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241125235008'),
 ('20241126215856'),
 ('20241127005322'),
-('20241127011437');
+('20241127011437'),
+('20241127174032'),
+('20241128041104'),
+('20241128054723');
 
 

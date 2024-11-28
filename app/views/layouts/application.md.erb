@@ -1,0 +1,8 @@
+---
+title: <%= @page_title %>
+path: <%= @current_path %>
+timestamp: <%= Time.now.utc %>
+---
+nav: | [Home](/) <% if @current_user %>| Logged in as [<%= @current_user.display_name %>](<%= @current_user.path %>) | [Scratchpad](/scratchpad)<% end %> | [About](/about) | [Help](/help) |
+
+<%= yield %>

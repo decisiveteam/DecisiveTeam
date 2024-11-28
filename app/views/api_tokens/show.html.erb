@@ -1,0 +1,39 @@
+<h1>API Token</h1>
+<ul>
+  <li>
+    <strong>Name:</strong>
+    <%= @token.name || 'Unnamed' %>
+  </li>
+  <li>
+    <strong>Token:</strong>
+    <code><%= @token.token %></code>
+    <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+      <input type="text" value="<%= @token.token %>" data-clipboard-target="source" style="display:none;"/>
+      <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy token to clipboard</span>
+    </span>
+  </li>
+  <li>
+    <strong>Created:</strong>
+    <%= timeago(@token.created_at) %>
+  </li>
+  <li>
+    <strong>Last Used:</strong>
+    <%= @token.last_used_at ? timeago(@token.last_used_at) : 'Never' %>
+  </li>
+  <li>
+    <strong>Expires:</strong>
+    <%= timeago(@token.expires_at) %>
+  </li>
+  <li>
+    <strong>Active:</strong>
+    <%= @token.active? ? 'Yes' : 'No' %>
+  </li>
+</ul>
+<h2>Scopes</h2>
+<p>
+<% @token.scopes.each do |scope| %>
+  <span><%= scope %></span>
+<% end %>
+</p>
+<h2>Delete</h2>
+<%= button_to 'Delete Token', @token.path, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %>

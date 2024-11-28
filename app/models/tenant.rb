@@ -75,10 +75,18 @@ class Tenant < ApplicationRecord
     )
   end
 
+  def description
+    settings['description']
+  end
+
   def team(limit: 100)
-    tenant_users.includes(:user).limit(limit).map do |tu|
-      tu.user.tenant_user = tu
-      tu.user
+    tenant_users
+      .where(archived_at: nil)
+      .includes(:user)
+      .limit(limit)
+      .order(created_at: :desc).map do |tu|
+        tu.user.tenant_user = tu
+        tu.user
     end
   end
 

@@ -1,0 +1,24 @@
+<h1>API Token</h1>
+<%= form_with(model: [@showing_user, @token]) do |form| %>
+  <h2>Name</h2>
+  <div style="margin-bottom:8px;">
+    <%= form.text_field :name, placeholder: 'Name', value: @token.name %>
+  </div>
+  <h2>Scopes</h2>
+  <p>
+    <%= form.radio_button :read_write, 'read', checked: true %>
+    <%= form.label :read_write, 'Read only' %>
+    <br/>
+    <%= form.radio_button :read_write, 'write' %>
+    <%= form.label :read_write, 'Read + write' %>
+  </p>
+  <h2>Expiration</h2>
+  <p>
+    This will expire in
+    <%= form.number_field :duration, value: 12, style: 'width:48px;' %>
+    <%= form.select :duration_unit, options_for_select(['hour(s)', 'day(s)', 'week(s)', 'month(s)'], selected: 'month(s)') %>
+    (max 12 months)
+  </p>
+  <hr style="height:1px;" />
+  <%= form.submit 'Create Token' %>
+<% end %>

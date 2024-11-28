@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/', to: 'info#index'
+      get 'scratchpad', to: 'scratchpad#show'
+      put 'scratchpad', to: 'scratchpad#update'
+      post 'scratchpad/append', to: 'scratchpad#append'
       resources :decisions do
         get :results, to: 'results#index'
         resources :participants do
@@ -33,13 +36,29 @@ Rails.application.routes.draw do
   end
   # Defines the root path route ("/")
   root 'home#index'
+  get 'home' => 'home#index'
   get 'settings' => 'home#settings'
   get 'admin' => 'home#admin'
-  # get 'team' => 'users#index'
-  get 'u/:handle' => 'users#show'
-  get 'u/:handle/settings' => 'users#settings'
+
   get 'cycles' => 'cycles#index'
   get 'cycles/:cycle' => 'cycles#show'
+
+  get 'scratchpad' => 'home#scratchpad'
+
+  get 'about' => 'home#about'
+  get 'help' => 'home#help'
+  get 'feedback' => 'home#feedback'
+
+  # get 'team' => 'users#index'
+  resources :users, path: 'u', param: :handle, only: [:show] do
+    put 'scratchpad' => 'users#scratchpad', on: :member
+    get 'settings', on: :member
+    resources :api_tokens,
+              path: 'settings/tokens',
+              only: [:new, :create, :show, :destroy]
+    post 'impersonate' => 'users#impersonate', on: :member
+    delete 'impersonate' => 'users#stop_impersonating', on: :member
+  end
 
   get 'note' => 'notes#new'
   resources :notes, only: [:create, :show], path: 'n' do

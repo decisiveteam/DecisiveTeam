@@ -45,7 +45,7 @@ class ApiToken < ApplicationRecord
       user_id: user_id,
       token: obfuscated_token,
       scopes: scopes,
-      active: active,
+      active: active?,
       expires_at: expires_at,
       last_used_at: last_used_at,
       created_at: created_at,
@@ -61,12 +61,29 @@ class ApiToken < ApplicationRecord
     token[0..3] + '*********'
   end
 
+  def base_path
+    "/u/#{user.handle}/settings/tokens"
+  end
+
+  def path
+    "#{base_path}/#{id}"
+  end
+
   def active?
-    active && !expired?
+    !deleted? && !expired?
   end
 
   def expired?
     expires_at < Time.current
+  end
+
+  def deleted?
+    !deleted_at.nil?
+  end
+
+  def delete!
+    self.deleted_at ||= Time.current
+    save!
   end
 
   def token_used!
@@ -75,9 +92,9 @@ class ApiToken < ApplicationRecord
 
   def can?(action, resource_model)
     action = {
-      'POST' => 'create', 'GET' => 'read', 'PATCH' => 'update', 'DELETE' => 'delete'
+      'POST' => 'create', 'GET' => 'read', 'PUT' => 'update', 'PATCH' => 'update', 'DELETE' => 'delete'
     }[action] || action
-    resource_name = resource_model.model_name.plural.downcase
+    resource_name = resource_model.to_s.pluralize.downcase
     scopes.include?("#{action}:#{resource_name}")
   end
 

@@ -8,7 +8,7 @@
   </div>
   <h2>Relevance Duration</h2>
   <p>
-    This note will be relevant for approximately
+    This note will be considered relevant for approximately
     <%= form.number_field :duration, value: 1, style: 'width:48px;' %>
     <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'day(s)') %>
   </p>

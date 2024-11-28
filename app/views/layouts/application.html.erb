@@ -43,6 +43,18 @@
       <div class="top-right-display">
         <% if @current_user %>
           <div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/ace.min.js" integrity="sha512-NIDAOLuPuewIzUrGoK5fXxowwGDm0DFJhI5TJPyTP6MeY2hUcCSKJr54fecQTEZ8kxxEO2NBrILQSUl4qZ37FA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/mode-markdown.min.js" integrity="sha512-6POKArs6bJW5Stg2VlGSlx1mEy/BRwaUk5xuhZVqts4cwKLHjO3i3OD3yPasDlMGEFDLN5RbP0UuBMllqhU2xw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <span data-controller="scratchpad">
+              <span data-scratchpad-target="visibilityToggle">Scratch Pad</span>
+              <div
+                id="scratchpad"
+                class="<%= @current_user.scratchpad['editor_theme'] || 'default' %>-theme"
+                style="display:<%= @current_user.scratchpad['visible'] ? 'block' : 'none' %>"
+                data-scratchpad-target="editor"
+                data-url="<%= @current_user.path %>/scratchpad"
+              ><%= @current_user.scratchpad['text'] %></div>
+            </span>
             <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
             <% if @showing_user && @showing_user == @current_user %>
               <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>

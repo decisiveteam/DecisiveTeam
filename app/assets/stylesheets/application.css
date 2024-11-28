@@ -224,6 +224,23 @@ select:focus {
   bottom: -0.35em;
 }
 
+#scratchpad {
+  position: absolute;
+  top: 50px;
+  right: 12px;
+  min-width: 200px;
+  width: 20%;
+  max-width: 400px; /* ??? */
+}
+
+#scratchpad.default-theme {
+  background-color: #fcfdb1;
+  border: 1px solid #aaa;
+  padding: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .resource-link-commitment, .resource-link-decision, .resource-link-note {
   font-weight: bold;
 }

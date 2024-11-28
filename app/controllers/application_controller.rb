@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :check_auth_subdomain, :current_app, :current_tenant, :current_user, :current_resource
+  before_action :check_auth_subdomain, :current_app, :current_tenant, :current_path, :current_user, :current_resource
 
   def check_auth_subdomain
     if request.subdomain == auth_subdomain && controller_name != 'sessions'
@@ -40,10 +40,60 @@ class ApplicationController < ActionController::Base
     @current_tenant
   end
 
+  def current_path
+    @current_path ||= request.path
+  end
+
+  def api_token_present?
+    request.headers['Authorization'].present?
+  end
+
+  def current_token
+    return @current_token if defined?(@current_token)
+    return @current_token = nil unless api_token_present?
+    prefix, token_string = request.headers['Authorization'].split(' ')
+    @current_token = ApiToken.find_by(token: token_string, deleted_at: nil, tenant_id: current_tenant.id)
+    return nil unless @current_token
+    if prefix == 'Bearer' && @current_token&.active?
+      @current_token.token_used!
+    elsif prefix == 'Bearer' && @current_token&.expired? && !@current_token.deleted?
+      render json: { error: 'Token expired' }, status: 401
+    else
+      render json: { error: 'Unauthorized' }, status: 401
+    end
+    @current_token
+  end
+
+  def api_authorize!
+    api_enabled = true # TODO add to .env
+    return render json: { error: 'API not enabled' }, status: 403 unless api_enabled
+    return render json: { error: 'API only supports JSON or Markdown formats' }, status: 401 unless json_or_markdown_request?
+    current_token || render(json: { error: 'Unauthorized' }, status: 401)
+  end
+
+  def json_or_markdown_request?
+    # API tokens can only access JSON and Markdown endpoints.
+    request.headers['Accept'] == 'application/json' || request.headers['Accept'] == 'text/markdown' ||
+    request.headers['Content-Type'] == 'application/json' || request.headers['Content-Type'] == 'text/markdown' ||
+    request.path.starts_with?('/api/v')
+  end
+
   def current_user
     return @current_user if defined?(@current_user)
+    if api_token_present?
+      api_authorize!
+      return @current_user = @current_token&.user
+    end
+    if session[:impersonating].present?
+      user = User.find_by(id: session[:impersonating])
+      parent_user = User.find_by(id: session[:user_id])
+      if user && parent_user&.can_impersonate?(user)
+        @current_user = user
+        @current_parent_user = parent_user
+      end
+    end
     if session[:user_id].present?
-      @current_user = User.find_by(id: session[:user_id])
+      @current_user ||= User.find_by(id: session[:user_id])
       if @current_user
         tu = current_tenant.tenant_users.find_by(user: @current_user)
         if tu.nil?
@@ -64,6 +114,10 @@ class ApplicationController < ActionController::Base
       @current_user = nil
     end
     @current_user
+  end
+
+  def current_parent_user
+    @current_parent_user
   end
 
   def current_resource_model
@@ -199,6 +253,10 @@ class ApplicationController < ActionController::Base
       duration.days
     when 'week(s)'
       duration.weeks
+    when 'month(s)'
+      duration.months
+    when 'year(s)'
+      duration.years
     else
       raise "Unknown duration_unit: #{duration_unit}"
     end

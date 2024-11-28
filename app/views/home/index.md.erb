@@ -1,0 +1,38 @@
+# <%= @current_tenant.name %>
+
+## Pinned
+
+<% if @pinned_items.length > 0 %>
+<% @pinned_items.each do |item| %>
+* <%= item.class.to_s %>: [<%= item.title %>](<%= item.path %>)
+<% end %>
+<% else %>
+No pinned items.
+<% end %>
+
+## Cycles
+
+<%= render 'shared/cycle_count_table', cycles: @current_cycles %>
+
+[View all cycles](/cycles)
+
+## Backlinks
+
+<% if @backlinks.empty? %>
+No backlinks yet.
+<% else %>
+| | Title | Count |
+|---|---|---|
+<% @backlinks.each.with_index do |bl, i| %>
+| <%= i + 1 %> | <%= bl['type'] %>: [<%= bl['title'] %>](/<%= bl['type'].downcase[0] %>/<%= bl['id'][0..7] %>) | <%= bl['count'] %> |
+<% end %>
+<% end %>
+
+## Team
+
+
+## Actions
+
+* [Create a new note](/note)
+* [Create a new decision](/decide)
+* [Create a new commitment](/commit)

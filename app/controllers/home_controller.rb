@@ -27,4 +27,16 @@ class HomeController < ApplicationController
     @team = @current_tenant.team
   end
 
+  def about
+    @page_title = 'About'
+  end
+
+  def help
+    @page_title = 'Help'
+  end
+
+  def scratchpad
+    @page_title = 'Scratchpad'
+  end
+
 end

@@ -39,6 +39,14 @@ module Api::V1
       render json: token.api_json
     end
 
+    def destroy
+      token = current_user.api_tokens.find_by(id: params[:id])
+      token ||= current_user.api_tokens.find_by(token: params[:id])
+      return render json: { error: 'Token not found' }, status: 404 unless token
+      token.delete!
+      render json: { message: 'Token deleted' }
+    end
+
     private
 
     def updatable_attributes

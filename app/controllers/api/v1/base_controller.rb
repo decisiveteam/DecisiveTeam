@@ -40,34 +40,6 @@ class Api::V1::BaseController < ApplicationController
     }
   end
 
-  def api_token_present?
-    request.headers['Authorization'].present?
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-    if api_token_present?
-      api_authorize!
-      @current_user = @current_token.user
-    else
-      super
-    end
-  end
-
-  def api_authorize!
-    return true if @current_token
-    api_enabled = true # TODO add to .env
-    return render json: { error: 'API not enabled' }, status: 403 unless api_enabled
-    prefix, token_string = request.headers['Authorization'].split(' ')
-    @current_token = ApiToken.find_by(token: token_string)
-    if prefix == 'Bearer' && @current_token&.active? && @current_token&.tenant_id == current_tenant.id
-      @current_token.token_used!
-      true
-    else
-      render json: { error: 'Unauthorized' }, status: 401
-    end
-  end
-
   def validate_scope
     return true if @current_user && !@current_token # Allow all actions for logged in users
     unless @current_token.can?(request.method, current_resource_model)

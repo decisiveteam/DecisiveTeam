@@ -73,9 +73,11 @@ class ApplicationController < ActionController::Base
 
   def json_or_markdown_request?
     # API tokens can only access JSON and Markdown endpoints.
-    request.headers['Accept'] == 'application/json' || request.headers['Accept'] == 'text/markdown' ||
-    request.headers['Content-Type'] == 'application/json' || request.headers['Content-Type'] == 'text/markdown' ||
-    request.path.starts_with?('/api/v')
+    request.headers['Accept'] == 'application/json' ||
+    request.headers['Accept'] == 'text/markdown' ||
+    request.headers['Content-Type'] == 'application/json' ||
+    request.headers['Content-Type'] == 'text/markdown' ||
+    request.path.starts_with?('/api/') # Allow all API endpoints
   end
 
   def current_user

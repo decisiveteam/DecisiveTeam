@@ -12,6 +12,9 @@ Rails.application.routes.draw do
       get 'scratchpad', to: 'scratchpad#show'
       put 'scratchpad', to: 'scratchpad#update'
       post 'scratchpad/append', to: 'scratchpad#append'
+      resources :notes do
+        post :confirm, to: 'note#confirm'
+      end
       resources :decisions do
         get :results, to: 'results#index'
         resources :participants do
@@ -22,9 +25,6 @@ Rails.application.routes.draw do
         end
         resources :approvals
       end
-      resources :notes do
-        post :confirm, to: 'note#confirm'
-      end
       resources :commitments do
         resources :participants
       end
@@ -32,6 +32,14 @@ Rails.application.routes.draw do
       resources :users do
         resources :api_tokens, path: 'tokens'
       end
+      # resources :webhooks
+      get 'custom/data', to: 'custom_data#info'
+      get 'custom/config', to: 'custom_data#configuration'
+      get 'custom/data/:table_name/:id/history', to: 'custom_data#history'
+      resources :custom_data, path: 'custom/data/:parent_table_name/:parent_id/:table_name' do
+        get 'history', to: 'custom_data#history'
+      end
+      resources :custom_data, path: 'custom/data/:table_name'
     end
   end
   # Defines the root path route ("/")

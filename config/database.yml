@@ -16,6 +16,6 @@ test:
 
 production:
   <<: *default
-  database: decisive_team_production
-  username: decisiveteam
+  database: <%= ENV['POSTGRES_DB'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
   password: <%= ENV['POSTGRES_PASSWORD'] %>

@@ -71,4 +71,15 @@ class Api::V1::BaseController < ApplicationController
   def includes_param
     params[:include].to_s.split(',')
   end
+
+  def request_context_for_history_events
+    {
+      request_id: request.request_id,
+      method: request.method,
+      url: request.url,
+      path: request.path,
+      user_id: @current_user.id,
+      token_id: @current_token.id,
+    }
+  end
 end

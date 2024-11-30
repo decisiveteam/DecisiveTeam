@@ -39,12 +39,12 @@ class UsersController < ApplicationController
     return render '404' if tu.nil?
     return render text: '403 Unauthorized' unless current_user.can_impersonate?(tu.user)
     session[:impersonating] = tu.user.id
-    redirect_to tu.user.path
+    redirect_to root_path
   end
 
   def stop_impersonating
     session.delete(:impersonating)
-    redirect_to current_user.path
+    redirect_to current_parent_user.path
   end
 
 end

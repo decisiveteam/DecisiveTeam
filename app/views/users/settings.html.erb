@@ -44,15 +44,19 @@
     <tr>
       <th>Name</th>
       <th>Created</th>
-      <th>Archived</th>
-      <th>View</th>
+      <th>Profile</th>
+      <th>Impersonate</th>
     </tr>
     <% @current_user.simulated_users.each do |simulated_user| %>
       <tr>
         <td><%= simulated_user.name %></td>
         <td><%= timeago(simulated_user.created_at) %></td>
-        <td><%= simulated_user.archived? ? 'Yes' : 'No' %></td>
         <td><%= link_to 'View', simulated_user.path %></td>
+        <% if simulated_user.archived? %>
+          <td>Archived</td>
+        <% else %>
+          <td><%= button_to 'Impersonate', "#{simulated_user.path}/impersonate", method: :post %></td>
+        <% end %>
       </tr>
     <% end %>
   </table>

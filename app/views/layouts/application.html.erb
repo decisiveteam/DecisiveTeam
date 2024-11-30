@@ -55,7 +55,14 @@
                 data-url="<%= @current_user.path %>/scratchpad"
               ><%= @current_user.scratchpad['text'] %></div>
             </span>
-            <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
+            <% if @current_user.image_url %>
+              <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
+            <% else %>
+              <a href="<%= @current_user.path %>"><div style="height:30px;width:30px;background-color:#ccc;border-radius:50%;text-align:center;line-height:30px;display:inline-block;"><%= @current_user.display_name[0] %></div></a>
+            <% end %>
+            <% if @current_parent_user %>
+              <%= button_to "Stop Impersonating", "#{@current_user.path}/impersonate", method: :delete %>
+            <% end %>
             <% if @showing_user && @showing_user == @current_user %>
               <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
             <% end %>

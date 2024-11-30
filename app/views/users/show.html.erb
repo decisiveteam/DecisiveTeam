@@ -3,11 +3,6 @@
 <p><%= @showing_user.handle %></p>
 <% if @showing_user.id == @current_user.id %>
   <p><a href="<%= @current_user.path %>/settings">Settings</a></p>
-  <% if @current_parent_user %>
-    <%= button_to "Stop Impersonating", "#{@current_user.path}/impersonate", method: :delete %>
-  <% end %>
-<% elsif @current_user.can_impersonate?(@showing_user) %>
-  <%= button_to "Impersonate", "#{@showing_user.path}/impersonate", method: :post %>
 <% end %>
 
 <h2>Pinned</h2>

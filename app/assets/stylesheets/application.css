@@ -141,8 +141,8 @@ table.results-table thead tr th:first-of-type, table.results-table thead tr th:n
 
 /* Buttons */
 button,
-.input[type="submit"],
-.input[type="button"] {
+input[type="submit"],
+input[type="button"] {
   /* background-color: #007bff; */
   background-color: #000;
   color: #fff;

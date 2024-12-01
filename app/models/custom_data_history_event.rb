@@ -2,6 +2,8 @@ class CustomDataHistoryEvent < ActiveRecord::Base
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
+  belongs_to :studio
+  before_validation :set_studio_id
   belongs_to :custom_data_record
   belongs_to :user
 
@@ -9,6 +11,10 @@ class CustomDataHistoryEvent < ActiveRecord::Base
 
   def set_tenant_id
     self.tenant_id ||= custom_data_record.tenant_id
+  end
+
+  def set_studio_id
+    self.studio_id ||= custom_data_record.studio_id
   end
 
   def api_json(include: [])

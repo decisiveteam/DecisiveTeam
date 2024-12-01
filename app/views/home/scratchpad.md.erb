@@ -14,11 +14,11 @@ This is your personal scratchpad. You can use it to jot down ideas and informati
 
 Only your scratchpad text is shown on this page. If you have custom JSON data stored with your scratchpad, you can retrieve it by making the following API call.
 
-`GET` to `/api/v1/scratchpad`
+`GET /api/v1/scratchpad`
 
 ### Update
 
-`PUT` to `/api/v1/scratchpad` with the following JSON data. Only one of `text` or `custom_json` is required.
+`PUT /api/v1/scratchpad` with the following JSON data. Only one of `text` or `custom_json` is required.
 
 ```json
 {
@@ -29,7 +29,7 @@ Only your scratchpad text is shown on this page. If you have custom JSON data st
 
 ### Append
 
-`POST` to `/api/v1/scratchpad/append` with the following JSON data:
+`POST /api/v1/scratchpad/append` with the following JSON data:
 
 ```json
 {

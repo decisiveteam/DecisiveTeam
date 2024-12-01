@@ -6,6 +6,8 @@ class User < ApplicationRecord
   has_many :note_history_events
   has_many :tenant_users
   has_many :tenants, through: :tenant_users
+  has_many :studio_users
+  has_many :studios, through: :studio_users
   has_many :api_tokens
   has_many :simulated_users, class_name: 'User', foreign_key: 'parent_id'
 
@@ -77,6 +79,22 @@ class User < ApplicationRecord
     tenant_user.save!
   end
 
+  def studio_user=(su)
+    if su.user_id == self.id
+      @studio_user = su
+    else
+      raise "studioUser user_id does not match User id"
+    end
+  end
+
+  def studio_user
+    @studio_user ||= studio_users.where(studio_id: Studio.current_id).first
+  end
+
+  def save_studio_user!
+    studio_user.save!
+  end
+
   def display_name=(name)
     tenant_user.display_name = name
   end
@@ -105,6 +123,14 @@ class User < ApplicationRecord
     tenant_user.pinned_items
   end
 
+  def pin_item!(item)
+    tenant_user.pin_item!(item)
+  end
+
+  def has_pinned?(item)
+    tenant_user.has_pinned?(item)
+  end
+
   def confirmed_read_note_events(limit: 10)
     tenant_user.confirmed_read_note_events(limit: limit)
   end
@@ -115,6 +141,15 @@ class User < ApplicationRecord
 
   def scratchpad
     tenant_user.scratchpad
+  end
+
+  def accept_invite!(studio_invite)
+    if studio_invite.invited_user_id == self.id || studio_invite.invited_user_id.nil?
+      StudioUser.find_or_create_by!(studio_id: studio_invite.studio_id, user_id: self.id)
+      # TODO track invite accepted event
+    else
+      raise "Cannot accept invite for another user"
+    end
   end
 
 end

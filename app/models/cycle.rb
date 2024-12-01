@@ -1,10 +1,12 @@
 class Cycle
   attr_accessor :name
 
-  def initialize(name:, tenant_id:)
+  def initialize(name:, tenant:, studio:)
     @name = name
-    @tenant_id = tenant_id
-    raise "Invalid tenant_id" if @tenant_id.nil?
+    @tenant = tenant
+    @studio = studio
+    raise "Invalid tenant" if @tenant.nil?
+    raise "Invalid studio" if @studio.nil?
   end
 
   def api_json(include: [])
@@ -37,7 +39,7 @@ class Cycle
   end
 
   def path
-    "/cycles/#{@name}"
+    "#{@studio.path}/cycles/#{@name}"
   end
 
   def display_window
@@ -149,7 +151,7 @@ class Cycle
   end
 
   def resources(model)
-    model.where(tenant_id: @tenant_id)
+    model.where(tenant_id: @tenant.id, studio_id: @studio.id)
          .where('created_at < ?', end_date).where('deadline > ?', start_date)
          .order(deadline: :asc)
   end
@@ -176,6 +178,6 @@ class Cycle
   end
 
   def backlinks
-    Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant_id)
+    Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant.id)
   end
 end

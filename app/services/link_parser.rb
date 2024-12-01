@@ -1,7 +1,7 @@
 class LinkParser
-  def self.parse(text, subdomain: nil)
+  def self.parse(text, subdomain: nil, studio_handle: nil)
     models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
-    domain = "#{subdomain}.#{ENV['HOSTNAME']}"
+    domain = "#{subdomain}.#{ENV['HOSTNAME']}" + (studio_handle ? "/s/#{studio_handle}" : '')
     pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
     text.gsub(pattern) do |match|
       prefix = $1
@@ -17,19 +17,24 @@ class LinkParser
 
   def self.parse_path(path)
     models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
-    x, prefix, id = path.split('/')
+    path_pieces = path.split('/')
+    prefix = path_pieces[-2]
+    id = path_pieces[-1]
+    studio_handle = path_pieces[-3]
+    studio_ids = Studio.where(handle: studio_handle).pluck(:id)
     model = models[prefix]
     column_name = id.length == 8 ? :truncated_id : :id
-    record = model.find_by(column_name => id)
+    record = model.find_by(column_name => id, studio_id: studio_ids)
   end
 
-  def initialize(from_record: nil, subdomain: nil)
+  def initialize(from_record: nil, subdomain: nil, studio_handle: nil)
     @from_record = from_record
     @subdomain = subdomain
-    if @from_record.nil? && @subdomain.nil?
-      raise ArgumentError, "Must pass in either from_record or subdomain"
+    @studio_handle = studio_handle
+    if @from_record.nil? && (@subdomain.nil? || @studio_handle.nil?)
+      raise ArgumentError, "Must pass in either from_record or subdomain + studio_handle"
     elsif @from_record && @subdomain
-      raise ArgumentError, "Cannot pass in both from_record and subdomain"
+      raise ArgumentError, "Cannot pass in both from_record and subdomain/studio_handle"
     end
   end
 
@@ -40,14 +45,15 @@ class LinkParser
       end
       text = @from_record.class == Note ? @from_record.text : @from_record.description
       subdomain = @from_record.tenant.subdomain
-      self.class.parse(text, subdomain: subdomain) do |to_record|
+      studio_handle = @from_record.studio.handle
+      self.class.parse(text, subdomain: subdomain, studio_handle: studio_handle) do |to_record|
         yield to_record
       end
-    elsif @subdomain
+    elsif @subdomain && @studio_handle
       if text.nil?
         raise ArgumentError, "Cannot pass in subdomain without text"
       end
-      self.class.parse(text, subdomain: @subdomain) do |to_record|
+      self.class.parse(text, subdomain: @subdomain, studio_handle: @studio_handle) do |to_record|
         yield to_record
       end
     else

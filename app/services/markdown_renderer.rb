@@ -79,7 +79,7 @@ class MarkdownRenderer
   end
 
   def self.display_refereces(html)
-    link_parser = LinkParser.new(subdomain: Tenant.current_subdomain)
+    link_parser = LinkParser.new(subdomain: Tenant.current_subdomain, studio_handle: Studio.current_handle)
     doc = Nokogiri::HTML.fragment(html)
     doc.search('a').each do |a|
       a['href'] && link_parser.parse(a['href']) do |resource|

@@ -1,0 +1,38 @@
+# Studio: [<%= @current_studio.name %>](<%= @current_studio.path %>)
+
+## Pinned
+
+<% if @pinned_items.length > 0 %>
+<% @pinned_items.each do |item| %>
+* <%= item[:item].class.to_s %>: [<%= item[:item].title %>](<%= item[:item].path %>) pinned <%= time_ago_in_words(item[:pinned_at]) %> ago
+<% end %>
+<% else %>
+No pinned items yet.
+<% end %>
+
+## Cycles
+
+<%= render 'shared/cycle_count_table', cycles: @current_cycles %>
+
+[View all cycles](<%= @current_studio.path %>/cycles)
+
+## Backlinks
+
+<% if @backlinks.empty? %>
+No backlinks yet.
+<% else %>
+| | Title | Count |
+|---|---|---|
+<% @backlinks.each.with_index do |bl, i| %>
+| <%= i + 1 %> | <%= bl['type'] %>: [<%= bl['title'] %>](<%= @current_studio.path %>/<%= bl['type'].downcase[0] %>/<%= bl['id'][0..7] %>) | <%= bl['count'] %> |
+<% end %>
+<% end %>
+
+## Team
+
+
+## Actions
+
+* [Create a new note](<%= @current_studio.path %>/note)
+* [Create a new decision](<%= @current_studio.path %>/decide)
+* [Create a new commitment](<%= @current_studio.path %>/commit)

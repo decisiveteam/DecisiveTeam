@@ -11,7 +11,7 @@
       <tr>
         <td><%= i + 1 %></td>
         <td>
-          <a href="/<%= bl['type'].downcase[0] %>/<%= bl['id'][0..7] %>">
+          <a href="<%= @current_studio.path %>/<%= bl['type'].downcase[0] %>/<%= bl['id'][0..7] %>">
             <i class="<%= bl['type'].downcase %>-icon"></i> <%= bl['title'] %>
           </a>
         </td>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= @page_title || @current_app_title %></title>
+    <title><%= @page_title || 'Harmonic Team' %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" type="image/png" href="/<%= @current_app %>-favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/<%= @current_app %>-favicon-16x16.png" sizes="16x16">
@@ -33,12 +33,15 @@
   <body>
     <% if controller_name != 'sessions' %>
       <a href="/"><%= @current_tenant.name %></a>
+      <% if @current_studio.id != @current_tenant.main_studio_id %>
+        / <a href="<%= @current_studio.path %>"><%= @current_studio.name %></a>
+      <% end %>
       <% if @current_resource && @current_resource.class.to_s == 'Cycle' %>
-        > <a href="/cycles">Cycles</a> > <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
+        / <a href="<%= @current_studio.path %>/cycles">Cycles</a> / <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
       <% elsif @current_resource %>
-        > <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
+        / <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
       <% elsif @showing_user %>
-        > <span class="resource-link-user"><%= @showing_user.handle %></span>
+        / <span class="resource-link-user"><%= @showing_user.handle %></span>
       <% end %>
       <div class="top-right-display">
         <% if @current_user %>

@@ -1,4 +1,5 @@
 class TenantUser < ApplicationRecord
+  include CanPin
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   belongs_to :user
@@ -30,26 +31,6 @@ class TenantUser < ApplicationRecord
 
   def archived?
     self.archived_at.present?
-  end
-
-  def pin_item!(item)
-    pin_items!([item])
-  end
-
-  def pin_items!(items)
-    self.settings['pinned'] += items.map do |item|
-      {
-        type: item.class.to_s,
-        id: item.id
-      }
-    end
-    save!
-  end
-
-  def pinned_items
-    settings['pinned'].map do |item|
-      item['type'].constantize.find_by(id: item['id'])
-    end
   end
 
   def path

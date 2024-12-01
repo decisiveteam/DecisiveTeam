@@ -1,15 +1,17 @@
 class Tenant < ApplicationRecord
   self.implicit_order_column = "created_at"
-  # Loop through all tables except tenants, users, and rails internal tables
+  has_many :tenant_users
+  has_many :users, through: :tenant_users
+  belongs_to :main_studio, class_name: 'Studio'
+  before_create :set_defaults
+  after_create :create_main_studio!
+
   tables = ActiveRecord::Base.connection.tables - [
-    'tenants', 'users', 'ar_internal_metadata', 'schema_migrations'
+    'tenants', 'users', 'oauth_identities', 'ar_internal_metadata', 'schema_migrations'
   ]
   tables.each do |table|
     has_many table.to_sym
   end
-  has_many :users, through: :tenant_users
-  before_create :set_defaults
-  after_create :create_welcome_note
 
   def self.scope_thread_to_tenant(subdomain:)
     if subdomain == ENV['AUTH_SUBDOMAIN']
@@ -44,26 +46,11 @@ class Tenant < ApplicationRecord
     self.settings['pinned'] ||= []
   end
 
-  def create_welcome_note!
-    note = Note.create!(
-      tenant: self,
-      title: 'Welcome to Harmonic Team',
-      text: 'This is a system generated note.'
+  def create_main_studio!
+    self.main_studio = studios.create!(
+      name: "#{self.subdomain}.#{ENV['HOSTNAME']}",
+      handle: SecureRandom.hex(16)
     )
-    pin_item!(note)
-  end
-
-  def pin_item!(item)
-    pin_items!([item])
-  end
-
-  def pin_items!(items)
-    self.settings['pinned'] += items.map do |item|
-      {
-        type: item.class.to_s,
-        id: item.id
-      }
-    end
     save!
   end
 
@@ -93,28 +80,6 @@ class Tenant < ApplicationRecord
   def is_admin?(user)
     # TODO - implement
     tenant_users.find_by(user: user).present?
-  end
-
-  def pinned_items
-    settings['pinned'].map do |item|
-      item['type'].constantize.find_by(id: item['id'])
-    end
-  end
-
-  def open_items
-    open_decisions = decisions.where('deadline > ?', Time.current)
-    open_commitments = commitments.where('deadline > ?', Time.current)
-    (open_decisions + open_commitments).sort_by(&:deadline)
-  end
-
-  def recently_closed_items(time_window: 1.week)
-    closed_decisions = decisions.where('deadline < ?', Time.current).where('deadline > ?', time_window.ago)
-    closed_commitments = commitments.where('deadline < ?', Time.current).where('deadline > ?', time_window.ago)
-    (closed_decisions + closed_commitments).sort_by(&:deadline).reverse
-  end
-
-  def backlink_leaderboard(start_date: nil, end_date: nil, limit: 10)
-    Link.backlink_leaderboard(tenant_id: self.id)
   end
 
   def auth_providers

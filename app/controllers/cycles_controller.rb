@@ -2,28 +2,19 @@ class CyclesController < ApplicationController
 
   def index
     # TODO - Make these queries more efficient
-    @current_cycles = [
-      Cycle.new(name: 'today', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'this-week', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'this-month', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'this-year', tenant_id: @current_tenant.id),
-    ]
-    @recent_cycles = [
-      Cycle.new(name: 'yesterday', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'last-week', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'last-month', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'last-year', tenant_id: @current_tenant.id),
-    ]
-    @future_cycles = [
-      Cycle.new(name: 'tomorrow', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'next-week', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'next-month', tenant_id: @current_tenant.id),
-      Cycle.new(name: 'next-year', tenant_id: @current_tenant.id),
-    ]
+    @current_cycles = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
+      Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
+    end
+    @recent_cycles = ['yesterday', 'last-week', 'last-month', 'last-year'].map do |name|
+      Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
+    end
+    @future_cycles = ['tomorrow', 'next-week', 'next-month', 'next-year'].map do |name|
+      Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
+    end
   end
 
   def show
-    @cycle = Cycle.new(name: params[:cycle], tenant_id: @current_tenant.id)
+    @cycle = Cycle.new(name: params[:cycle], tenant: @current_tenant, studio: @current_studio)
     @current_resource = @cycle
     @notes = @cycle.notes
     @decisions = @cycle.decisions

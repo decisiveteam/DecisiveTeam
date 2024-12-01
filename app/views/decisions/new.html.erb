@@ -1,5 +1,5 @@
 <h1><i class="decision-icon large-icon"></i> Decision</h1>
-<%= form_with(model: [@decision]) do |form| %>
+<%= form_with do |form| %>
   <p style="margin-bottom:2px;">Type the <strong>question</strong> that this decision will answer.</p>
   <div>
     <%= form.text_field :question, placeholder: 'Question' %>

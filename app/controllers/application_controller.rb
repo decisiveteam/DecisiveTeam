@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
-  before_action :check_auth_subdomain, :current_app, :current_tenant, :current_path, :current_user, :current_resource
+  before_action :check_auth_subdomain, :current_app, :current_tenant, :current_studio,
+                :current_path, :current_user, :current_resource
 
   def check_auth_subdomain
     if request.subdomain == auth_subdomain && controller_name != 'sessions'
@@ -26,18 +27,30 @@ class ApplicationController < ActionController::Base
 
   def current_tenant
     return @current_tenant if defined?(@current_tenant)
-    begin
-      # Tenant.scope_thread_to_tenant sets the current tenant based on the subdomain
-      # and raises an error if the subdomain is not found.
-      # Default scope is configured in ApplicationRecord to scope all queries to Tenant.current_tenant_id
-      # and automatically set tenant_id on any new records.
-      @current_tenant = Tenant.scope_thread_to_tenant(subdomain: request.subdomain)
-    rescue
-      raise ActionController::RoutingError.new('Not Found')
-    end
-    @breadcrumb_path ||= []
-    @breadcrumb_path << @current_tenant.name
-    @current_tenant
+    current_studio
+    @current_tenant ||= @current_studio.tenant
+  end
+
+  def current_studio
+    return @current_studio if defined?(@current_studio)
+    # begin
+      # Studio.scope_thread_to_studio sets the current studio and tenant based on the subdomain and handle
+      # and raises an error if the subdomain or handle is not found.
+      # Default scope is configured in ApplicationRecord to scope all queries to
+      # Tenant.current_tenant_id and Studio.current_studio_id
+      # and automatically set tenant_id and studio_id on any new records.
+      @current_studio = Studio.scope_thread_to_studio(
+        subdomain: request.subdomain,
+        handle: params[:studio_handle]
+      )
+      @current_tenant = @current_studio.tenant
+      # Set these associations to avoid unnecessary reloading.
+      @current_studio.tenant = @current_tenant
+      @current_tenant.main_studio = @current_studio if @current_tenant.main_studio_id == @current_studio.id
+    # rescue
+    #   raise ActionController::RoutingError.new('Not Found')
+    # end
+    @current_studio
   end
 
   def current_path
@@ -106,10 +119,22 @@ class ApplicationController < ActionController::Base
           @current_user.tenant_user = tu
         end
       end
+      if @current_user
+        su = current_studio.studio_users.find_by(user: @current_user)
+        if su.nil?
+          # TODO - Handle this case
+          current_studio.add_user!(@current_user) unless controller_name == 'sessions'
+        else
+          @current_user.studio_user = su
+        end
+      end
     elsif @current_tenant.require_login? && controller_name != 'sessions'
       if current_resource
         path = current_resource.path
         query_string = "?redirect_to_resource=#{path}"
+      elsif params[:code] && controller_name == 'studios'
+        # Studio invite code
+        query_string = "?code=#{params[:code]}"
       end
       redirect_to '/login' + (query_string || '')
     else
@@ -265,7 +290,7 @@ class ApplicationController < ActionController::Base
   end
 
   def model_params
-    params[current_resource_model.name.underscore.to_sym]
+    params[current_resource_model.name.underscore.to_sym] || params
   end
 
   def reset_session
@@ -295,5 +320,29 @@ class ApplicationController < ActionController::Base
 
   def auth_domain_login_url
     "https://#{auth_subdomain}.#{ENV['HOSTNAME']}/login"
+  end
+
+  def pin
+    @pinnable = current_resource
+    return render '404', status: 404 unless @pinnable
+    if params[:pinned] == true
+      @pinnable.pin!(tenant: @current_tenant, studio: @current_studio, user: @current_user)
+    elsif params[:pinned] == false
+      @pinnable.unpin!(tenant: @current_tenant, studio: @current_studio, user: @current_user)
+    else
+      raise 'pinned param required. must be boolean value'
+    end
+    set_pin_vars
+    render json: {
+      pinned: @is_pinned,
+      click_title: @pin_click_title,
+    }
+  end
+
+  def set_pin_vars
+    @pinnable = current_resource
+    pin_destination = current_studio == current_tenant.main_studio ? 'your profile' : 'the studio homepage'
+    @is_pinned = current_resource.is_pinned?(tenant: @current_tenant, studio: @current_studio, user: @current_user)
+    @pin_click_title = 'Click to ' + (@is_pinned ? 'unpin from ' : 'pin to ') + pin_destination
   end
 end

@@ -1,0 +1,30 @@
+<h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
+<h1 style="margin-top:0;"><%= @current_studio.name %></h1>
+
+<h2>Pinned</h2>
+<%= render 'pinned' %>
+
+<h2>Create</h2>
+<p>
+  <img src="/resource-icons/note-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+  <a href="<%= @current_studio.path %>/note"><button>New Note</button></a>
+</p>
+<p>
+  <img src="/resource-icons/decision-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+  <a href="<%= @current_studio.path %>/decide"><button>New Decision</button></a>
+</p>
+<p>
+  <img src="/resource-icons/commitment-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+  <a href="<%= @current_studio.path %>/commit"><button>New Commitment</button></a>
+</p>
+
+<h2>Cycles</h2>
+<p><a href="<%= @current_studio.path %>/cycles">View all</a></p>
+<%= render 'shared/cycle_count_table', cycles: @current_cycles %>
+
+<h2>Backlinks</h2>
+<%= render 'backlinks' %>
+
+<h2>Team</h2>
+<%= render 'team' %>
+<a href="<%= @current_studio.path %>/invite"><button>Invite Team Members</button></a>

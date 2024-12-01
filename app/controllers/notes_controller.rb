@@ -3,7 +3,6 @@ class NotesController < ApplicationController
   def new
     @page_title = "Note"
     @page_description = "Make a note for your team"
-    @breadcrumb_path << 'New Note'
     @note = Note.new(
       title: params[:title],
     )
@@ -33,7 +32,7 @@ class NotesController < ApplicationController
     return render '404', status: 404 unless @note
     @page_title = @note.title
     @page_description = "Note page"
-    @breadcrumb_path << "Note #{@note.truncated_id}"
+    set_pin_vars
     @note_reader = NoteReader.new(note: @note, user: current_user)
   end
 

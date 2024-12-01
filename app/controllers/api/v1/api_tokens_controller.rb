@@ -1,6 +1,5 @@
 module Api::V1
   class ApiTokensController < BaseController
-    # NOTE - Once we create simulated users, we'll need to expand the scope beyond current_user
     def index
       render json: current_user.api_tokens.map(&:api_json)
     end

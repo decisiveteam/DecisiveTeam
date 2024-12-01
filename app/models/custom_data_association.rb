@@ -2,6 +2,8 @@ class CustomDataAssociation < ApplicationRecord
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
+  belongs_to :studio
+  before_validation :set_studio_id
   belongs_to :parent_record, class_name: 'CustomDataRecord'
   belongs_to :child_record, class_name: 'CustomDataRecord'
 
@@ -12,6 +14,10 @@ class CustomDataAssociation < ApplicationRecord
 
   def set_tenant_id
     self.tenant_id ||= parent_record.tenant_id
+  end
+
+  def set_studio_id
+    self.studio_id ||= parent_record.studio_id
   end
 
   def all_records_belong_to_same_tenant

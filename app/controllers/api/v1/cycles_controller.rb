@@ -2,13 +2,13 @@ module Api::V1
   class CyclesController < BaseController
     def index
       response = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
-        Cycle.new(name: name, tenant_id: @current_tenant.id).api_json(include: includes_param)
+        Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio).api_json(include: includes_param)
       end
       render json: response
     end
 
     def show
-      cycle = Cycle.new(name: params[:id], tenant_id: @current_tenant.id)
+      cycle = Cycle.new(name: params[:id], tenant: @current_tenant, studio: @current_studio)
       render json: cycle.api_json(include: ['notes', 'decisions', 'commitments', 'backlinks'])
     end
 

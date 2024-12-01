@@ -69,6 +69,7 @@ export default class extends Controller {
   }
 
   async toggleApprovalValues(event) {
+    const studioHandle = window.location.pathname.split('/')[2];
     const decisionId = this.inputTarget.dataset.decisionId;
     const optionItem = event.target.closest('.option-item');
     const checkbox = optionItem.querySelector('input.approval-button');
@@ -87,7 +88,7 @@ export default class extends Controller {
     }
 
     this.updatingApprovals = true;
-    await fetch(`/api/v1/decisions/${decisionId}/options/${optionId}/approvals`, {
+    await fetch(`/s/${studioHandle}/api/v1/decisions/${decisionId}/options/${optionId}/approvals`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

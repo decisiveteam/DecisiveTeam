@@ -1,5 +1,6 @@
 <span data-controller="commitment" data-commitment-id="<%= @commitment.id %>">
-<h4 style="margin-top:0px;"><i class="commitment-icon"></i> Commitment</h4>
+<%= render 'shared/pin_button' %>
+<h4 style="margin-top:0px;margin-bottom:0;"><i class="commitment-icon"></i> Commitment</h4>
 <h1 style="margin-top:0;"><%= @commitment.title %></h1>
 <p style="font-size:0.8em;">
   <% if @commitment.deadline && !@commitment.closed? %>

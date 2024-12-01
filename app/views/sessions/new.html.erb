@@ -3,6 +3,8 @@
   Log in to <code><%= "#{@original_tenant.subdomain}.#{ENV['HOSTNAME']}" %></code>
   <% if @redirect_to_resource %>
     to view <code><%= @redirect_to_resource %></code>
+  <% elsif @studio_invite_code %>
+    to accept this invite.
   <% end %>
 </p>
 <% @original_tenant.auth_providers.each do |provider| %>

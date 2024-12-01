@@ -36,6 +36,7 @@ class DecisionsController < ApplicationController
 
     @approvals = current_approvals
     set_results_view_vars
+    set_pin_vars
   end
 
   def options_partial
@@ -64,7 +65,7 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    params.require(:decision).permit(:question, :description, :options_open, :duration, :duration_unit)
+    model_params.permit(:question, :description, :options_open, :duration, :duration_unit)
   end
 
   def set_results_view_vars

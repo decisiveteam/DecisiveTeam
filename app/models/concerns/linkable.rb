@@ -8,7 +8,9 @@ module Linkable
   end
 
   def parse_and_create_link_records!
-    LinkParser.new(from_record: self).parse_and_create_link_records!
+    unless self.studio.is_main_studio?
+      LinkParser.new(from_record: self).parse_and_create_link_records!
+    end
   end
 
   def backlinks

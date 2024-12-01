@@ -3,6 +3,7 @@
 # then all tenants redirect to that one auth subdomain to authenticate, and once authenticated, the user is
 # redirected back to the original tenant subdomain with a token cookie that can be used to log in with the tenant.
 class SessionsController < ApplicationController
+
   # <login>
   # Step 1: direct user to auth domain login page where they can authenticate with OAuth provider
   def new
@@ -20,6 +21,7 @@ class SessionsController < ApplicationController
       @original_tenant = Tenant.find_by(subdomain: cookies[:redirect_to_subdomain])
       # TODO - handle case where tenant is not found
       @redirect_to_resource = cookies[:redirect_to_resource]
+      @studio_invite_code = cookies[:studio_invite_code]
     else
       # user is on the tenant subdomain and is not logged in
       # so we redirect them to the auth domain
@@ -90,6 +92,8 @@ class SessionsController < ApplicationController
     if params[:redirect_to_resource]
       resource = LinkParser.parse_path(params[:redirect_to_resource])
       set_shared_domain_cookie(:redirect_to_resource, resource.path) if resource && resource.tenant_id == current_tenant.id
+    elsif params[:code]
+      set_shared_domain_cookie(:studio_invite_code, params[:code])
     end
     redirect_to auth_domain_login_url,
                 allow_other_host: true
@@ -136,12 +140,14 @@ class SessionsController < ApplicationController
       # TODO - handle this case more gracefully
       raise 'Unexpected error. User not allowed to access tenant.'
     end
-    redirect_to_resource_or_root
+    redirect_to_resource_or_invite_or_root
   end
 
-  def redirect_to_resource_or_root
+  def redirect_to_resource_or_invite_or_root
     if cookies[:redirect_to_resource]
       redirect_to_resource_if_allowed
+    elsif cookies[:studio_invite_code]
+      redirect_to_invite_if_allowed
     else
       redirect_to root_path
     end
@@ -153,6 +159,17 @@ class SessionsController < ApplicationController
     resource = LinkParser.parse_path(resource_path)
     if resource && resource.tenant_id == current_tenant.id
       redirect_to resource.path
+    else
+      redirect_to root_path
+    end
+  end
+
+  def redirect_to_invite_if_allowed
+    invite = StudioInvite.find_by(code: cookies[:studio_invite_code])
+    delete_studio_invite_cookie
+    if invite && invite.studio.tenant_id == current_tenant.id
+      current_user.accept_invite!(invite)
+      redirect_to invite.studio.path
     else
       redirect_to root_path
     end
@@ -189,6 +206,10 @@ class SessionsController < ApplicationController
 
   def delete_redirect_to_resource_cookie
     delete_shared_domain_cookie(:redirect_to_resource)
+  end
+
+  def delete_studio_invite_cookie
+    delete_shared_domain_cookie(:studio_invite_code)
   end
 
 end

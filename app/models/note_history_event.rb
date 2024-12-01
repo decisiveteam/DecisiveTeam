@@ -2,6 +2,8 @@ class NoteHistoryEvent < ApplicationRecord
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
+  belongs_to :studio
+  before_validation :set_studio_id
   belongs_to :note
   belongs_to :user
   validates :event_type, presence: true, inclusion: { in: %w(create update read_confirmation) }
@@ -9,6 +11,10 @@ class NoteHistoryEvent < ApplicationRecord
 
   def set_tenant_id
     self.tenant_id ||= note.tenant_id
+  end
+
+  def set_studio_id
+    self.studio_id ||= note.studio_id
   end
 
   def api_json

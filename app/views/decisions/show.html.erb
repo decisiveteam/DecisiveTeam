@@ -1,5 +1,6 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<h4 style="margin-top:0px;"><i class="decision-icon"></i> Decision</h4>
+<%= render 'shared/pin_button' %>
+<h4 style="margin-top:0px;margin-bottom:0;"><i class="decision-icon"></i> Decision</h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   <% if @decision.deadline.nil? %>

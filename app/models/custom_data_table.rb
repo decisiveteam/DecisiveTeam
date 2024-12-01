@@ -2,6 +2,8 @@ class CustomDataTable < ApplicationRecord
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
+  belongs_to :studio
+  before_validation :set_studio_id
   before_validation :set_defaults
   has_many :records, class_name: 'CustomDataRecord', foreign_key: 'table_id'
 
@@ -13,6 +15,10 @@ class CustomDataTable < ApplicationRecord
 
   def set_tenant_id
     self.tenant_id ||= Tenant.current_id
+  end
+
+  def set_studio_id
+    self.studio_id ||= Studio.current_id
   end
 
   def set_defaults

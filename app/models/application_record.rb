@@ -2,11 +2,16 @@ class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
   before_validation :set_tenant_id
+  before_validation :set_studio_id
   before_validation :set_updated_by
 
   default_scope do
     if belongs_to_tenant? && Tenant.current_id
-      where(tenant_id: Tenant.current_id)
+      s = where(tenant_id: Tenant.current_id)
+      if belongs_to_studio? && Studio.current_id
+        s = s.where(studio_id: Studio.current_id)
+      end
+      s
     else
       all
     end
@@ -19,6 +24,17 @@ class ApplicationRecord < ActiveRecord::Base
   def set_tenant_id
     if self.class.belongs_to_tenant?
       self.tenant_id ||= Tenant.current_id
+    end
+  end
+
+  def self.belongs_to_studio?
+    return false if self == StudioUser # This is a special case
+    self.column_names.include?("studio_id")
+  end
+
+  def set_studio_id
+    if self.class.belongs_to_studio?
+      self.studio_id ||= Studio.current_id
     end
   end
 
@@ -49,7 +65,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def path
-    "/#{path_prefix}/#{self.truncated_id}"
+    "#{studio.path}/#{path_prefix}/#{self.truncated_id}"
   end
 
   def shareable_link

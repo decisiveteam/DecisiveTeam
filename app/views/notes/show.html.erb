@@ -1,6 +1,6 @@
 <span data-controller="note" data-note-id="<%= @note.id %>">
-<span style="float:right;cursor:pointer">[pin]</span>
-<h4 style="margin-top:0px;"><i class="note-icon"></i> Note</h4>
+<%= render 'shared/pin_button' %>
+<h4 style="margin-top:0px;margin-bottom:0;"><i class="note-icon"></i> Note</h4>
 <h1 style="margin-top:0;"><%= @note.title %></h1>
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@note.created_at) %></strong><br/>

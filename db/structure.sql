@@ -59,7 +59,8 @@ CREATE TABLE public.approvals (
     stars integer DEFAULT 0,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    studio_id uuid
 );
 
 
@@ -88,7 +89,8 @@ CREATE TABLE public.commitment_participants (
     committed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    studio_id uuid
 );
 
 
@@ -107,7 +109,8 @@ CREATE TABLE public.commitments (
     updated_at timestamp(6) without time zone NOT NULL,
     tenant_id uuid NOT NULL,
     created_by_id uuid,
-    updated_by_id uuid
+    updated_by_id uuid,
+    studio_id uuid
 );
 
 
@@ -121,7 +124,8 @@ CREATE TABLE public.custom_data_associations (
     parent_record_id uuid NOT NULL,
     child_record_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -134,7 +138,8 @@ CREATE TABLE public.custom_data_configs (
     tenant_id uuid NOT NULL,
     config jsonb DEFAULT '{}'::jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -151,7 +156,8 @@ CREATE TABLE public.custom_data_history_events (
     event_type character varying NOT NULL,
     event_data jsonb DEFAULT '{}'::jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -169,7 +175,8 @@ CREATE TABLE public.custom_data_records (
     data jsonb DEFAULT '{}'::jsonb,
     deleted_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -183,7 +190,8 @@ CREATE TABLE public.custom_data_tables (
     name character varying NOT NULL,
     config jsonb DEFAULT '{}'::jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -199,7 +207,8 @@ CREATE TABLE public.decision_participants (
     updated_at timestamp(6) without time zone NOT NULL,
     user_id uuid,
     participant_uid character varying DEFAULT ''::character varying NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    studio_id uuid
 );
 
 
@@ -235,7 +244,8 @@ CREATE TABLE public.decisions (
     options_open boolean DEFAULT true NOT NULL,
     tenant_id uuid NOT NULL,
     created_by_id uuid,
-    updated_by_id uuid
+    updated_by_id uuid,
+    studio_id uuid
 );
 
 
@@ -251,7 +261,8 @@ CREATE TABLE public.links (
     to_linkable_type character varying NOT NULL,
     to_linkable_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    studio_id uuid
 );
 
 
@@ -267,7 +278,8 @@ CREATE TABLE public.note_history_events (
     happened_at timestamp without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    studio_id uuid
 );
 
 
@@ -285,7 +297,8 @@ CREATE TABLE public.notes (
     tenant_id uuid NOT NULL,
     deadline timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP,
     created_by_id uuid,
-    updated_by_id uuid
+    updated_by_id uuid,
+    studio_id uuid
 );
 
 
@@ -321,7 +334,8 @@ CREATE TABLE public.options (
     random_id integer DEFAULT (floor((random() * (1000000000)::double precision)))::integer NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tenant_id uuid NOT NULL
+    tenant_id uuid NOT NULL,
+    studio_id uuid
 );
 
 
@@ -331,6 +345,53 @@ CREATE TABLE public.options (
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
+);
+
+
+--
+-- Name: studio_invites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.studio_invites (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    created_by_id uuid NOT NULL,
+    invited_user_id uuid,
+    code character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: studio_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.studio_users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    archived_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: studios; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.studios (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    name character varying,
+    handle character varying,
+    settings jsonb DEFAULT '{}'::jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -361,7 +422,8 @@ CREATE TABLE public.tenants (
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    settings jsonb DEFAULT '{}'::jsonb
+    settings jsonb DEFAULT '{}'::jsonb,
+    main_studio_id uuid
 );
 
 
@@ -527,6 +589,30 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: studio_invites studio_invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_invites
+    ADD CONSTRAINT studio_invites_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: studio_users studio_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_users
+    ADD CONSTRAINT studio_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: studios studios_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studios
+    ADD CONSTRAINT studios_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: tenant_users tenant_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -607,6 +693,13 @@ CREATE UNIQUE INDEX index_approvals_on_option_id_and_decision_participant_id ON 
 
 
 --
+-- Name: index_approvals_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_approvals_on_studio_id ON public.approvals USING btree (studio_id);
+
+
+--
 -- Name: index_approvals_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -635,6 +728,13 @@ CREATE INDEX index_commitment_participants_on_participant_uid ON public.commitme
 
 
 --
+-- Name: index_commitment_participants_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitment_participants_on_studio_id ON public.commitment_participants USING btree (studio_id);
+
+
+--
 -- Name: index_commitment_participants_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -653,6 +753,13 @@ CREATE INDEX index_commitment_participants_on_user_id ON public.commitment_parti
 --
 
 CREATE INDEX index_commitments_on_created_by_id ON public.commitments USING btree (created_by_id);
+
+
+--
+-- Name: index_commitments_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_commitments_on_studio_id ON public.commitments USING btree (studio_id);
 
 
 --
@@ -691,6 +798,13 @@ CREATE INDEX index_custom_data_associations_on_parent_record_id ON public.custom
 
 
 --
+-- Name: index_custom_data_associations_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_custom_data_associations_on_studio_id ON public.custom_data_associations USING btree (studio_id);
+
+
+--
 -- Name: index_custom_data_associations_on_ten_par; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -712,6 +826,13 @@ CREATE INDEX index_custom_data_associations_on_tenant_id ON public.custom_data_a
 
 
 --
+-- Name: index_custom_data_configs_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_custom_data_configs_on_studio_id ON public.custom_data_configs USING btree (studio_id);
+
+
+--
 -- Name: index_custom_data_configs_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -723,6 +844,13 @@ CREATE INDEX index_custom_data_configs_on_tenant_id ON public.custom_data_config
 --
 
 CREATE INDEX index_custom_data_history_events_on_custom_data_record_id ON public.custom_data_history_events USING btree (custom_data_record_id);
+
+
+--
+-- Name: index_custom_data_history_events_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_custom_data_history_events_on_studio_id ON public.custom_data_history_events USING btree (studio_id);
 
 
 --
@@ -768,6 +896,13 @@ CREATE INDEX index_custom_data_records_on_created_by_id ON public.custom_data_re
 
 
 --
+-- Name: index_custom_data_records_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_custom_data_records_on_studio_id ON public.custom_data_records USING btree (studio_id);
+
+
+--
 -- Name: index_custom_data_records_on_table_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -786,6 +921,13 @@ CREATE INDEX index_custom_data_records_on_tenant_id ON public.custom_data_record
 --
 
 CREATE INDEX index_custom_data_records_on_updated_by_id ON public.custom_data_records USING btree (updated_by_id);
+
+
+--
+-- Name: index_custom_data_tables_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_custom_data_tables_on_studio_id ON public.custom_data_tables USING btree (studio_id);
 
 
 --
@@ -817,6 +959,13 @@ CREATE UNIQUE INDEX index_decision_participants_on_decision_id_and_participant_u
 
 
 --
+-- Name: index_decision_participants_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decision_participants_on_studio_id ON public.decision_participants USING btree (studio_id);
+
+
+--
 -- Name: index_decision_participants_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -828,6 +977,13 @@ CREATE INDEX index_decision_participants_on_tenant_id ON public.decision_partici
 --
 
 CREATE INDEX index_decisions_on_created_by_id ON public.decisions USING btree (created_by_id);
+
+
+--
+-- Name: index_decisions_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_decisions_on_studio_id ON public.decisions USING btree (studio_id);
 
 
 --
@@ -859,6 +1015,13 @@ CREATE INDEX index_links_on_from_linkable ON public.links USING btree (from_link
 
 
 --
+-- Name: index_links_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_studio_id ON public.links USING btree (studio_id);
+
+
+--
 -- Name: index_links_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -880,6 +1043,13 @@ CREATE INDEX index_note_history_events_on_note_id ON public.note_history_events 
 
 
 --
+-- Name: index_note_history_events_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_note_history_events_on_studio_id ON public.note_history_events USING btree (studio_id);
+
+
+--
 -- Name: index_note_history_events_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -898,6 +1068,13 @@ CREATE INDEX index_note_history_events_on_user_id ON public.note_history_events 
 --
 
 CREATE INDEX index_notes_on_created_by_id ON public.notes USING btree (created_by_id);
+
+
+--
+-- Name: index_notes_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_notes_on_studio_id ON public.notes USING btree (studio_id);
 
 
 --
@@ -957,10 +1134,94 @@ CREATE INDEX index_options_on_decision_participant_id ON public.options USING bt
 
 
 --
+-- Name: index_options_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_options_on_studio_id ON public.options USING btree (studio_id);
+
+
+--
 -- Name: index_options_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_options_on_tenant_id ON public.options USING btree (tenant_id);
+
+
+--
+-- Name: index_studio_invites_on_code; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_studio_invites_on_code ON public.studio_invites USING btree (code);
+
+
+--
+-- Name: index_studio_invites_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_invites_on_created_by_id ON public.studio_invites USING btree (created_by_id);
+
+
+--
+-- Name: index_studio_invites_on_invited_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_invites_on_invited_user_id ON public.studio_invites USING btree (invited_user_id);
+
+
+--
+-- Name: index_studio_invites_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_invites_on_studio_id ON public.studio_invites USING btree (studio_id);
+
+
+--
+-- Name: index_studio_invites_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_invites_on_tenant_id ON public.studio_invites USING btree (tenant_id);
+
+
+--
+-- Name: index_studio_users_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_users_on_studio_id ON public.studio_users USING btree (studio_id);
+
+
+--
+-- Name: index_studio_users_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_users_on_tenant_id ON public.studio_users USING btree (tenant_id);
+
+
+--
+-- Name: index_studio_users_on_tenant_id_and_studio_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_studio_users_on_tenant_id_and_studio_id_and_user_id ON public.studio_users USING btree (tenant_id, studio_id, user_id);
+
+
+--
+-- Name: index_studio_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studio_users_on_user_id ON public.studio_users USING btree (user_id);
+
+
+--
+-- Name: index_studios_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studios_on_tenant_id ON public.studios USING btree (tenant_id);
+
+
+--
+-- Name: index_studios_on_tenant_id_and_handle; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_studios_on_tenant_id_and_handle ON public.studios USING btree (tenant_id, handle);
 
 
 --
@@ -989,6 +1250,13 @@ CREATE UNIQUE INDEX index_tenant_users_on_tenant_id_and_user_id ON public.tenant
 --
 
 CREATE INDEX index_tenant_users_on_user_id ON public.tenant_users USING btree (user_id);
+
+
+--
+-- Name: index_tenants_on_main_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tenants_on_main_studio_id ON public.tenants USING btree (main_studio_id);
 
 
 --
@@ -1033,6 +1301,14 @@ CREATE OR REPLACE VIEW public.decision_results AS
 
 
 --
+-- Name: studio_invites fk_rails_07e7bb098b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_invites
+    ADD CONSTRAINT fk_rails_07e7bb098b FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
 -- Name: note_history_events fk_rails_0a4621d4f9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1073,11 +1349,43 @@ ALTER TABLE ONLY public.custom_data_records
 
 
 --
+-- Name: studio_invites fk_rails_19f2570176; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_invites
+    ADD CONSTRAINT fk_rails_19f2570176 FOREIGN KEY (invited_user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: custom_data_records fk_rails_1f9c7e3c30; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.custom_data_records
+    ADD CONSTRAINT fk_rails_1f9c7e3c30 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: approvals fk_rails_23f31e4409; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.approvals
     ADD CONSTRAINT fk_rails_23f31e4409 FOREIGN KEY (option_id) REFERENCES public.options(id);
+
+
+--
+-- Name: studio_users fk_rails_247e24a571; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_users
+    ADD CONSTRAINT fk_rails_247e24a571 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: studio_invites fk_rails_29373b6d24; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_invites
+    ADD CONSTRAINT fk_rails_29373b6d24 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1105,6 +1413,14 @@ ALTER TABLE ONLY public.decision_participants
 
 
 --
+-- Name: custom_data_history_events fk_rails_37658b724a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.custom_data_history_events
+    ADD CONSTRAINT fk_rails_37658b724a FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: decisions fk_rails_3844b64911; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1121,11 +1437,43 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: custom_data_configs fk_rails_3a16ee90b1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.custom_data_configs
+    ADD CONSTRAINT fk_rails_3a16ee90b1 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: studios fk_rails_3a6c376636; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studios
+    ADD CONSTRAINT fk_rails_3a6c376636 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: options fk_rails_3c650690de; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.options
+    ADD CONSTRAINT fk_rails_3c650690de FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: custom_data_history_events fk_rails_3ed7817b22; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.custom_data_history_events
     ADD CONSTRAINT fk_rails_3ed7817b22 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: commitment_participants fk_rails_40630ce2d2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitment_participants
+    ADD CONSTRAINT fk_rails_40630ce2d2 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1153,11 +1501,27 @@ ALTER TABLE ONLY public.commitments
 
 
 --
+-- Name: custom_data_associations fk_rails_5329956518; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.custom_data_associations
+    ADD CONSTRAINT fk_rails_5329956518 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: custom_data_records fk_rails_547bd37e39; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.custom_data_records
     ADD CONSTRAINT fk_rails_547bd37e39 FOREIGN KEY (table_id) REFERENCES public.custom_data_tables(id);
+
+
+--
+-- Name: studio_users fk_rails_55c1625b39; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_users
+    ADD CONSTRAINT fk_rails_55c1625b39 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -1185,11 +1549,35 @@ ALTER TABLE ONLY public.note_history_events
 
 
 --
+-- Name: links fk_rails_6888b30c51; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_6888b30c51 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: studio_users fk_rails_6922fe428a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_users
+    ADD CONSTRAINT fk_rails_6922fe428a FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: custom_data_tables fk_rails_6bf817584a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.custom_data_tables
     ADD CONSTRAINT fk_rails_6bf817584a FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: studio_invites fk_rails_6dd1026bef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studio_invites
+    ADD CONSTRAINT fk_rails_6dd1026bef FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
 
 
 --
@@ -1209,11 +1597,43 @@ ALTER TABLE ONLY public.custom_data_records
 
 
 --
+-- Name: decisions fk_rails_7ee5cf7c37; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decisions
+    ADD CONSTRAINT fk_rails_7ee5cf7c37 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: tenants fk_rails_81228c3d0f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tenants
+    ADD CONSTRAINT fk_rails_81228c3d0f FOREIGN KEY (main_studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: decision_participants fk_rails_81ebc9cc6f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.decision_participants
     ADD CONSTRAINT fk_rails_81ebc9cc6f FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: custom_data_tables fk_rails_84f28416f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.custom_data_tables
+    ADD CONSTRAINT fk_rails_84f28416f5 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: note_history_events fk_rails_927b722124; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.note_history_events
+    ADD CONSTRAINT fk_rails_927b722124 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1241,11 +1661,27 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: commitments fk_rails_ae61a497df; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commitments
+    ADD CONSTRAINT fk_rails_ae61a497df FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: custom_data_history_events fk_rails_ae91ef006c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.custom_data_history_events
     ADD CONSTRAINT fk_rails_ae91ef006c FOREIGN KEY (custom_data_record_id) REFERENCES public.custom_data_records(id);
+
+
+--
+-- Name: approvals fk_rails_ae9f41675e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.approvals
+    ADD CONSTRAINT fk_rails_ae9f41675e FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1361,6 +1797,14 @@ ALTER TABLE ONLY public.commitment_participants
 
 
 --
+-- Name: notes fk_rails_f11a0907b0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT fk_rails_f11a0907b0 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: api_tokens fk_rails_f16b5e0447; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1374,6 +1818,14 @@ ALTER TABLE ONLY public.api_tokens
 
 ALTER TABLE ONLY public.commitment_participants
     ADD CONSTRAINT fk_rails_f513f0d5dd FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: decision_participants fk_rails_f9c15d4765; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.decision_participants
+    ADD CONSTRAINT fk_rails_f9c15d4765 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1447,6 +1899,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241127174032'),
 ('20241128041104'),
 ('20241128054723'),
-('20241128204415');
+('20241128204415'),
+('20241130040434'),
+('20241130211736');
 
 

@@ -40,6 +40,7 @@ class CommitmentsController < ApplicationController
     @participants_list_limit = 10
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"
+    set_pin_vars
   end
 
   def status_partial

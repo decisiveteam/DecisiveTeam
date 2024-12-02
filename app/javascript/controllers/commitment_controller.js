@@ -60,7 +60,7 @@ export default class extends Controller {
   async join(event) {
     event.preventDefault();
     if (this.editingName) return;
-    console.log("Joining commitment... " + this.joinButtonTarget.dataset.url);
+    // console.log("Joining commitment... " + this.joinButtonTarget.dataset.url);
     this.joinButtonTarget.innerHTML = "Joining...";
     const url = this.joinButtonTarget.dataset.url;
     try {

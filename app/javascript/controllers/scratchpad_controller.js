@@ -1,13 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["editor", "visibilityToggle"]
+  static targets = ["editor"]
 
   connect() {
-    console.log("Connecting...")
-    this.visibilityToggleTarget.addEventListener("click", this.toggleVisibility.bind(this))
-    // this.editorTarget.addEventListener("keyup", this.updateEditor.bind(this))
-    // this.editorTarget.addEventListener("paste", this.preventPasteBug.bind(this))
+    // This is hacky, but it makes it easier since there is only one scratchpad
+    // and different parts of the app need to access it, and the behavior is
+    // relatively simple.
+    window.htScratchpad = this
+
+    // this.visibilityToggleTarget = document.getElementById("scratchpad-visibility-toggle")
+    // this.visibilityToggleTarget.addEventListener("click", this.toggleVisibility.bind(this))
     this.text = this.editorTarget.textContent
     this.editor = ace.edit(this.editorTarget, {
       mode: "ace/mode/markdown",
@@ -22,7 +25,15 @@ export default class extends Controller {
       autoScrollEditorIntoView: true
     });
     this.editor.on("change", this.updateEditor.bind(this))
-    console.log("Connected!")
+
+    document.addEventListener('click', (event) => {
+      const isClickInside = this.editorTarget.contains(event.target)
+      const isClickOn = event.target === this.editorTarget
+      const isEditorVisible = this.editorTarget.style.display === 'block'
+      if (!isClickInside && !isClickOn && isEditorVisible) {
+        this.editorTarget.style.display = 'none'
+      }
+    })
   }
 
   get csrfToken() {
@@ -32,12 +43,13 @@ export default class extends Controller {
   toggleVisibility() {
     const currentDisplay = this.editorTarget.style.display
     if (currentDisplay === "none" || currentDisplay === "") {
-      this.editorTarget.style.display = "block"
-      this.visibilityToggleTarget.textContent = "Hide Scratch Pad"
-      this.editor.resize()
+      setTimeout(() => {
+        this.editorTarget.style.display = "block"
+      }, 1)
     } else {
-      this.editorTarget.style.display = "none"
-      this.visibilityToggleTarget.textContent = "Show Scratch Pad"
+      setTimeout(() => {
+        this.editorTarget.style.display = "none"
+      }, 1)
     }
   }
 
@@ -46,6 +58,16 @@ export default class extends Controller {
     this.timeout = setTimeout(() => {
       this.saveText()
     }, 1000)
+  }
+
+  setText(text) {
+    this.editor.setValue(text)
+    this.saveText()
+  }
+
+  appendText(text) {
+    this.editor.setValue(this.editor.getValue() + '\n' + text)
+    this.saveText()
   }
 
   saveText() {
@@ -62,7 +84,7 @@ export default class extends Controller {
     }).then(response => {
       if (response.ok) {
         this.text = text
-        console.log("Saved!")
+        // console.log("Saved!")
       } else {
         console.error("Error saving text:", response)
       }

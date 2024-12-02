@@ -43,7 +43,6 @@ class Tenant < ApplicationRecord
 
   def set_defaults
     self.settings ||= {}
-    self.settings['pinned'] ||= []
   end
 
   def create_main_studio!

@@ -1,0 +1,32 @@
+<span data-controller="more-button" class="more-button">
+  <button data-more-button-target="button" data-action="click->more-button#toggleMenu" class="btn btn-outline-secondary btn-sm">
+    <%= octicon 'kebab-horizontal' %>
+  </button>
+  <div data-more-button-target="menu" class="more-button-menu">
+    <ul>
+      <% options.each do |option| %>
+        <li
+          <% if option[:url] %>
+            data-url="<%= option[:url] %>"
+          <% end %>
+          <% if option[:action] %>
+            data-action="<%= option[:action] %>"
+          <% end %>
+          >
+          <%= octicon option[:icon] %>
+          <% if option[:link_to] %>
+            <%= link_to option[:label], option[:link_to] %>
+          <% elsif option[:clipboard_text] %>
+            <span data-controller="clipboard">
+              <input type="text" value="<%= option[:clipboard_text] %>" data-clipboard-target="source" style="display:none;"/>
+              <span data-action="click->clipboard#copy" data-clipboard-target="button"><%= option[:label] %></span>
+              <span data-clipboard-target="successMessage" style="display:none;">Copied!</span>
+            </span>
+          <% else %>
+            <%= option[:label] %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</span>

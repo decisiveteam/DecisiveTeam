@@ -8,10 +8,14 @@
   </div>
   <h2>Relevance Duration</h2>
   <p>
-    This note will be considered relevant for approximately
-    <%= form.number_field :duration, value: 1, style: 'width:48px;' %>
-    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'day(s)') %>
+    This note will be considered relevant until
+    <%= form.select :end_of_cycle, options_for_select(@end_of_cycle_options, selected: @end_of_cycle_options[0]) %>
   </p>
   <hr style="height:1px;" />
-  <%= form.submit 'Save note' %>
+  <% if @current_studio != @current_tenant.main_studio %>
+    <%= form.submit 'Save note' %> in <strong><%= @current_studio.name %></strong>
+  <% else %>
+    <p>Items created outside of a studio context do not display backlinks and do not show up in any cycle views.</p>
+    <%= form.submit 'Save note' %>
+  <% end %>
 <% end %>

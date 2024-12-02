@@ -1,0 +1,19 @@
+<h1><i class="note-icon large-icon"></i> Note</h1>
+<%= form_with do |form| %>
+  <div style="margin-bottom:8px;">
+    <%= form.text_field :title, placeholder: 'Title', value: @note.title %>
+  </div>
+  <div>
+    <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;', value: @note.text %>
+  </div>
+  <% # <h2>Relevance Duration</h2> %>
+  <hr style="height:1px;" />
+  <p>
+    Edits will appear in note history.
+  </p>
+  <% if @current_studio != @current_tenant.main_studio %>
+    <%= form.submit 'Save note' %> in <strong><%= @current_studio.name %></strong>
+  <% else %>
+    <%= form.submit 'Save note' %>
+  <% end %>
+<% end %>

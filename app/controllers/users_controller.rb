@@ -17,14 +17,14 @@ class UsersController < ApplicationController
   def settings
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
     return render '404' if tu.nil?
-    return render text: '403 Unauthorized' unless tu.user == current_user
+    return render plain: '403 Unauthorized' unless tu.user == current_user
     @current_user.tenant_user = tu
   end
 
   def scratchpad
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
     return render '404' if tu.nil?
-    return render text: '403 Unauthorized' unless tu.user == current_user
+    return render plain: '403 Unauthorized' unless tu.user == current_user
     if params[:text].present?
       tu.settings['scratchpad']['text'] = params[:text]
       tu.save!
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
   def impersonate
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
     return render '404' if tu.nil?
-    return render text: '403 Unauthorized' unless current_user.can_impersonate?(tu.user)
+    return render plain: '403 Unauthorized' unless current_user.can_impersonate?(tu.user)
     session[:impersonating] = tu.user.id
     redirect_to root_path
   end

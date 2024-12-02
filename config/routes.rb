@@ -73,12 +73,16 @@ Rails.application.routes.draw do
   get "s/:studio_handle/cycles/:cycle" => 'cycles#show'
   get "s/:studio_handle/team" => 'studios#team'
   get "s/:studio_handle/settings" => 'studios#settings'
+  post "s/:studio_handle/settings" => 'studios#update_settings'
   get "s/:studio_handle/invite" => 'studios#invite'
   get "s/:studio_handle/join" => 'studios#join'
+  post "s/:studio_handle/join" => 'studios#accept_invite'
   ['', 's/:studio_handle'].each do |prefix|
     get "#{prefix}/note" => 'notes#new'
     post "#{prefix}/note" => 'notes#create'
     resources :notes, only: [:show], path: "#{prefix}/n" do
+      get '/edit' => 'notes#edit'
+      post '/edit' => 'notes#update'
       get '/history.html' => 'notes#history_log_partial'
       post '/confirm.html' => 'notes#confirm_and_return_partial'
       put '/edit_display_name.html' => 'notes#edit_display_name_and_return_partial'

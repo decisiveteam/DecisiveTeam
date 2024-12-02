@@ -1,4 +1,4 @@
-<h1>Invite Team Members</h1>
+<h1>Invite to Studio</h1>
 <p>
   Share this link with your team members to invite them to studio <strong><%= @current_studio.name %></strong>.
   <br/>
@@ -6,10 +6,7 @@
 </p>
 <p>
   <code><%= @invite.shareable_link %></code><br/>
-  <span data-controller="clipboard" data-clipboard-success-content="Copied!">
-    <input type="text" value="<%= @invite.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
-  </span>
+  <%= render 'shared/copy_to_clipboard', text: @invite.shareable_link %>
 </p>
 <p>
   This link expires <%= timeago(@invite.expires_at) %>.

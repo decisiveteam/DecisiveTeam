@@ -122,8 +122,14 @@ class ApplicationController < ActionController::Base
       if @current_user
         su = current_studio.studio_users.find_by(user: @current_user)
         if su.nil?
-          # TODO - Handle this case
-          current_studio.add_user!(@current_user) unless controller_name == 'sessions'
+          if current_studio == current_tenant.main_studio
+            current_studio.add_user!(@current_user) unless controller_name == 'sessions'
+          else
+            # If this user has an invite to this studio, they will see the option to accept on the studio's join page.
+            # Otherwise, they will see the studio's default join page, which may or may not allow them to join.
+            path = "#{current_studio.path}/join"
+            redirect_to path unless request.path == path
+          end
         else
           @current_user.studio_user = su
         end

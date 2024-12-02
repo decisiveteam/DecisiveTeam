@@ -6,10 +6,11 @@
   </li>
   <li>
     <strong>Token:</strong>
-    <code><%= @token.token %></code>
-    <span data-controller="clipboard" data-clipboard-success-content="Copied!">
+    <code><%= @token.obfuscated_token %></code>
+    <span data-controller="clipboard">
       <input type="text" value="<%= @token.token %>" data-clipboard-target="source" style="display:none;"/>
-      <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy token to clipboard</span>
+      <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button"><%= octicon 'copy' %> Copy token to clipboard</span>
+      <span class="text-only-button" data-clipboard-target="successMessage" style="display:none;"><%= octicon 'copy' %> Copied!</span>
     </span>
   </li>
   <li>

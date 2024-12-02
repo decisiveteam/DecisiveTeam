@@ -4,10 +4,8 @@ export default class extends Controller {
   static targets = ["pinButton"]
 
   connect() {
-    console.log("Connecting...")
     this.pinButtonTarget.addEventListener("click", this.togglePin.bind(this))
     this.isPinned = this.pinButtonTarget.dataset.isPinned == 'true'
-    console.log("Connected!")
   }
 
   get csrfToken() {

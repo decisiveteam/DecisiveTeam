@@ -3,6 +3,7 @@ class CommitmentsController < ApplicationController
   def new
     @page_title = "Commit"
     @page_description = "Start a group commitment"
+    @end_of_cycle_options =['1 hour from now'] + Cycle.end_of_cycle_options
     @commitment = Commitment.new(
       title: params[:title],
     )
@@ -13,7 +14,11 @@ class CommitmentsController < ApplicationController
       title: model_params[:title],
       description: model_params[:description],
       critical_mass: model_params[:critical_mass],
-      deadline: Time.now + duration_param,
+      deadline: params[:end_of_cycle] == '1 hour from now' ? 1.hour.from_now : Cycle.new_from_end_of_cycle_option(
+        end_of_cycle: params[:end_of_cycle],
+        tenant: current_tenant,
+        studio: current_studio,
+      ).end_date,
       created_by: current_user,
     )
     begin

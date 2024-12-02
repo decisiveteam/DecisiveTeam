@@ -45,11 +45,23 @@ class Studio < ApplicationRecord
   end
 
   def set_defaults
-    self.settings ||= {
+    self.settings = {
       'unlisted' => false,
       'invite_only' => true,
-    }
-    self.settings['pinned'] ||= []
+    }.merge(self.settings || {})
+    self.settings['pinned'] ||= {}
+  end
+
+  def timezone=(value)
+    if value.present?
+      @timezone = ActiveSupport::TimeZone[value]
+      set_defaults
+      self.settings = self.settings.merge('timezone' => @timezone.name)
+    end
+  end
+
+  def timezone
+    @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
   end
 
   def handle_is_valid

@@ -1,6 +1,24 @@
 class Cycle
   attr_accessor :name
 
+  def self.end_of_cycle_options
+    [
+      'end of day today',
+      'end of day tomorrow',
+      'end of this week',
+      'end of next week',
+      'end of this month',
+      'end of next month',
+      'end of this year',
+      'end of next year',
+    ]
+  end
+
+  def self.new_from_end_of_cycle_option(end_of_cycle:, tenant:, studio:)
+    cycle = end_of_cycle.downcase.gsub(' ', '-').split(/end-of-(?:day-)?/).last
+    new(name: cycle, tenant: tenant, studio: studio)
+  end
+
   def initialize(name:, tenant:, studio:)
     @name = name
     @tenant = tenant
@@ -129,21 +147,27 @@ class Cycle
     @unit_for_custom_date = is_month_name ? 'month' : 'day'
   end
 
+  def now
+    Time.current.in_time_zone(@studio.timezone.name)
+  end
+
   def start_date
     return @start_date if defined?(@start_date)
     if @name.starts_with?('last-') || @name == 'yesterday'
-      relative_now = 1.send(unit).ago
+      relative_now = now - 1.send(unit)
     elsif @name.starts_with?('next-') || @name == 'tomorrow'
-      relative_now = 1.send(unit).from_now
+      relative_now = now + 1.send(unit)
     else
-      relative_now = Time.current
+      relative_now = now
     end
+    # @start_date = relative_now.in_time_zone(timezone).send("beginning_of_#{unit}")
     @start_date = relative_now.send("beginning_of_#{unit}")
   end
 
   def end_date
     return @end_date if defined?(@end_date)
-    @end_date = start_date.send("end_of_#{unit}")
+    # @end_date = start_date.in_time_zone(timezone).send("end_of_#{unit}")
+    @end_date = start_date + 1.send(unit)
   end
 
   def window
@@ -180,4 +204,14 @@ class Cycle
   def backlinks
     Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant.id)
   end
+
+  # def view(filter:, group_by:, sort_by:)
+  #   case group_by
+  #   when 'type'
+  #   when 'user'
+  #   when 'status'
+  #   when 'deadline'
+  #   when 'created_at'
+  #   end
+  # end
 end

@@ -9,7 +9,7 @@ class TenantUser < ApplicationRecord
     self.handle ||= user.email
     self.display_name ||= user.name
     self.settings ||= {}
-    self.settings['pinned'] ||= []
+    self.settings['pinned'] ||= {}
     self.settings['scratchpad'] ||= default_scratchpad
   end
 

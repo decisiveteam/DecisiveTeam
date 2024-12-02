@@ -168,8 +168,7 @@ class SessionsController < ApplicationController
     invite = StudioInvite.find_by(code: cookies[:studio_invite_code])
     delete_studio_invite_cookie
     if invite && invite.studio.tenant_id == current_tenant.id
-      current_user.accept_invite!(invite)
-      redirect_to invite.studio.path
+      redirect_to "#{invite.studio.path}/join?code=#{invite.code}"
     else
       redirect_to root_path
     end

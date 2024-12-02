@@ -1,0 +1,11 @@
+<span data-controller="clipboard">
+  <input type="text" value="<%= text %>" data-clipboard-target="source" style="display:none;"/>
+  <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">
+    <%= octicon 'copy' %>
+    Copy link to clipboard
+  </span>
+  <span class="text-only-button" data-clipboard-target="successMessage" style="display:none;">
+    <%= octicon 'copy' %>
+    Copied!
+  </span>
+</span>

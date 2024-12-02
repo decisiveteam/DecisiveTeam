@@ -1,0 +1,41 @@
+<div class="top-right-display">
+<% if @current_user %>
+  <div data-controller="top-right-menu">
+    <% if @current_parent_user %>
+      <span style="margin-right:12px;">
+        <%= octicon 'feed-person' %>
+        <%= button_to "Stop Impersonating", "#{@current_user.path}/impersonate", method: :delete %>
+      </span>
+    <% end %>
+    <div data-top-right-menu-target="button" class="top-right-menu-button" data-action="click->top-right-menu#toggleMenu">
+      <% if @current_user.image_url %>
+        <img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>">
+      <% else %>
+        <div style="height:30px;width:30px;background-color:#ccc;border-radius:50%;text-align:center;line-height:30px;display:inline-block;"><%= @current_user.display_name[0] %></div>
+      <% end %>
+    </div>
+    <div data-top-right-menu-target="menu" class="top-right-menu" style="display:none;<% if @current_parent_user %>min-width:185px;<% end %>">
+      <ul>
+        <li id="scratchpad-visibility-toggle" data-action="click->top-right-menu#toggleScratchpad">
+          <%= octicon 'file' %> Scratchpad
+        </li>
+        <li>
+          <%= octicon 'person' %>
+          <a href="<%= @current_user.path %>">Profile</a>
+        </li>
+        <li>
+          <%= octicon 'gear' %>
+          <a href="<%= @current_user.path %>/settings">Settings</a>
+        </li>
+        <li>
+          <%= octicon 'sign-out' %>
+          <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
+        </li>
+      </ul>
+    </div>
+    <%= render 'layouts/scratchpad' %>
+  </div>
+<% else %>
+  <%= button_to "Log in", "/login", method: :get %>
+<% end %>
+</div>

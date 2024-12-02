@@ -3,6 +3,7 @@ class DecisionsController < ApplicationController
   def new
     @page_title = "Decide"
     @page_description = "Make a group decision with Harmonic Team"
+    @end_of_cycle_options = ['1 hour from now'] + Cycle.end_of_cycle_options
     @decision = Decision.new(
       question: params[:question],
     )
@@ -15,7 +16,11 @@ class DecisionsController < ApplicationController
           question: decision_params[:question],
           description: decision_params[:description],
           options_open: decision_params[:options_open],
-          deadline: Time.now + duration_param,
+          deadline: params[:end_of_cycle] == '1 hour from now' ? 1.hour.from_now : Cycle.new_from_end_of_cycle_option(
+            end_of_cycle: params[:end_of_cycle],
+            tenant: current_tenant,
+            studio: current_studio,
+          ).end_date,
           created_by: current_user,
         )
       end

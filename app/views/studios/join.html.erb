@@ -1,0 +1,19 @@
+<h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
+<h1 style="margin-top:0;"><%= @current_studio.name %></h1>
+<h2>Join</h2>
+<% if @invite %>
+  <p>
+    Click the button below to join studio <strong><%= @current_studio.name %></strong>.
+  </p>
+  <p>
+    <%= button_to 'Join Studio', "#{@current_studio.path}/join", method: :post, params: { code: @invite.code } %>
+  </p>
+<% elsif @current_user_is_member %>
+  <p>
+    You are already a member of this studio.
+  </p>
+<% else %>
+  <p>
+    You need an invitation code to join this studio.
+  </p>
+<% end %>

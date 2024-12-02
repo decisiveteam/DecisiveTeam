@@ -14,8 +14,16 @@ class CyclesController < ApplicationController
   end
 
   def show
+    @filter = params[:filter] || 'all'
+    @group_by = params[:group_by] || 'type'
+    @sort_by = params[:sort_by] || 'created_at:desc'
     @cycle = Cycle.new(name: params[:cycle], tenant: @current_tenant, studio: @current_studio)
     @current_resource = @cycle
+    # @view = @cycle.view(
+    #   filter: @filter,
+    #   group_by: @group_by,
+    #   sort_by: @sort_by,
+    # )
     @notes = @cycle.notes
     @decisions = @cycle.decisions
     @commitments = @cycle.commitments

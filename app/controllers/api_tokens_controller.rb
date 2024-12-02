@@ -38,7 +38,7 @@ class ApiTokensController < ApplicationController
     tu = current_tenant.tenant_users.find_by(handle: params[:user_handle])
     tu ||= current_tenant.tenant_users.find_by(user_id: params[:user_handle])
     return render '404' if tu.nil?
-    return render text: '403 Unauthorized' unless tu.user == current_user
+    return render plain: '403 Unauthorized' unless tu.user == current_user
     @showing_user = tu.user
     @showing_user.tenant_user = tu
   end

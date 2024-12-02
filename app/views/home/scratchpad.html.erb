@@ -1,0 +1,20 @@
+<h1>Scratchpad</h1>
+
+<p>
+  This is your personal scratchpad. What you write here is only visible to you. You can use your scratchpad for bookmarking links, keeping track of ideas, or anything else you want to jot down. It is always available through the top right menu.
+</p>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
+<textarea id="MyID"><%= @current_user.scratchpad['text'] %></textarea>
+<script>
+var simplemde = new SimpleMDE({
+  element: document.getElementById("MyID"),
+  autoDownloadFontAwesome: false,
+  spellChecker: false,
+  status: false,
+  toolbar: false,
+  indentWithTabs: false,
+});
+</script>

@@ -3,17 +3,22 @@
 <p>
   <strong><%= @cycle.display_window %></strong>
   <br/>
-  <span style="font-size: 0.8em;">
+  <span style="font-size: 0.8em;" title="<%= @current_studio.timezone.name %>">
     <%= @cycle.display_duration %>,
-    <% if @cycle.start_date > Date.today %>
+    <% if @cycle.start_date > @cycle.now %>
       starting <%= timeago(@cycle.start_date) %>
-    <% elsif @cycle.end_date < Date.today %>
+    <% elsif @cycle.end_date < @cycle.now %>
       ended <%= timeago(@cycle.end_date) %>
     <% else %>
       ending in <strong><%= countdown(@cycle.end_date) %></strong>
     <% end %>
   </span>
 </p>
+
+<!-- <h2>View Options</h2>
+<p>
+  Group by: <code><%= @group_by %></code>, Sort by: <code><%= @sort_by %></code>, Filters: <code><%= @filter %></code>
+</p> -->
 
 <h2>Notes</h2>
 <ul>

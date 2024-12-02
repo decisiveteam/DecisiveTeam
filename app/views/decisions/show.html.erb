@@ -1,5 +1,10 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<%= render 'shared/pin_button' %>
+<%= render 'shared/more_button', options: [
+  { icon: 'copy', label: 'Copy link to clipboard', clipboard_text: @decision.shareable_link },
+  { action: 'append', icon: 'file-moved', label: 'Append link to scratchpad' },
+  { action: 'pin', icon: 'pin', url: "#{@decision.path}/pin", label: "Pin to #{@current_studio == @current_tenant.main_studio ? 'your profile' : 'studio homepage' }" },
+  { link_to: "#{@decision.path}/edit", icon: 'gear', label: 'Settings' },
+] %>
 <h4 style="margin-top:0px;margin-bottom:0;"><i class="decision-icon"></i> Decision</h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
@@ -10,10 +15,8 @@
   <% elsif @decision.closed? %>
     Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
   <% end %>
-  Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
-    <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
-  </span><br/>
+  <%= render 'shared/copy_to_clipboard', text: @decision.shareable_link %>
+  <br/>
 </p>
 <% if @decision.description && @decision.description.length > 0 %>
   <h2>Description</h2>

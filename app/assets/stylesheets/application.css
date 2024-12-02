@@ -15,16 +15,33 @@
  */
 
 body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  /* margin: 0; */
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-default);
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
 }
 
 .logo {
-  /*background-image: url(/icon.svg); // set in application_controller.rb */
-  background-size: 40px;
+  /* background-image: url(/tri-logo.svg); */
+  background-color: var(--color-canvas-default);
+  background-size: 25px;
   background-repeat: no-repeat;
-  height: 40px;
-  width: 40px;
+  height: 25px;
+  width: 25px;
   display: inline-block;
+  border-radius: 50%;
+  box-shadow: 0 0 3px var(--color-fg-default);
 }
 
 @font-face {
@@ -37,11 +54,11 @@ pre, code, .markdown-body {
   padding: 8px 12px;
   margin: 0 auto;
   margin-top: 40px;
-  border: 1px solid #AAA;
+  border: 1px solid var(--color-border-default);
 }
 
 .user-generated-markdown {
-  border: 1px solid #AAA;
+  border: 1px solid var(--color-border-default);
   padding: 8px 12px;
 }
 
@@ -144,10 +161,10 @@ button,
 input[type="submit"],
 input[type="button"] {
   /* background-color: #007bff; */
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-fg-default);
+  color: var(--color-canvas-default);
   padding: 5px 10px;
-  border: 1px solid #fff;
+  border: 1px solid var(--color-canvas-subtle);
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
@@ -163,21 +180,22 @@ input[type="button"] {
 button:disabled,
 .input[type="submit"]:disabled,
 .input[type="button"]:disabled {
-  background-color: #ccc;
+  background-color: var(--color-border-default);
   cursor: not-allowed;
 }
 
 /* Dropdowns */
 select {
-  background-color: #eee;
-  border: 1px solid #ccc;
+  background-color: var(--color-canvas-subtle);
+  border: 1px solid var(--color-fg-subtle);
   padding: 5px;
   border-radius: 4px;
   font-size: 16px;
 }
 
 select:focus {
-  border-color: #007bff;
+  /* border-color: #007bff; */
+  border-color: var(--color-accent-fg);
 }
 
 .top-right-display {
@@ -188,13 +206,9 @@ select:focus {
   display: inline-block;
 }
 
-.top-right-display form button {
-  position: relative;
-  top: -9px;
-}
-
 .text-only-button {
-  color: #007bff;
+  /* color: #007bff; */
+  color: var(--color-accent-fg);
   cursor: pointer;
 }
 
@@ -234,11 +248,72 @@ select:focus {
 }
 
 #scratchpad.default-theme {
-  background-color: #fcfdb1;
-  border: 1px solid #aaa;
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
   padding: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Courier New', Courier, monospace;
+  /* font-family: 'Courier New', Courier, monospace; */
+}
+
+.more-button, .top-right-menu-button {
+  float: right;
+  cursor: pointer;
+}
+
+.more-button button, .top-right-menu-button button {
+  float: right;
+  background-color: transparent;
+  color: var(--color-fg-default);
+  padding: 0;
+  border: none;
+}
+
+.more-button .more-button-menu, .top-right-menu {
+  min-width: 127px;
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 0; /* x and y will be set in js */
+  background-color: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}
+
+.top-right-menu {
+  top: 36px;
+}
+
+.top-right-menu ul li button {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+}
+
+.more-button-menu ul, .top-right-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.more-button-menu ul li, .top-right-menu ul li {
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.more-button-menu ul li:last-child, .top-right-menu ul li:last-child {
+  margin-bottom: 0;
+}
+
+.more-button-menu ul li a, .top-right-menu ul li a {
+  text-decoration: none;
+  color: var(--color-fg-default);
+}
+
+.more-button-menu ul li a:hover, .top-right-menu ul li a:hover {
+  text-decoration: none;
 }
 
 .resource-link-commitment, .resource-link-decision, .resource-link-note {
@@ -297,6 +372,15 @@ select:focus {
   background-image: url(/resource-icons/commitment-icon.svg);
 }
 
+.pin-icon {
+  background-image: url(/pin-fill-icon-black.svg);
+  background-size: 16px;
+  background-repeat: no-repeat;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {
@@ -308,31 +392,39 @@ select:focus {
 
 @media (prefers-color-scheme: light) {
   body {
-    color: #000;
     background-color: #FFF;
-  }
-  .logo {
-    background-image: url(/icon.svg);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   body {
-    color: #c9d1d9;
     background-color: #000;
   }
-  .logo {
-    background-image: url(/icon-white.svg);
-  }
-  select {
+  /* select {
     background-color: #2b2a33;
     border: 1px solid #8f8f9d;
-  }
+  } */
   .highlighted {
     background-color: rgba(255, 255, 0, 0.2);
     text-shadow: -1px -1px 0 #000,
                   1px -1px 0 #000,
                   -1px 1px 0 #000,
                   1px 1px 0 #000;
+  }
+
+  .note-icon {
+    background-image: url(/resource-icons/note-icon-dark.svg);
+  }
+
+  .decision-icon {
+    background-image: url(/resource-icons/decision-icon-dark.svg);
+  }
+
+  .commitment-icon {
+    background-image: url(/resource-icons/commitment-icon-dark.svg);
+  }
+
+  .pin-icon {
+    background-image: url(/pin-fill-icon-white.svg);
   }
 }

@@ -23,57 +23,24 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <style>
-    .logo {
-      background-image: url(/<%= @current_app %>-icon.svg);
-    }
-    </style>
   </head>
 
   <body>
     <% if controller_name != 'sessions' %>
-      <a href="/"><%= @current_tenant.name %></a>
-      <% if @current_studio.id != @current_tenant.main_studio_id %>
-        / <a href="<%= @current_studio.path %>"><%= @current_studio.name %></a>
-      <% end %>
-      <% if @current_resource && @current_resource.class.to_s == 'Cycle' %>
-        / <a href="<%= @current_studio.path %>/cycles">Cycles</a> / <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
-      <% elsif @current_resource %>
-        / <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
-      <% elsif @showing_user %>
-        / <span class="resource-link-user"><%= @showing_user.handle %></span>
-      <% end %>
-      <div class="top-right-display">
-        <% if @current_user %>
-          <div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/ace.min.js" integrity="sha512-NIDAOLuPuewIzUrGoK5fXxowwGDm0DFJhI5TJPyTP6MeY2hUcCSKJr54fecQTEZ8kxxEO2NBrILQSUl4qZ37FA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.36.5/mode-markdown.min.js" integrity="sha512-6POKArs6bJW5Stg2VlGSlx1mEy/BRwaUk5xuhZVqts4cwKLHjO3i3OD3yPasDlMGEFDLN5RbP0UuBMllqhU2xw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <span data-controller="scratchpad">
-              <span data-scratchpad-target="visibilityToggle">Scratch Pad</span>
-              <div
-                id="scratchpad"
-                class="<%= @current_user.scratchpad['editor_theme'] || 'default' %>-theme"
-                style="display:<%= @current_user.scratchpad['visible'] ? 'block' : 'none' %>"
-                data-scratchpad-target="editor"
-                data-url="<%= @current_user.path %>/scratchpad"
-              ><%= @current_user.scratchpad['text'] %></div>
-            </span>
-            <% if @current_user.image_url %>
-              <a href="<%= @current_user.path %>"><img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>"></a>
-            <% else %>
-              <a href="<%= @current_user.path %>"><div style="height:30px;width:30px;background-color:#ccc;border-radius:50%;text-align:center;line-height:30px;display:inline-block;"><%= @current_user.display_name[0] %></div></a>
-            <% end %>
-            <% if @current_parent_user %>
-              <%= button_to "Stop Impersonating", "#{@current_user.path}/impersonate", method: :delete %>
-            <% end %>
-            <% if @showing_user && @showing_user == @current_user %>
-              <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
-            <% end %>
-          </div>
-        <% else %>
-          <%= button_to "Log in", "/login", method: :get %>
+      <nav style="display:block;min-height:16px;">
+        <a href="/" style="float:left; margin: 0 10px 0 0;"><i class="logo"></i></a>
+        <% if @current_studio.id != @current_tenant.main_studio_id %>
+          / <a href="<%= @current_studio.path %>"><%= @current_studio.name %></a>
         <% end %>
-      </div>
+        <% if @current_resource && @current_resource.class.to_s == 'Cycle' %>
+          / <a href="<%= @current_studio.path %>/cycles">Cycles</a> / <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
+        <% elsif @current_resource %>
+          / <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
+        <% elsif @showing_user %>
+          / <span class="resource-link-user"><%= @showing_user.handle %></span>
+        <% end %>
+        <%= render 'layouts/top_right_menu' %>
+      </nav>
     <% end %>
     <div class="notice"><%= notice %></div>
     <div class="alert"><%= alert %></div>

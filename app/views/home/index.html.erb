@@ -1,19 +1,5 @@
 <h1><%= @current_tenant.name %></h1>
 
-<h2>Create</h2>
-<p>
-  <img src="/resource-icons/note-icon.svg" style="height:2em;float:left;margin-right:12px"/>
-  <a href="/note"><button>New Note</button></a>
-</p>
-<p>
-  <img src="/resource-icons/decision-icon.svg" style="height:2em;float:left;margin-right:12px"/>
-  <a href="/decide"><button>New Decision</button></a>
-</p>
-<p>
-  <img src="/resource-icons/commitment-icon.svg" style="height:2em;float:left;margin-right:12px"/>
-  <a href="/commit"><button>New Commitment</button></a>
-</p>
-
 <% if @current_user %>
   <h2>Your Studios</h2>
   <% if @studios.any? %>
@@ -28,6 +14,23 @@
     <p>No studios yet.</p>
   <% end %>
   <p><a href="/studios/new"><button>New Studio</button></a></p>
+
+  <h2>Create</h2>
+  <p>
+    <img src="/resource-icons/note-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+    <a href="/note"><button>New Note</button></a>
+  </p>
+  <p>
+    <img src="/resource-icons/decision-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+    <a href="/decide"><button>New Decision</button></a>
+  </p>
+  <p>
+    <img src="/resource-icons/commitment-icon.svg" style="height:2em;float:left;margin-right:12px"/>
+    <a href="/commit"><button>New Commitment</button></a>
+  </p>
+  <p>
+    Items created outside of a studio context do not display backlinks and do not show up in any cycle views.
+  </p>
 <% else %>
-  <p><a href="/login">Log in</a> to see your studios.</p>
+  <p><a href="/login">Log in</a></p>
 <% end %>

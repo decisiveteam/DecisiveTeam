@@ -87,3 +87,4 @@ gem 'omniauth-auth0', '~> 3.0'
 gem 'omniauth-rails_csrf_protection', '~> 1.0' # prevents forged authentication requests
 
 gem 'redcarpet'
+gem 'octicons_helper'

@@ -60,7 +60,7 @@ export default class extends Controller {
   async confirm(event) {
     event.preventDefault();
     if (this.editingName) return;
-    console.log("Confirming read... " + this.confirmButtonTarget.dataset.url);
+    // console.log("Confirming read... " + this.confirmButtonTarget.dataset.url);
     this.confirmButtonTarget.innerHTML = "Confirming...";
     const url = this.confirmButtonTarget.dataset.url;
     try {

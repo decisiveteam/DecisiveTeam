@@ -3,6 +3,7 @@ class NotesController < ApplicationController
   def new
     @page_title = "Note"
     @page_description = "Make a note for your team"
+    @end_of_cycle_options = Cycle.end_of_cycle_options
     @note = Note.new(
       title: params[:title],
     )
@@ -12,7 +13,11 @@ class NotesController < ApplicationController
     @note = Note.new(
       title: model_params[:title],
       text: model_params[:text],
-      deadline: Time.now + duration_param,
+      deadline: Cycle.new_from_end_of_cycle_option(
+        end_of_cycle: params[:end_of_cycle],
+        tenant: current_tenant,
+        studio: current_studio,
+      ).end_date,
       created_by: current_user,
     )
     begin
@@ -34,6 +39,27 @@ class NotesController < ApplicationController
     @page_description = "Note page"
     set_pin_vars
     @note_reader = NoteReader.new(note: @note, user: current_user)
+  end
+
+  def edit
+    @note = current_note
+    return render '404', status: 404 unless @note
+    @page_title = "Edit Note"
+    # Which cycle end date is this note deadline associated with?
+  end
+
+  def update
+    @note = current_note
+    return render '404', status: 404 unless @note
+    @note.title = model_params[:title]
+    @note.text = model_params[:text]
+    # @note.deadline = Cycle.new_from_end_of_cycle_option(
+    #   end_of_cycle: params[:end_of_cycle],
+    #   tenant: current_tenant,
+    #   studio: current_studio,
+    # ).end_date
+    @note.save! if @note.changed?
+    redirect_to @note.path
   end
 
   def confirm_and_return_partial

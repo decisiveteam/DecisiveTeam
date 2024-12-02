@@ -9,16 +9,12 @@
     <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
   </div>
   <h2>Critical Mass</h2>
-  <p style="margin-bottom:2px;margin-top:16px;">Set the minimum number of participants required for this commitment to take effect.</p>
-  <div>
-    <%= form.number_field :critical_mass, value: 1, style: 'width:48px;' %>
-  </div>
-  <h2>Deadline</h2>
-  <p style="margin-bottom:2px;margin-top:16px;">Set the deadline.</p>
   <p>
-    <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
-    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
-    will be given to reach critical mass.
+    At least <%= form.number_field :critical_mass, value: 1, style: 'width:48px;' %> participant(s) required for this commitment to take effect.
+  </p>
+  <h2>Deadline</h2>
+  <p>
+    Critical mass must be reached by <%= form.select :end_of_cycle, options_for_select(@end_of_cycle_options, selected: @end_of_cycle_options[1]) %>
   </p>
   <hr style="height:1px;" />
   <p>Go to the commitment page and share the link with others.</p>

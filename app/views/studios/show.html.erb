@@ -1,22 +1,9 @@
+<%= render 'shared/more_button', resource: @current_studio, options: ['invite', 'settings'] %>
 <h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
 <h1 style="margin-top:0;"><%= @current_studio.name %></h1>
 
 <h2>Pinned</h2>
 <%= render 'pinned' %>
-
-<h2>Create</h2>
-<p>
-  <i class="note-icon large-icon" style="float:left;margin-right:12px"></i>
-  <a href="<%= @current_studio.path %>/note"><button>New Note</button></a>
-</p>
-<p>
-  <i class="decision-icon large-icon" style="float:left;margin-right:12px"></i>
-  <a href="<%= @current_studio.path %>/decide"><button>New Decision</button></a>
-</p>
-<p>
-  <i class="commitment-icon large-icon" style="float:left;margin-right:12px"></i>
-  <a href="<%= @current_studio.path %>/commit"><button>New Commitment</button></a>
-</p>
 
 <h2>Cycles</h2>
 <p><a href="<%= @current_studio.path %>/cycles">View all</a></p>
@@ -25,6 +12,11 @@
 <h2>Backlinks</h2>
 <%= render 'backlinks' %>
 
+<% if @current_studio.pages_enabled? %>
+  <h2>Pages</h2>
+  <%= render 'pages' %>
+<% end %>
+
 <h2>Team</h2>
 <%= render 'team' %>
-<a href="<%= @current_studio.path %>/invite"><button><%= octicon "person-add" %> Invite Team Members</button></a>
+

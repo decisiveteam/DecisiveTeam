@@ -34,6 +34,19 @@ class UsersController < ApplicationController
     end
   end
 
+  def append_to_scratchpad
+    tu = current_tenant.tenant_users.find_by(handle: params[:handle])
+    return render '404' if tu.nil?
+    return render plain: '403 Unauthorized' unless tu.user == current_user
+    if params[:text].present?
+      tu.settings['scratchpad']['text'] += "\n" + params[:text]
+      tu.save!
+      render json: { text: tu.settings['scratchpad']['text'] }
+    else
+      render status: 400, json: { error: 'Text is required' }
+    end
+  end
+
   def impersonate
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
     return render '404' if tu.nil?

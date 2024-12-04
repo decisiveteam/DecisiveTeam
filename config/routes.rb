@@ -52,10 +52,11 @@ Rails.application.routes.draw do
 
   get 'about' => 'home#about'
   get 'help' => 'home#help'
-  get 'feedback' => 'home#feedback'
+  get 'contact' => 'home#contact'
 
   resources :users, path: 'u', param: :handle, only: [:show] do
     put 'scratchpad' => 'users#scratchpad', on: :member
+    post 'scratchpad/append' => 'users#append_to_scratchpad', on: :member
     get 'settings', on: :member
     resources :api_tokens,
               path: 'settings/tokens',
@@ -77,6 +78,7 @@ Rails.application.routes.draw do
   get "s/:studio_handle/invite" => 'studios#invite'
   get "s/:studio_handle/join" => 'studios#join'
   post "s/:studio_handle/join" => 'studios#accept_invite'
+
   ['', 's/:studio_handle'].each do |prefix|
     get "#{prefix}/note" => 'notes#new'
     post "#{prefix}/note" => 'notes#create'
@@ -138,5 +140,27 @@ Rails.application.routes.draw do
         resources :custom_data, path: 'custom/data/:table_name'
       end
     end
+
+    namespace :readybase, path: "#{prefix}/readybase" do
+      get '' => 'main#index'
+      get 'main' => 'main#index'
+    end
+
+    namespace :pages, path: "#{prefix}/pages" do
+      get '' => 'main#index'
+      get 'new' => 'main#new'
+      post 'publish' => 'main#publish'
+      get ':path' => 'main#show'
+    end
+
+    namespace :random, path: "#{prefix}/random" do
+      get '' => 'main#index'
+      get 'new' => 'main#new'
+      get 'beacon' => 'main#beacon'
+      get 'cointoss' => 'main#cointoss'
+      get 'shuffle' => 'main#shuffle_items'
+      post 'shuffle' => 'main#shuffle_items'
+    end
+
   end
 end

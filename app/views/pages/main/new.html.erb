@@ -1,5 +1,5 @@
 <h4 style="display:inline-block;">
-  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="note-icon"></i> Note
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <%= octicon 'note' %> Page
 </h4>
 <span data-controller="scratchpad-links" class="more-button">
   <span
@@ -19,23 +19,20 @@
     <% end %>
   </ul>
 </span>
-<%= form_with do |form| %>
+<%= form_with url: "#{@current_studio.path}/pages/publish" do |form| %>
+  <div style="margin-bottom:8px;">
+    <%= form.text_field :path, placeholder: 'path' %>
+  </div>
   <div style="margin-bottom:8px;">
     <%= form.text_field :title, placeholder: 'Title' %>
   </div>
   <div>
-    <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;' %>
+    <%= form.text_area :markdown, placeholder: 'Markdown', style: 'height:300px;' %>
   </div>
-  <h2>Relevance Duration</h2>
-  <p>
-    This note will be considered relevant until
-    <%= form.select :end_of_cycle, options_for_select(@end_of_cycle_options, selected: @end_of_cycle_options[0]) %>
-  </p>
   <hr style="height:1px;" />
   <% if @current_studio != @current_tenant.main_studio %>
-    <%= form.submit 'Save note' %> in <strong><%= @current_studio.name %></strong>
+    <%= form.submit 'Publish' %> in <strong><%= @current_studio.name %></strong>
   <% else %>
-    <p>Items created outside of a studio context do not display backlinks and do not show up in any cycle views.</p>
-    <%= form.submit 'Save note' %>
+    <%= form.submit 'Publish' %>
   <% end %>
 <% end %>

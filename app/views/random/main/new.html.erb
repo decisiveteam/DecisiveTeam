@@ -1,0 +1,20 @@
+<h4 style="display:inline-block;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / 🎲 Randomness
+</h4>
+<%= form_with url: "#{@current_studio.path}/random" do |form| %>
+  <div style="margin-bottom:8px;">
+    <%= form.text_field :title, placeholder: 'Title (purpose)' %>
+  </div>
+  <div>
+    <%= form.text_area :description, placeholder: 'Describe what the results of this random process will mean.', style: 'height:300px;' %>
+  </div>
+  <div>
+    <%= form.select :type, ['dice', 'coin', 'card', 'number', 'list'], prompt: 'Type' %>
+  </div>
+  <hr style="height:1px;" />
+  <% if @current_studio != @current_tenant.main_studio %>
+    <%= form.submit 'Publish' %> in <strong><%= @current_studio.name %></strong>
+  <% else %>
+    <%= form.submit 'Publish' %>
+  <% end %>
+<% end %>

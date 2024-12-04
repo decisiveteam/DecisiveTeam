@@ -24,6 +24,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
+  min-height: calc(100vh - 46px);
 }
 
 body .octicon {
@@ -256,12 +257,12 @@ select:focus {
   /* font-family: 'Courier New', Courier, monospace; */
 }
 
-.more-button, .top-right-menu-button {
+.more-button, .top-menu-button {
   float: right;
   cursor: pointer;
 }
 
-.more-button button, .top-right-menu-button button {
+.more-button button, .top-menu-button button {
   float: right;
   background-color: transparent;
   color: var(--color-fg-default);
@@ -269,8 +270,9 @@ select:focus {
   border: none;
 }
 
-.more-button .more-button-menu, .top-right-menu {
+.more-button .more-button-menu, .top-menu {
   min-width: 127px;
+  max-width: fit-content;
   display: none;
   position: absolute;
   top: 20px;
@@ -279,40 +281,51 @@ select:focus {
   border: 1px solid var(--color-border-default);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 8px;
+  z-index: 100;
 }
 
-.top-right-menu {
+.more-button .more-button-menu {
+  min-width: 234px;
+}
+
+.top-menu {
   top: 36px;
 }
 
-.top-right-menu ul li button {
+.top-menu ul li button {
   background-color: transparent;
   border: none;
   color: inherit;
   padding: 0;
 }
 
-.more-button-menu ul, .top-right-menu ul {
+.top-menu ul li h4 {
+  border-bottom: 1px solid var(--color-border-muted);
+  padding: 0;
+  margin: 0;
+}
+
+.more-button-menu ul, .top-menu ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.more-button-menu ul li, .top-right-menu ul li {
+.more-button-menu ul li, .top-menu ul li {
   margin-bottom: 8px;
   cursor: pointer;
 }
 
-.more-button-menu ul li:last-child, .top-right-menu ul li:last-child {
+.more-button-menu ul li:last-child, .top-menu ul li:last-child {
   margin-bottom: 0;
 }
 
-.more-button-menu ul li a, .top-right-menu ul li a {
+.more-button-menu ul li a, .top-menu ul li a {
   text-decoration: none;
   color: var(--color-fg-default);
 }
 
-.more-button-menu ul li a:hover, .top-right-menu ul li a:hover {
+.more-button-menu ul li a:hover, .top-menu ul li a:hover {
   text-decoration: none;
 }
 
@@ -341,6 +354,7 @@ select:focus {
 .note-icon, .decision-icon, .commitment-icon {
   background-size: 16px;
   background-repeat: no-repeat;
+  background-position: center center;
   height: 14px;
   width: 16px;
   display: inline-block;

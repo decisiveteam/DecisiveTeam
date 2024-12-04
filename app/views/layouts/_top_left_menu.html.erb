@@ -1,0 +1,81 @@
+<span data-controller="top-left-menu" class="top-left-menu">
+  <span
+    class="top-left-menu-button"
+    style="cursor:pointer;"
+    data-action="click->top-left-menu#toggleMenu"
+    data-top-left-menu-target="button"
+    >
+    <i class="logo"></i>
+  </span>
+  <span data-top-left-menu-target="menu" style="display:none;" class="top-menu">
+    <ul>
+      <li>
+        <% if @current_studio == @current_tenant.main_studio %>
+          <a href="/" style="color:var(--color-accent-fg);">
+            <%= octicon 'dot-fill' %>
+            <%= octicon 'home' %>
+            <span style="font-size:0.8em;padding:2px 4px;">
+              <%= @current_tenant.domain %>
+            </span>
+          </a>
+        <% else %>
+          <a href="/">
+            <%= octicon 'dot' %>
+            <%= octicon 'home' %>
+            <span style="font-size:0.8em;padding:2px 4px;">
+              <%= @current_tenant.domain %>
+            </span>
+          </a>
+        <% end %>
+      </li>
+      <% if @current_user %>
+        <li>
+          <h4>Studios</h4>
+        </li>
+        <% @current_user.studios.each do |studio| %>
+          <% if studio == @current_tenant.main_studio %>
+            <% next %>
+          <% elsif studio == @current_studio %>
+            <li style="color:var(--color-accent-fg)">
+              <%= octicon 'dot-fill' %>
+              <a href="<%= studio.path %>" style="color:var(--color-accent-fg)"><%= studio.name %></a>
+            </li>
+          <% else %>
+            <li>
+              <%= octicon 'dot' %>
+              <a href="<%= studio.path %>"><%= studio.name %></a>
+            </li>
+          <% end %>
+        <% end %>
+      <% end %>
+      <li>
+        <h4>Info</h4>
+      </li>
+      <li>
+        <a href="/about">
+          <%= octicon 'info' %> About
+        </a>
+      </li>
+      <li>
+        <a href="/contact">
+          <%= octicon 'mail' %> Contact
+        </a>
+      </li>
+      <li>
+        <a href="/help">
+          <%= octicon 'question' %> Help
+        </a>
+      </li>
+      <% if @current_tenant.is_admin?(@current_user) %>
+        <li>
+          <h4>Admin</h4>
+        </li>
+        <li>
+          <a href="/admin">
+            <%= octicon 'tools' %> Admin
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </span>
+</span>

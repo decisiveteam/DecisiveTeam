@@ -25,6 +25,9 @@ class HomeController < ApplicationController
     @page_title = 'Help'
   end
 
+  def contact
+  end
+
   def scratchpad
     @page_title = 'Scratchpad'
   end

@@ -19,11 +19,18 @@ class MarkdownRenderer
     fenced_code_blocks: true
   )
 
-  def self.render(content)
+  def self.render(content, shift_headers: true, display_references: true)
     raw_html = @@markdown.render(content.to_s)
     sanitized_html = sanitize(raw_html)
-    shifted_header_html = shift_headers(sanitized_html)
-    display_refereces(shifted_header_html)
+    if shift_headers
+      output = shift_headers(sanitized_html)
+    else
+      output = sanitized_html
+    end
+    if display_references
+      output = display_refereces(output)
+    end
+    output
   end
 
   def self.render_inline(content)

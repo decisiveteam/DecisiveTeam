@@ -131,6 +131,8 @@ class ApplicationController < ActionController::Base
             redirect_to path unless request.path == path
           end
         else
+          # TODO Add last_seen_at to StudioUser instead of touch
+          su.touch if controller_name != 'sessions'
           @current_user.studio_user = su
         end
       end

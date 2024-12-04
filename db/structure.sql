@@ -340,6 +340,28 @@ CREATE TABLE public.options (
 
 
 --
+-- Name: pages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.pages (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    path character varying NOT NULL,
+    title character varying DEFAULT ''::character varying NOT NULL,
+    markdown text DEFAULT ''::text NOT NULL,
+    html text DEFAULT ''::text NOT NULL,
+    published boolean DEFAULT false NOT NULL,
+    published_at timestamp(6) without time zone,
+    archived_at timestamp(6) without time zone,
+    settings jsonb DEFAULT '{}'::jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -578,6 +600,14 @@ ALTER TABLE ONLY public.oauth_identities
 
 ALTER TABLE ONLY public.options
     ADD CONSTRAINT options_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pages pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT pages_pkey PRIMARY KEY (id);
 
 
 --
@@ -1148,6 +1178,34 @@ CREATE INDEX index_options_on_tenant_id ON public.options USING btree (tenant_id
 
 
 --
+-- Name: index_pages_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pages_on_studio_id ON public.pages USING btree (studio_id);
+
+
+--
+-- Name: index_pages_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pages_on_tenant_id ON public.pages USING btree (tenant_id);
+
+
+--
+-- Name: index_pages_on_tenant_id_and_studio_id_and_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_pages_on_tenant_id_and_studio_id_and_path ON public.pages USING btree (tenant_id, studio_id, path);
+
+
+--
+-- Name: index_pages_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pages_on_user_id ON public.pages USING btree (user_id);
+
+
+--
 -- Name: index_studio_invites_on_code; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1378,6 +1436,14 @@ ALTER TABLE ONLY public.approvals
 
 ALTER TABLE ONLY public.studio_users
     ADD CONSTRAINT fk_rails_247e24a571 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: pages fk_rails_2692f121c1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT fk_rails_2692f121c1 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -1621,6 +1687,14 @@ ALTER TABLE ONLY public.decision_participants
 
 
 --
+-- Name: pages fk_rails_84a58494eb; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT fk_rails_84a58494eb FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: custom_data_tables fk_rails_84f28416f5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1698,6 +1772,14 @@ ALTER TABLE ONLY public.custom_data_associations
 
 ALTER TABLE ONLY public.custom_data_configs
     ADD CONSTRAINT fk_rails_bceb6b3236 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: pages fk_rails_c7f006a55b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT fk_rails_c7f006a55b FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
 
 
 --
@@ -1901,6 +1983,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241128054723'),
 ('20241128204415'),
 ('20241130040434'),
-('20241130211736');
+('20241130211736'),
+('20241203033229');
 
 

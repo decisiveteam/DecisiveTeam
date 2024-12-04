@@ -7,7 +7,9 @@ class Tenant < ApplicationRecord
   after_create :create_main_studio!
 
   tables = ActiveRecord::Base.connection.tables - [
-    'tenants', 'users', 'oauth_identities', 'ar_internal_metadata', 'schema_migrations'
+    'tenants', 'users', 'oauth_identities',
+    'ar_internal_metadata', 'schema_migrations'
+
   ]
   tables.each do |table|
     has_many table.to_sym
@@ -77,8 +79,8 @@ class Tenant < ApplicationRecord
   end
 
   def is_admin?(user)
-    # TODO - implement
-    tenant_users.find_by(user: user).present?
+    tu = tenant_users.find_by(user: user)
+    tu && tu.roles.include?('admin')
   end
 
   def auth_providers
@@ -89,8 +91,12 @@ class Tenant < ApplicationRecord
     settings['require_login'].to_s == 'false' ? false : true
   end
 
+  def domain
+    "#{subdomain}.#{ENV['HOSTNAME']}"
+  end
+
   def url
-    "https://#{subdomain}.#{ENV['HOSTNAME']}"
+    "https://#{domain}"
   end
 
   private

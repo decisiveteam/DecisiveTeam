@@ -10,7 +10,10 @@ class TenantUser < ApplicationRecord
     self.display_name ||= user.name
     self.settings ||= {}
     self.settings['pinned'] ||= {}
-    self.settings['scratchpad'] ||= default_scratchpad
+    self.settings['scratchpad'] ||= {}
+    self.settings['scratchpad'].merge!(default_scratchpad)
+    self.roles ||= []
+    self.roles << 'default'
   end
 
   def user
@@ -64,6 +67,22 @@ class TenantUser < ApplicationRecord
 
       The purpose of this feature is simply to provide a convenient place to save links and thoughts and any other info you might want to jot down so that you don't lose track of it.
     SCRATCH_PAD_TEXT
+  end
+
+  def roles
+    settings['roles'] || []
+  end
+
+  def add_role!(role)
+    settings['roles'] ||= []
+    settings['roles'] << role
+    save!
+  end
+
+  def remove_role!(role)
+    settings['roles'] ||= []
+    settings['roles'].delete(role)
+    save!
   end
 
 end

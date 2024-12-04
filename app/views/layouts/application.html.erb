@@ -25,20 +25,10 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body style="<%= @current_parent_user ? 'border:16px dotted var(--color-fg-default);' : '' %>">
     <% if controller_name != 'sessions' %>
       <nav style="display:block;min-height:16px;">
-        <a href="/" style="float:left; margin: 0 10px 0 0;"><i class="logo"></i></a>
-        <% if @current_studio.id != @current_tenant.main_studio_id %>
-          / <a href="<%= @current_studio.path %>"><%= @current_studio.name %></a>
-        <% end %>
-        <% if @current_resource && @current_resource.class.to_s == 'Cycle' %>
-          / <a href="<%= @current_studio.path %>/cycles">Cycles</a> / <span class="resource-link-cycle"><%= @current_resource.display_name %></span>
-        <% elsif @current_resource %>
-          / <span class="resource-link-<%= @current_resource.class.name.downcase %>"><%= @current_resource.truncated_id %></span>
-        <% elsif @showing_user %>
-          / <span class="resource-link-user"><%= @showing_user.handle %></span>
-        <% end %>
+        <%= render 'layouts/top_left_menu' %>
         <%= render 'layouts/top_right_menu' %>
       </nav>
     <% end %>

@@ -95,6 +95,10 @@ class User < ApplicationRecord
     studio_user.save!
   end
 
+  def studios
+    @studios ||= Studio.joins(:studio_users).where(studio_users: {user_id: id}).order('studio_users.updated_at' => :desc)
+  end
+
   def display_name=(name)
     tenant_user.display_name = name
   end

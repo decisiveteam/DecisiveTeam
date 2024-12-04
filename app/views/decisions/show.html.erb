@@ -1,11 +1,11 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<%= render 'shared/more_button', options: [
-  { icon: 'copy', label: 'Copy link to clipboard', clipboard_text: @decision.shareable_link },
-  { action: 'append', icon: 'file-moved', label: 'Append link to scratchpad' },
-  { action: 'pin', icon: 'pin', url: "#{@decision.path}/pin", label: "Pin to #{@current_studio == @current_tenant.main_studio ? 'your profile' : 'studio homepage' }" },
-  { link_to: "#{@decision.path}/edit", icon: 'gear', label: 'Settings' },
-] %>
-<h4 style="margin-top:0px;margin-bottom:0;"><i class="decision-icon"></i> Decision</h4>
+<%= render 'shared/more_button', resource: @decision, options: ['copy', 'appendLink', 'pin', 'settings'] %>
+<h4 style="margin-top:0px;margin-bottom:0;">
+  <a href="<%= @current_studio.path || '/' %>"><%= @current_studio.name %></a> /
+  <span style="white-space:nowrap;">
+    <i class="decision-icon"></i> Decision <code><%= @decision.truncated_id %></code>
+  </span>
+</h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
   <% if @decision.deadline.nil? %>
@@ -15,7 +15,6 @@
   <% elsif @decision.closed? %>
     Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
   <% end %>
-  <%= render 'shared/copy_to_clipboard', text: @decision.shareable_link %>
   <br/>
 </p>
 <% if @decision.description && @decision.description.length > 0 %>

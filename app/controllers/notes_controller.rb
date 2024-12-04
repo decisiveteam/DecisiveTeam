@@ -4,6 +4,7 @@ class NotesController < ApplicationController
     @page_title = "Note"
     @page_description = "Make a note for your team"
     @end_of_cycle_options = Cycle.end_of_cycle_options
+    @scratchpad_links = [] # parse urls and filter to current studio
     @note = Note.new(
       title: params[:title],
     )

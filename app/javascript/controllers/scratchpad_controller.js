@@ -66,8 +66,24 @@ export default class extends Controller {
   }
 
   appendText(text) {
-    this.editor.setValue(this.editor.getValue() + '\n' + text)
-    this.saveText()
+    const url = this.editorTarget.dataset.url + "/append"
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": this.csrfToken,
+      },
+      body: JSON.stringify({ text: text }),
+    }).then(response => {
+      if (response.ok) {
+        return response.json()
+      } else {
+        console.error("Error appending text:", response)
+      }
+    }).then(responseBody => {
+      this.text = responseBody.text
+      this.editor.setValue(this.text)
+    })
   }
 
   saveText() {

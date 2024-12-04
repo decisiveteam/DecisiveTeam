@@ -64,6 +64,11 @@ class Studio < ApplicationRecord
     @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
   end
 
+  def pages_enabled?
+    # self.settings['pages_enabled']
+    true
+  end
+
   def handle_is_valid
     if handle.present?
       only_alphanumeric_with_dash = handle.match?(/\A[a-z0-9-]+\z/)
@@ -105,7 +110,7 @@ class Studio < ApplicationRecord
 
   def path
     if is_main_studio?
-      ''
+      nil
     else
       "/#{path_prefix}/#{handle}"
     end

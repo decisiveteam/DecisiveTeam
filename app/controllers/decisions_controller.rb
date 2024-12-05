@@ -26,8 +26,14 @@ class DecisionsController < ApplicationController
       end
       redirect_to @decision.path
     rescue ActiveRecord::RecordInvalid => e
-      # TODO - Detect specific validation errors and return helpful error messages
-      flash.now[:alert] = 'There was an error creating the decision. Please try again.'
+      e.record.errors.full_messages.each do |msg|
+        flash.now[:alert] = msg
+      end
+      @end_of_cycle_options = ['1 hour from now'] + Cycle.end_of_cycle_options
+      @decision = Decision.new(
+        question: decision_params[:question],
+        description: decision_params[:description],
+      )
       render :new
     end
   end

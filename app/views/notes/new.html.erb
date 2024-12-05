@@ -1,4 +1,4 @@
-<h4 style="display:inline-block;">
+<h4 style="display:inline-block;margin-top:0;">
   <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="note-icon"></i> Note
 </h4>
 <span data-controller="scratchpad-links" class="more-button">
@@ -8,23 +8,27 @@
     >
     <%= octicon 'link' %>
   </span>
-  <ul data-scratchpad-links-target="menu" class="more-button-menu">
-    <li>
-      <h4>Scratchpad links</h4>
-    </li>
-    <% @scratchpad_links.each do |link| %>
+  <span data-scratchpad-links-target="menu" class="more-button-menu">
+    <ul>
       <li>
-        <a href="<%= link[:url] %>"><%= link[:title] %></a>
+        <h4>Scratchpad links</h4>
       </li>
-    <% end %>
-  </ul>
+      <% @scratchpad_links.each do |link| %>
+        <li title="<%= link[:type] %>: <%= link[:title] %>">
+          <%= render 'shared/copy_button', text: link[:url] %>
+          <code><%= link[:type].downcase[0] %>/<%= link[:id] %></code>
+          <span><%= link[:title].truncate(30) %></span>
+        </li>
+      <% end %>
+    </ul>
+  </span>
 </span>
 <%= form_with do |form| %>
   <div style="margin-bottom:8px;">
-    <%= form.text_field :title, placeholder: 'Title' %>
+    <%= form.text_field :title, placeholder: 'Title', value: @note.title %>
   </div>
   <div>
-    <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;' %>
+    <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;', value: @note.text %>
   </div>
   <h2>Relevance Duration</h2>
   <p>

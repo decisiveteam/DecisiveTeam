@@ -10,6 +10,10 @@
 <p style="font-size:0.8em;">
   Created <strong><%= timeago(@note.created_at) %></strong> by <%= @note.created_by.name %>
   <br/>
+  <% if @note.created_at != @note.updated_at %>
+    Last updated <strong><%= timeago(@note.updated_at) %></strong> by <%= @note.updated_by.name %>
+    <br/>
+  <% end %>
   <% if @note.deadline > Time.now %>
     Relevant until <strong><%= timeago(@note.deadline) %></strong><br/>
   <% else %>

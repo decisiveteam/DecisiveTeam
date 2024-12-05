@@ -1,4 +1,4 @@
-class Random::MainController < BaseDualDomainController
+class Random::MainController < Random::BaseRandomController
   def index
     render json: { message: 'Hello, world!' }
   end
@@ -14,7 +14,7 @@ class Random::MainController < BaseDualDomainController
       message = "Invalid time unit: #{time_unit}. Must be one of: second minute, hour, day, week, month, year"
       return render json: { error: message }, status: 400
     end
-    timestamp = Time.current
+    timestamp = Time.current.to_s.to_time
     time_point = params[:time_point].to_time if params[:time_point]
     time_point ||= timestamp
     unless time_point <= Time.current
@@ -27,14 +27,21 @@ class Random::MainController < BaseDualDomainController
       time_window_start = time_point.send("beginning_of_#{time_unit}")
       time_window_end = time_point.send("end_of_#{time_unit}")
     end
-    hash = hash_with_secret([seed, time_window_start.to_s, time_window_end.to_s])
-    # TODO support multiple output value types
-    value = Random.new(hash.to_i(16)).rand.to_s
-    render json: {
+    if params[:list]
+      list = params[:list].is_a?(Array) ? params[:list] : params[:list].split(',')
+      shuffled_list = shuffle(seed, list)
+      value = shuffled_list
+    else
+      list = nil
+      hash = hash_with_secret([seed, time_window_start.to_s, time_window_end.to_s])
+      value = Random.new(hash.to_i(16)).rand.to_s
+    end
+    @json_response = {
       input: {
         time_point: time_point,
         time_unit: time_unit,
         seed: seed,
+        list: list,
       },
       output: {
         time_window_start: time_window_start,
@@ -44,6 +51,14 @@ class Random::MainController < BaseDualDomainController
       timestamp: timestamp,
       message: 'This random value is intended for group coordination purposes only, and not for cryptographic purposes. Do not use this endpoint for security-sensitive applications.',
     }
+    respond_to do |format|
+      format.json do
+        render json: @json_response
+      end
+      format.html do
+        render layout: 'application'
+      end
+    end
   end
 
   def cointoss
@@ -83,27 +98,6 @@ class Random::MainController < BaseDualDomainController
       },
       timestamp: Time.current,
     }
-  end
-
-  private
-
-  def solo_domain
-    ENV['RANDOM_DOMAIN']
-  end
-
-  def feature_name
-    'random'
-  end
-
-  def shuffle(seed, items)
-    hash = hash_with_secret([seed, items])
-    shuffled_items = items.shuffle(random: Random.new(hash.to_i(16)))
-  end
-
-  def hash_with_secret(array)
-    secret = ENV['SECRET_RANDOM_SEED']
-    raise 'SECRET_RANDOM_SEED environment variable is required' unless secret
-    Digest::SHA512.hexdigest(array.join(':') + ':' + secret)
   end
 
 end

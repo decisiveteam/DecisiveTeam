@@ -129,7 +129,13 @@ Rails.application.routes.draw do
         resources :commitments do
           resources :participants
         end
-        resources :cycles
+        if prefix == 's/:studio_handle'
+          # Cycles must be scoped to a studio
+          resources :cycles
+        else
+          # Studios must not be scoped to a studio (doesn't make sense)
+          resources :studios
+        end
         # resources :webhooks
         get 'custom/data', to: 'custom_data#info'
         get 'custom/config', to: 'custom_data#configuration'
@@ -150,6 +156,8 @@ Rails.application.routes.draw do
       get '' => 'main#index'
       get 'new' => 'main#new'
       post 'publish' => 'main#publish'
+      get ':path/edit' => 'main#edit'
+      put ':path/edit' => 'main#update'
       get ':path' => 'main#show'
     end
 

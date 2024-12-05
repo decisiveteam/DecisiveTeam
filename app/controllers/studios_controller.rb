@@ -26,19 +26,29 @@ class StudiosController < ApplicationController
     )
     @studio.timezone = params[:timezone]
     @studio.save!
-    @studio.add_user!(@current_user)
+    @studio.add_user!(@current_user, roles: ['admin'])
     redirect_to @studio.path
   end
 
   def settings
-    @page_title = 'Studio Settings'
+    if @current_user.studio_user.is_admin?
+      @page_title = 'Studio Settings'
+    else
+      return render layout: 'application', html: 'You must be an admin to access studio settings.'
+    end
   end
 
   def update_settings
     # TODO - only allow admins to update settings
     @current_studio.name = params[:name]
-    @current_studio.handle = params[:handle]
+    # @current_studio.handle = params[:handle] if params[:handle]
     @current_studio.timezone = params[:timezone]
+    if ['true', 'false', '1', '0'].include?(params[:pages_enabled])
+      @current_studio.settings['pages_enabled'] = params[:pages_enabled] == 'true' || params[:pages_enabled] == '1'
+    end
+    if ['true', 'false', '1', '0'].include?(params[:random_enabled])
+      @current_studio.settings['random_enabled'] = params[:random_enabled] == 'true' || params[:random_enabled] == '1'
+    end
     @current_studio.save!
     redirect_to @current_studio.path
   end
@@ -89,6 +99,9 @@ class StudiosController < ApplicationController
       # TODO - check studio settings to see if public join is allowed
       return render plain: '404 invite code not found', status: 404
     end
+  end
+
+  def leave
   end
 
 end

@@ -4,9 +4,8 @@ module ApplicationHelper
     "<time
       data-controller='timeago'
       data-timeago-datetime-value='#{datetime.to_datetime.iso8601}'
-      data-refresh-interval='#{60 * 1000}'
       title='#{datetime.to_s}'
-    >#{time_ago_in_words(datetime)}</time> #{ago_or_from_now}".html_safe
+    >#{time_ago_in_words(datetime)} #{ago_or_from_now}</time>".html_safe
   end
 
   def countdown(datetime, base_unit: 'seconds')

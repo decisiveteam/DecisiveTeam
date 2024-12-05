@@ -4,7 +4,7 @@ class NotesController < ApplicationController
     @page_title = "Note"
     @page_description = "Make a note for your team"
     @end_of_cycle_options = Cycle.end_of_cycle_options
-    @scratchpad_links = [] # parse urls and filter to current studio
+    @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
     @note = Note.new(
       title: params[:title],
     )
@@ -28,7 +28,15 @@ class NotesController < ApplicationController
       end
       redirect_to @note.path
     rescue ActiveRecord::RecordInvalid => e
-      flash.now[:alert] = 'There was an error creating the note. Please try again.'
+      e.record.errors.full_messages.each do |msg|
+        flash.now[:alert] = msg
+      end
+      @end_of_cycle_options = Cycle.end_of_cycle_options
+      @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
+      @note = Note.new(
+        title: model_params[:title],
+        text: model_params[:text],
+      )
       render :new
     end
   end
@@ -44,6 +52,7 @@ class NotesController < ApplicationController
 
   def edit
     @note = current_note
+    @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
     return render '404', status: 404 unless @note
     @page_title = "Edit Note"
     # Which cycle end date is this note deadline associated with?

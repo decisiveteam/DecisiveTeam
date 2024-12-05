@@ -2,7 +2,16 @@ module Api::V1
   class CyclesController < BaseController
     def index
       response = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
-        Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio).api_json(include: includes_param)
+        Cycle.new(
+          name: name,
+          tenant: @current_tenant,
+          studio: @current_studio,
+          current_user: @current_user,
+          params: {
+            filters: params[:filters],
+            sort_by: params[:sort_by],
+          }
+        ).api_json(include: includes_param)
       end
       render json: response
     end

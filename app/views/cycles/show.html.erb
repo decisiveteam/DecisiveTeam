@@ -12,12 +12,33 @@
       ending in <strong><%= countdown(@cycle.end_date) %></strong>
     <% end %>
   </span>
+  <br/>
+  <span id="last-sync-display" style="font-size: 0.8em;display:inline;">
+    <span style="opacity:0.6;">Last sync <%= timeago(Time.current) %></span>
+    <a href="<%= @cycle.path_with_params %>"><%= octicon 'sync' %></a>
+  </span>
+  <script>
+    setTimeout(function() {
+      document.getElementById('last-sync-display').style.display = 'inline';
+    }, 10 * 60 * 1000); // Show sync display after 10 minutes
+  </script>
 </p>
 
-<!-- <h2>View Options</h2>
-<p>
-  Group by: <code><%= @group_by %></code>, Sort by: <code><%= @sort_by %></code>, Filters: <code><%= @filter %></code>
-</p> -->
+<%= form_with url: @cycle.path, method: :get, local: true, id: 'sort-filter-form' do |form| %>
+  <div>
+    <h4>Filter</h4>
+    <%= form.select :filter, options_for_select(@filter_options, @filters), {}, { id: 'filter-select' } %>
+  </div>
+  <script>
+    document.getElementById('filter-select').addEventListener('change', function(event) {
+      if (event.target.value === 'none') {
+        window.location = '<%= @cycle.path %>';
+      } else {
+        document.getElementById('sort-filter-form').submit();
+      }
+    });
+  </script>
+<% end %>
 
 <h2>Notes</h2>
 <ul>
@@ -49,10 +70,9 @@
 <h2>Backlinks</h2>
 <p>Items that are linked to by the items above.</p>
 <ul>
-<% @backlinks.each do |backlink| %>
-  <% type = backlink['type'].downcase %>
+<% @backlinks.each do |resource| %>
   <li>
-    <a href="/<%= type[0] + '/' + backlink['id'].slice(0, 8) %>"><i class="<%= type %>-icon"></i> <%= backlink['title'] %></a>
+    <a href="<%= resource.path %>"><i class="<%= resource.class.to_s.downcase %>-icon"></i> <%= resource.title %></a>
   </li>
 <% end %>
 </ul>

@@ -1,55 +1,12 @@
-<h1>Studio Settings</h1>
+<h4 style="margin-bottom:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %>
+</h4>
+<h1 style="margin-top:0;">Settings</h1>
 <%= form_with(url: "#{@current_studio.path}/settings") do |form| %>
   <h2>Studio Name</h2>
   <p>
     <%= form.text_field :name, placeholder: 'Studio Name', value: @current_studio.name %>
   </p>
-
-  <h2>Studio Handle</h2>
-  <p style="margin-bottom:0;">
-    ⚠️ <strong>WARNING</strong> ⚠️ Changing the studio handle is not recommended as it will break all existing links.
-    <br/>
-    Once changed, the old handle may become associated with a different studio.
-  </p>
-  <p>
-    <span id="already-taken-message" style="display:block;opacity:0;height:1.6em;font-size:0.8em;color:red;">That handle is already taken.</span>
-    <%= form.text_field :handle, placeholder: 'handle', id: 'handle-input', value: @current_studio.handle  %>
-  </p>
-  <script>
-    const handleInput = document.getElementById('handle-input');
-    const alreadyTakenMessage = document.getElementById('already-taken-message');
-    const validateHandle = function(handle) {
-      return /^[a-z0-9-]+$/.test(handle);
-    };
-    const checkIfAvailable = function(handle) {
-      if (handle === '<%= @current_studio.handle %>') {
-        alreadyTakenMessage.style.opacity = 0;
-        handleInput.style.backgroundColor = 'inherit';
-        return;
-      }
-      return fetch('/studios/available?handle=' + handle)
-        .then(response => response.json())
-        .then(data => {
-          if (data.available && handleInput.value === handle) {
-            alreadyTakenMessage.style.opacity = 0;
-            handleInput.style.backgroundColor = 'inherit';
-          } else if (!data.available && handleInput.value === handle) {
-            alreadyTakenMessage.style.opacity = 1;
-            handleInput.style.backgroundColor = 'rgba(255,0,0,0.3)';
-          } else {
-            // noop
-          }
-        });
-    };
-    handleInput.addEventListener('input', function() {
-      const handle = handleInput.value;
-      if (validateHandle(handle)) {
-        checkIfAvailable(handle)
-      } else {
-        handleInput.value = handle.replace(/[^a-z0-9-]/g, '');
-      }
-    });
-  </script>
 
   <h2>Time Zone</h2>
   <p>
@@ -57,6 +14,20 @@
   </p>
   <p>
     <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_studio.timezone.name %>
+  </p>
+
+  <h2>Experimental Features</h2>
+  <p>
+    <label>
+      <%= form.check_box :pages_enabled, checked: @current_studio.pages_enabled? %>
+      Enable Pages (markdown webpages only accessible to studio members)
+    </label>
+  </p>
+  <p>
+    <label>
+      <%= form.check_box :random_enabled, checked: @current_studio.random_enabled? %>
+      Enable Randomness (coin toss, names from a hat, shuffle)
+    </label>
   </p>
 
   <hr style="height:1px;" />

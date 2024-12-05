@@ -398,7 +398,8 @@ CREATE TABLE public.studio_users (
     user_id uuid NOT NULL,
     archived_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    settings jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -1984,6 +1985,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241128204415'),
 ('20241130040434'),
 ('20241130211736'),
-('20241203033229');
+('20241203033229'),
+('20241204200412');
 
 

@@ -50,6 +50,23 @@ body .octicon {
   src: url('/SourceCodePro-VariableFont_wght.ttf') format('truetype');
 }
 
+.alert, .notice {
+  padding: 10px;
+  background-color: var(--color-attention-subtle);
+  border: 1px solid var(--color-border-default);
+}
+
+.alert {
+  padding: 10px;
+  background-color: var(--color-attention-subtle);
+  border: 1px solid var(--color-danger-fg);
+}
+
+.notice .dismiss-button, .alert .dismiss-button {
+  float: right;
+  cursor: pointer;
+}
+
 pre, code, .markdown-body {
   width: min(88vw, 800px);
   padding: 8px 12px;
@@ -213,9 +230,9 @@ select:focus {
   cursor: pointer;
 }
 
-.text-only-button:hover {
+/* .text-only-button:hover {
   text-decoration: underline;
-}
+} */
 
 .auth-required-message {
   border: 1px solid #aaa;
@@ -299,7 +316,7 @@ select:focus {
   padding: 0;
 }
 
-.top-menu ul li h4 {
+.top-menu ul li h4, .more-button-menu ul li h4 {
   border-bottom: 1px solid var(--color-border-muted);
   padding: 0;
   margin: 0;
@@ -393,6 +410,13 @@ select:focus {
   height: 16px;
   width: 16px;
   display: inline-block;
+}
+
+.admin-badge {
+  background-color: var(--color-neutral-muted);
+  padding: 2px 4px;
+  font-size: 0.7em;
+  border-radius: 5px;
 }
 
 /* Mobile-only styles */

@@ -20,23 +20,14 @@
         <i class="commitment-icon" style="height:1.5em;float:left;margin-right:12px"></i>
         <a href="<%= @current_studio.path %>/commit">New Commitment</a>
       </li>
-      <hr style="margin:12px 0;height:1px;"/>
-      <li>
-        <%= octicon 'note', style: 'margin-right:8px;' %>
-        <a href="<%= @current_studio.path %>/pages/new">New Page</a>
-      </li>
-      <li>
-        <%= octicon 'database', style: 'margin-right:8px;' %>
-        <a href="<%= @current_studio.path %>/data/new">New Data</a>
-      </li>
-      <li>
-        <span style="margin-right:8px;">🎲</span>
-        <a href="<%= @current_studio.path %>/random/new">New Randomness</a>
-      </li>
     </ul>
   </div>
 
-  <button data-more-button-target="button" data-action="click->more-button#toggleMenu" class="btn btn-outline-secondary btn-sm">
+  <button
+    data-more-button-target="button"
+    data-action="click->more-button#toggleMenu"
+    style="<%= @current_user.studio_user.is_admin? ? 'display:inline-block;' : 'display:none;' %>"
+    >
     <%= octicon 'kebab-horizontal' %>
   </button>
   <div data-more-button-target="menu" class="more-button-menu">
@@ -89,6 +80,26 @@
           <li>
             <%= octicon option[:icon] %>
             <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'new_page' %>
+          <% option = { link_to: "#{@current_studio.path}/pages/new", icon: 'note', label: 'New Page' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'new_randomness' %>
+          <% option = { link_to: "#{@current_studio.path}/random/new", icon: 'light-bulb', label: 'New Randomness' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == '---' %>
+          <li>
+            <hr style="height:1px;margin:0;" />
+          </li>
+        <% else %>
+          <li>
+            <%= option %>
           </li>
         <% end %>
       <% end %>

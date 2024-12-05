@@ -83,6 +83,10 @@ class Tenant < ApplicationRecord
     tu && tu.roles.include?('admin')
   end
 
+  def admin_users
+    tenant_users.where_has_role('admin')
+  end
+
   def auth_providers
     settings['auth_providers'] || ['github']
   end

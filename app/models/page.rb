@@ -37,6 +37,10 @@ class Page < ActiveRecord::Base
     end
   end
 
+  def shareable_link
+    "https://#{tenant.subdomain}.#{ENV['HOSTNAME']}#{full_studio_path}"
+  end
+
   def author
     user
   end

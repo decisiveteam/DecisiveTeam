@@ -29,6 +29,9 @@
           <a href="<%= @current_user.path %>/settings">Settings</a>
         </li>
         <li>
+          <hr style="height:0;margin:0;border:none;border-top:1px solid var(--color-border-default);" />
+        </li>
+        <li>
           <%= octicon 'sign-out' %>
           <%= button_to "Sign Out", logout_path, method: :delete, style: "display:inline;" %>
         </li>

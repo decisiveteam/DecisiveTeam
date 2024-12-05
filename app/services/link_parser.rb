@@ -3,13 +3,15 @@ class LinkParser
     models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
     domain = "#{subdomain}.#{ENV['HOSTNAME']}" + (studio_handle ? "/s/#{studio_handle}" : '')
     pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
+    memo = {}
     text.gsub(pattern) do |match|
       prefix = $1
       id = $2
       model = models[prefix]
       column_name = id.length == 8 ? :truncated_id : :id
       record = model.find_by(column_name => id)
-      if record
+      if record && !memo[record.id]
+        memo[record.id] = true
         yield record
       end
     end

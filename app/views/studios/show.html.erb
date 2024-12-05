@@ -1,4 +1,10 @@
-<%= render 'shared/more_button', resource: @current_studio, options: ['invite', 'settings'] %>
+<% options = @current_user.studio_user.is_admin? ? ['invite', 'settings'] : [] %>
+<% new_page = @current_studio.pages_enabled? ? 'new_page' : nil %>
+<% new_randomness = @current_studio.random_enabled? ? 'new_randomness' : nil %>
+<% options << '---' if new_page || new_randomness %>
+<% options << new_page if new_page %>
+<% options << new_randomness if new_randomness %>
+<%= render 'shared/more_button', resource: @current_studio, options: options %>
 <h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
 <h1 style="margin-top:0;"><%= @current_studio.name %></h1>
 
@@ -19,4 +25,3 @@
 
 <h2>Team</h2>
 <%= render 'team' %>
-

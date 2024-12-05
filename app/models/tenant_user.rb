@@ -1,5 +1,6 @@
 class TenantUser < ApplicationRecord
   include CanPin
+  include HasRoles
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   belongs_to :user
@@ -52,6 +53,20 @@ class TenantUser < ApplicationRecord
     settings['scratchpad'] || default_scratchpad
   end
 
+  def scratchpad_links(tenant:, studio:)
+    # Parse the text of the scratchpad and return an array of links
+    links = []
+    LinkParser.parse(scratchpad['text'], subdomain: tenant.subdomain, studio_handle: studio.handle) do |resource|
+      links << {
+        id: resource.truncated_id,
+        url: resource.shareable_link,
+        title: resource.title,
+        type: resource.class.name,
+      }
+    end
+    links
+  end
+
   def default_scratchpad
     {
       'text' => default_scratchpad_text,
@@ -67,22 +82,6 @@ class TenantUser < ApplicationRecord
 
       The purpose of this feature is simply to provide a convenient place to save links and thoughts and any other info you might want to jot down so that you don't lose track of it.
     SCRATCH_PAD_TEXT
-  end
-
-  def roles
-    settings['roles'] || []
-  end
-
-  def add_role!(role)
-    settings['roles'] ||= []
-    settings['roles'] << role
-    save!
-  end
-
-  def remove_role!(role)
-    settings['roles'] ||= []
-    settings['roles'].delete(role)
-    save!
   end
 
 end

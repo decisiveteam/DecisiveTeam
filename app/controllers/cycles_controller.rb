@@ -14,20 +14,25 @@ class CyclesController < ApplicationController
   end
 
   def show
-    @filter = params[:filter] || 'all'
-    @group_by = params[:group_by] || 'type'
-    @sort_by = params[:sort_by] || 'created_at:desc'
-    @cycle = Cycle.new(name: params[:cycle], tenant: @current_tenant, studio: @current_studio)
+    @cycle = Cycle.new(
+      name: params[:cycle],
+      tenant: @current_tenant,
+      studio: @current_studio,
+      current_user: @current_user,
+      params: {
+        filters: params[:filters] || params[:filter],
+        sort_by: params[:sort_by],
+      }
+    )
     @current_resource = @cycle
-    # @view = @cycle.view(
-    #   filter: @filter,
-    #   group_by: @group_by,
-    #   sort_by: @sort_by,
-    # )
     @notes = @cycle.notes
     @decisions = @cycle.decisions
     @commitments = @cycle.commitments
     @backlinks = @cycle.backlinks
+    @filters = params[:filters] || params[:filter]
+    @sort_by = params[:sort_by]
+    @sort_by_options = @cycle.sort_by_options
+    @filter_options = @cycle.filter_options
   end
 
 end

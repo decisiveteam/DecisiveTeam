@@ -1,4 +1,4 @@
-class Pages::MainController < ApplicationController
+class Pages::MainController < BaseDualDomainController
 
   def index
     if pages_domain?
@@ -52,6 +52,37 @@ class Pages::MainController < ApplicationController
     end
   end
 
+  def edit
+    @page = Page.find_by(path: params[:path])
+    if @page
+      if pages_enabled?
+        @scratchpad_links = [] unless pages_domain?
+        # Let rails view template handle rendering
+      else
+        render plain: '404 not found', status: 404
+      end
+    else
+      render plain: '404 not found', status: 404
+    end
+  end
+
+  def update
+    @page = Page.find_by(path: params[:path])
+    if @page
+      if pages_enabled?
+        @page.path = params[:path]
+        @page.title = params[:title]
+        @page.markdown = params[:markdown]
+        @page.save!
+        redirect_to @page.full_studio_path
+      else
+        render plain: '404 not found', status: 404
+      end
+    else
+      render plain: '404 not found', status: 404
+    end
+  end
+
   private
 
   def solo_domain
@@ -67,7 +98,7 @@ class Pages::MainController < ApplicationController
   end
 
   def pages_enabled?
-    feature_enabled?
+    feature_enabled? || true
   end
 
   def layout

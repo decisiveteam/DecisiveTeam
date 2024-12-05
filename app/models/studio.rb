@@ -52,6 +52,16 @@ class Studio < ApplicationRecord
     self.settings['pinned'] ||= {}
   end
 
+  def api_json(include: [])
+    {
+      id: id,
+      name: name,
+      handle: handle,
+      timezone: timezone.name,
+      # settings: settings, # if current_user is admin
+    }
+  end
+
   def timezone=(value)
     if value.present?
       @timezone = ActiveSupport::TimeZone[value]
@@ -65,8 +75,21 @@ class Studio < ApplicationRecord
   end
 
   def pages_enabled?
-    # self.settings['pages_enabled']
-    true
+    self.settings['pages_enabled']
+  end
+
+  def random_enabled?
+    self.settings['random_enabled']
+  end
+
+  def enable_feature!(feature)
+    self.settings["#{feature}_enabled"] = true
+    save!
+  end
+
+  def disable_feature!(feature)
+    self.settings["#{feature}_enabled"] = false
+    save!
   end
 
   def handle_is_valid
@@ -124,11 +147,12 @@ class Studio < ApplicationRecord
     end
   end
 
-  def add_user!(user)
-    studio_users.create!(
+  def add_user!(user, roles: [])
+    su = studio_users.create!(
       tenant: tenant,
       user: user,
     )
+    su.add_roles!(roles)
   end
 
   def team(limit: 100)

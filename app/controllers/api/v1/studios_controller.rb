@@ -36,8 +36,8 @@ module Api::V1
           studio.handle = params[:handle]
         else
           error_message = "Changing a studio's handle can break some functionality (including links) and is not recommended. " +
-                          "Once changed, the old handle will become available for others to claim for a different studio. "
-                          "If you are sure you want to do this, include '\"force_update\": true' in your request." +
+                          "Once changed, the old handle will become available for others to claim for a different studio. " +
+                          "If you are sure you want to do this, include '\"force_update\": true' in your request."
           return render json: { error: error_message }, status: 400
         end
       end

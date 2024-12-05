@@ -19,10 +19,12 @@ class Cycle
     new(name: cycle, tenant: tenant, studio: studio)
   end
 
-  def initialize(name:, tenant:, studio:)
+  def initialize(name:, tenant:, studio:, params: {}, current_user: nil)
     @name = name
     @tenant = tenant
     @studio = studio
+    @params = params || {}
+    @current_user = current_user
     raise "Invalid tenant" if @tenant.nil?
     raise "Invalid studio" if @studio.nil?
   end
@@ -58,6 +60,21 @@ class Cycle
 
   def path
     "#{@studio.path}/cycles/#{@name}"
+  end
+
+  def path_with_params
+    p = {}
+    if params[:filters].present? && params[:filters] != 'none'
+      p[:filters] = params[:filters]
+    end
+    if params[:sort_by].present?
+      p[:sort_by] = params[:sort_by]
+    end
+    if p.empty?
+      path
+    else
+      "#{path}?#{p.to_query}"
+    end
   end
 
   def display_window
@@ -175,9 +192,110 @@ class Cycle
   end
 
   def resources(model)
-    model.where(tenant_id: @tenant.id, studio_id: @studio.id)
-         .where('created_at < ?', end_date).where('deadline > ?', start_date)
-         .order(deadline: :asc)
+    rs = model.where(tenant_id: @tenant.id, studio_id: @studio.id).where('created_at < ?', end_date).where('deadline > ?', start_date)
+    if filters.present?
+      filters.each do |filter|
+        rs = rs.where(filter)
+      end
+    end
+    rs.order(sort_by)
+  end
+
+  def params
+    @params
+  end
+
+  def sort_by_options
+    [
+      ['Deadline (earliest first)', 'deadline-asc'],
+      ['Deadline (latest first)', 'deadline-desc'],
+      ['Created (oldest first)', 'created_at-asc'],
+      ['Created (newest first)', 'created_at-desc'],
+      ['Updated (oldest first)', 'updated_at-asc'],
+      ['Updated (most recent first)', 'updated_at-desc'],
+    ]
+  end
+
+  def sort_by
+    return @sort_by if @sort_by
+    key, direction = (params[:sort_by] || 'deadline:desc').split('-')
+    key = 'deadline' unless %w[created_at updated_at deadline].include?(key)
+    direction = 'desc' unless %w[asc desc].include?(direction)
+    @sort_by = { key => direction }
+  end
+
+  def filter_options
+    dn = display_name.downcase
+    past_cycle = end_date < now
+    future_cycle = start_date > now
+    current_cycle = start_date <= now && end_date >= now
+    [
+      ["None", 'none'],
+      ["Created by me", 'mine'],
+      past_cycle ? ["Still open", 'open'] : nil,
+      current_cycle ? ["Open", 'open'] : nil,
+      current_cycle ? ["Open currently, closing #{dn}", 'closing_soon'] : nil,
+      (past_cycle || current_cycle) ? ["Closed", 'closed'] : nil,
+      current_cycle ? ["Closed or closing #{dn}", 'deadline_within_cycle'] : nil,
+      past_cycle ? ["Closed #{dn}", 'deadline_within_cycle'] : nil,
+      future_cycle ? ["Closing #{dn}", 'deadline_within_cycle'] : nil,
+      (current_cycle || future_cycle) ? ["Closing after #{dn}", 'deadline_after_cycle'] : nil,
+      (past_cycle || current_cycle) ? ["Created #{dn}", 'new'] : nil,
+      (past_cycle || current_cycle) ? ["Created before #{dn}", 'old'] : nil,
+      ["Updated", 'updated'],
+      (past_cycle || current_cycle) ? ["Updated #{dn}", 'updated_within_cycle'] : nil,
+      (past_cycle || current_cycle) ? ["Created or updated #{dn}", 'created_or_updated_within_cycle'] : nil,
+    ].compact
+  end
+
+  def filters
+    return @filters if defined?(@filters)
+    return @filters = nil unless params[:filters].present?
+    valid_keys = %w[created_by created_at updated_at deadline] + filter_options.map(&:last)
+    @filters = params[:filters].split(',').map do |filter|
+      key, value = filter.split(':')
+      next if key == 'none'
+      if value.nil?
+        key, gt = key.split('>')
+        key, lt = key.split('<') if gt.nil?
+        next unless valid_keys.include?(key)
+        if gt
+          ["#{key} > ?", gt]
+        elsif lt
+          ["#{key} < ?", lt]
+        elsif key == 'mine'
+          ['created_by_id = ?', @current_user.id]
+        elsif key == 'open'
+          ['deadline > ?', Time.current]
+        elsif key == 'closed'
+          ['deadline < ?', Time.current]
+        elsif key == 'closing_soon'
+          ['deadline > ? and deadline < ?', Time.current, self.end_date]
+        elsif key == 'deadline_within_cycle'
+          ['deadline > ? and deadline < ?', self.start_date, self.end_date]
+        elsif key == 'deadline_after_cycle'
+          ['deadline > ?', self.end_date]
+        elsif key == 'new'
+          ['created_at > ?', self.start_date]
+        elsif key == 'old'
+          ['created_at < ?', self.start_date]
+        elsif key == 'updated'
+          ['updated_at != created_at']
+        elsif key == 'updated_within_cycle'
+          ['updated_at > ? and updated_at != created_at', self.start_date]
+        elsif key == 'created_or_updated_within_cycle'
+          ['created_at > ? or updated_at > ?', self.start_date, self.start_date]
+        else
+          raise "Invalid filter: #{key}"
+        end
+      elsif key == 'created_by'
+        u = User.find_by(handle: value)
+        u ? ['created_by_id = ?', u.id] : nil
+      else
+        next unless valid_keys.include?(key)
+        ["#{key} = ?", value]
+      end
+    end.compact
   end
 
   def notes
@@ -202,16 +320,11 @@ class Cycle
   end
 
   def backlinks
-    Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant.id)
+    # Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant.id)
+    Link.where(tenant: @tenant, studio: @studio)
+        .where(from_linkable: [notes, decisions, commitments].flatten)
+        .includes(:to_linkable)
+        .map(&:to_linkable).uniq
   end
 
-  # def view(filter:, group_by:, sort_by:)
-  #   case group_by
-  #   when 'type'
-  #   when 'user'
-  #   when 'status'
-  #   when 'deadline'
-  #   when 'created_at'
-  #   end
-  # end
 end

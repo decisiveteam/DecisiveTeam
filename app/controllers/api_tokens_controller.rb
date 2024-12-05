@@ -17,14 +17,14 @@ class ApiTokensController < ApplicationController
 
   def show
     @token = @showing_user.api_tokens.find_by(id: params[:id])
-    return render '404' if @token.nil?
+    return render status: 404, plain: '404 not token found' if @token.nil?
   end
 
   def destroy
     @token = @showing_user.api_tokens.find_by(id: params[:id])
-    return render '404' if @token.nil?
+    return render status: 404, plain: '404 not token found' if @token.nil?
     @token.delete!
-    redirect_to "#{@showing_user.path}/settings"
+    redirect_to "#{@current_user.path}/settings"
   end
 
   private
@@ -37,8 +37,8 @@ class ApiTokensController < ApplicationController
   def set_user
     tu = current_tenant.tenant_users.find_by(handle: params[:user_handle])
     tu ||= current_tenant.tenant_users.find_by(user_id: params[:user_handle])
-    return render '404' if tu.nil?
-    return render plain: '403 Unauthorized' unless tu.user == current_user
+    return render status: 404, plain: '404 not user found' if tu.nil?
+    return render status: 403, plain: '403 Unauthorized' unless tu.user == current_user || current_user.can_impersonate?(tu.user)
     @showing_user = tu.user
     @showing_user.tenant_user = tu
   end

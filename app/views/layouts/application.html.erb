@@ -32,9 +32,30 @@
         <%= render 'layouts/top_right_menu' %>
       </nav>
     <% end %>
-    <div class="notice"><%= notice %></div>
-    <div class="alert"><%= alert %></div>
     <div class="markdown-body">
+      <% if notice || alert %>
+        <% if notice %>
+          <div class="notice" style="display:<%= notice ? 'block' : 'none' %>;">
+            <%= notice %>
+            <span class="dismiss-button">&times;</span>
+          </div>
+        <% end %>
+        <% if alert %>
+          <div class="alert" style="display:<%= alert ? 'block' : 'none' %>;">
+            <%= alert %>
+            <span class="dismiss-button">&times;</span>
+          </div>
+        <% end %>
+        <script>
+          [document.querySelector('.notice'), document.querySelector('.alert')].forEach(function(el) {
+            if (!el) return;
+            const dismissButton = el.querySelector('.dismiss-button');
+            dismissButton.addEventListener('click', function() {
+              el.remove();
+            });
+          });
+        </script>
+      <% end %>
       <%= yield %>
     </div>
   </body>

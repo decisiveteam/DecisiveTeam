@@ -1,2 +1,68 @@
-<h1>Admin</h1>
-<pre>current_tenant: <%= @current_tenant.inspect %></pre>
+<h1><%= octicon "tools", height: 32 %> Subdomain Admin</h1>
+
+<code><%= @current_tenant.subdomain %><span style="opacity:0.6">.<%= ENV['HOSTNAME'] %></span></code>
+
+<h3>Admin Users</h3>
+
+<ul>
+  <% @current_tenant.admin_users.each do |user| %>
+    <li>
+      <%= user.display_name %>
+      <a href="<%= user.path %>">
+        <code><%= user.handle %></code>
+      </a>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Tenant Details</h2>
+
+<ul>
+  <li>
+    Name: <code><%= @current_tenant.name %></code>
+  </li>
+  <li>
+    Subdomain: <code><%= @current_tenant.subdomain %></code>
+  </li>
+  <li>
+    ID: <code><%= @current_tenant.id %></code>
+    <%= render 'shared/copy_button', text: @current_tenant.id %>
+  </li>
+  <li>
+    Created: <%= timeago(@current_tenant.created_at) %>
+  </li>
+  <li>
+    Updated: <%= timeago(@current_tenant.updated_at) %>
+  </li>
+</ul>
+
+<h3>Settings</h3>
+<pre>
+<%= JSON.pretty_generate(@current_tenant.settings) %>
+</pre>
+
+<h3>Main Studio</h3>
+
+<p>
+  The main studio is the default studio at the base path (i.e. <code><%= @current_tenant.domain %>/</code>).
+  When the app describes data as being "outside of a studio context", that means that the data is associated with the main studio.
+</p>
+
+<ul>
+  <li>
+    Name: <code><%= @current_tenant.main_studio.name %></code>
+  </li>
+  <li>
+    ID: <code><%= @current_tenant.main_studio.id %></code>
+    <%= render 'shared/copy_button', text: @current_tenant.main_studio.id %>
+  </li>
+  <li>
+    Notes: <%= @current_tenant.main_studio.notes.count %>
+  </li>
+  <li>
+    Decisions: <%= @current_tenant.main_studio.decisions.count %>
+  </li>
+  <li>
+    Commitments: <%= @current_tenant.main_studio.commitments.count %>
+  </li>
+</ul>

@@ -1,4 +1,7 @@
-<h1>Cycles</h1>
+<h4 style="margin-bottom:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %>
+</h4>
+<h1 style="margin-top:0;">Cycles</h1>
 
 <h2>Current</h2>
 <%= render 'shared/cycle_count_table', cycles: @current_cycles %>

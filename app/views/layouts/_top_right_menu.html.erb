@@ -1,12 +1,6 @@
 <div class="top-right-display">
 <% if @current_user %>
   <div data-controller="top-right-menu">
-    <% if @current_parent_user %>
-      <span style="margin-right:12px;">
-        <%= octicon 'feed-person' %>
-        <%= button_to "Stop Impersonating", "#{@current_user.path}/impersonate", method: :delete %>
-      </span>
-    <% end %>
     <div data-top-right-menu-target="button" class="top-menu-button" data-action="click->top-right-menu#toggleMenu">
       <% if @current_user.image_url %>
         <img src="<%= @current_user.image_url %>" style="height:30px;" title="<%= @current_user.display_name %>">

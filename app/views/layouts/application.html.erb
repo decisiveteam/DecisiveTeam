@@ -25,24 +25,26 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body style="<%= @current_parent_user ? 'border:16px dotted var(--color-fg-default);' : '' %>">
+  <body>
     <% if controller_name != 'sessions' %>
       <nav style="display:block;min-height:16px;">
         <%= render 'layouts/top_left_menu' %>
-        <%= render 'layouts/top_right_menu' %>
+        <% unless @current_representation_session %>
+          <%= render 'layouts/top_right_menu' %>
+        <% end %>
       </nav>
     <% end %>
     <div class="markdown-body">
       <% if notice || alert %>
         <% if notice %>
           <div class="notice" style="display:<%= notice ? 'block' : 'none' %>;">
-            <%= notice %>
+            <%= markdown_inline(notice) %>
             <span class="dismiss-button">&times;</span>
           </div>
         <% end %>
         <% if alert %>
           <div class="alert" style="display:<%= alert ? 'block' : 'none' %>;">
-            <%= alert %>
+            <%= markdown_inline(alert) %>
             <span class="dismiss-button">&times;</span>
           </div>
         <% end %>
@@ -55,6 +57,13 @@
             });
           });
         </script>
+      <% end %>
+      <% if @current_parent_user %>
+        <div class="alert">
+          <% impersonating_or_representing = @current_user.simulated? ? 'impersonating' : 'currently acting as a representative of' %>
+          <span>You are <%= impersonating_or_representing %> <%= @current_user.display_name %>.</span>
+          <%= button_to "End Session", "#{@current_user.path}/impersonate", method: :delete %>
+        </div>
       <% end %>
       <%= yield %>
     </div>

@@ -29,7 +29,7 @@ class Random::MainController < Random::BaseRandomController
     end
     if params[:list]
       list = params[:list].is_a?(Array) ? params[:list] : params[:list].split(',')
-      shuffled_list = shuffle(seed, list)
+      shuffled_list, hash = shuffle(seed, list)
       value = shuffled_list
     else
       list = nil
@@ -37,19 +37,24 @@ class Random::MainController < Random::BaseRandomController
       value = Random.new(hash.to_i(16)).rand.to_s
     end
     @json_response = {
-      input: {
+      params: {
         time_point: time_point,
         time_unit: time_unit,
         seed: seed,
         list: list,
       },
-      output: {
+      input: {
         time_window_start: time_window_start,
         time_window_end: time_window_end,
+        seed: seed,
+        list: list,
+      },
+      hash_of_inputs_with_secret: hash,
+      output: {
         value: value,
       },
       timestamp: timestamp,
-      message: 'This random value is intended for group coordination purposes only, and not for cryptographic purposes. Do not use this endpoint for security-sensitive applications.',
+      message: 'This random value is intended for basic group coordination purposes only, and not for cryptographic purposes. Do not use this endpoint for security-sensitive applications or other high stakes applications.',
     }
     respond_to do |format|
       format.json do
@@ -63,12 +68,15 @@ class Random::MainController < Random::BaseRandomController
 
   def cointoss
     seed = params[:seed] || SecureRandom.hex(16)
+    results, hash = shuffle(seed, %w[heads tails])
+    result = results.first
     render json: {
       input: {
         seed: seed,
       },
       output: {
-        result: shuffle(seed, %w[heads tails]).first,
+        hash_with_secret: hash,
+        result: result,
       },
       timestamp: Time.current,
     }

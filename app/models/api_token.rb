@@ -14,7 +14,7 @@ class ApiToken < ApplicationRecord
   end
 
   def self.valid_resources
-    ['notes', 'confirmations',
+    ['all', 'notes', 'confirmations',
      'decisions', 'options', 'approvals', 'decision_participants',
      'commitments', 'commitment_participants',
      'cycles', 'users', 'api_tokens']
@@ -26,11 +26,13 @@ class ApiToken < ApplicationRecord
   end
 
   def self.read_scopes
-    valid_scopes.select { |scope| scope.start_with?('read') }
+    # valid_scopes.select { |scope| scope.start_with?('read') }
+    ['read:all']
   end
 
   def self.write_scopes
-    valid_scopes.select { |scope| scope.start_with?('create', 'update', 'delete') }
+    # valid_scopes.select { |scope| scope.start_with?('create', 'update', 'delete') }
+    ['create:all', 'update:all', 'delete:all']
   end
 
   def self.valid_scope?(scope)
@@ -94,7 +96,17 @@ class ApiToken < ApplicationRecord
     action = {
       'POST' => 'create', 'GET' => 'read', 'PUT' => 'update', 'PATCH' => 'update', 'DELETE' => 'delete'
     }[action] || action
+    unless valid_actions.include?(action)
+      raise "Invalid action: #{action}"
+    end
     resource_name = resource_model.to_s.pluralize.downcase
+    unless valid_resources.include?(resource_name)
+      raise "Invalid resource: #{resource_name}"
+    end
+    unless resource_model.respond_to?(:api_json)
+      raise "Resource model #{resource_model} does not respond to api_json"
+    end
+    return true if scopes.include?('all') || scopes.include?("#{action}:all")
     scopes.include?("#{action}:#{resource_name}")
   end
 

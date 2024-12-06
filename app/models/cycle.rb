@@ -231,17 +231,21 @@ class Cycle
     current_cycle = start_date <= now && end_date >= now
     [
       ["None", 'none'],
+      # Created
       ["Created by me", 'mine'],
+      (past_cycle || current_cycle) ? ["Created #{dn}", 'new'] : nil,
+      (past_cycle || current_cycle) ? ["Created before #{dn}", 'old'] : nil,
+      # Open
       past_cycle ? ["Still open", 'open'] : nil,
       current_cycle ? ["Open", 'open'] : nil,
       current_cycle ? ["Open currently, closing #{dn}", 'closing_soon'] : nil,
+      # Closed
       (past_cycle || current_cycle) ? ["Closed", 'closed'] : nil,
       current_cycle ? ["Closed or closing #{dn}", 'deadline_within_cycle'] : nil,
       past_cycle ? ["Closed #{dn}", 'deadline_within_cycle'] : nil,
       future_cycle ? ["Closing #{dn}", 'deadline_within_cycle'] : nil,
       (current_cycle || future_cycle) ? ["Closing after #{dn}", 'deadline_after_cycle'] : nil,
-      (past_cycle || current_cycle) ? ["Created #{dn}", 'new'] : nil,
-      (past_cycle || current_cycle) ? ["Created before #{dn}", 'old'] : nil,
+      # Updated
       ["Updated", 'updated'],
       (past_cycle || current_cycle) ? ["Updated #{dn}", 'updated_within_cycle'] : nil,
       (past_cycle || current_cycle) ? ["Created or updated #{dn}", 'created_or_updated_within_cycle'] : nil,

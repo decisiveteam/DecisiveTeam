@@ -1,4 +1,4 @@
-<h1><%= octicon "tools", height: 32 %> Subdomain Admin</h1>
+<h1><%= octicon "tools", height: 32 %> Admin</h1>
 
 <code><%= @current_tenant.subdomain %><span style="opacity:0.6">.<%= ENV['HOSTNAME'] %></span></code>
 
@@ -36,12 +36,14 @@
   </li>
 </ul>
 
-<h3>Settings</h3>
+<h3>Tenant Settings</h3>
+<%= link_to "Edit Settings", '/admin/settings' %>
+
 <pre>
 <%= JSON.pretty_generate(@current_tenant.settings) %>
 </pre>
 
-<h3>Main Studio</h3>
+<h2>Main Studio</h2>
 
 <p>
   The main studio is the default studio at the base path (i.e. <code><%= @current_tenant.domain %>/</code>).
@@ -66,3 +68,8 @@
     Commitments: <%= @current_tenant.main_studio.commitments.count %>
   </li>
 </ul>
+
+<h3>Main Studio Settings</h3>
+<pre>
+<%= JSON.pretty_generate(@current_tenant.main_studio.settings) %>
+</pre>

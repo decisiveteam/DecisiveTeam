@@ -7,9 +7,10 @@ class StudiosController < ApplicationController
     # @recently_closed_items = @current_studio.recently_closed_items
     @backlinks = @current_studio.backlink_leaderboard
     @team = @current_studio.team
-    @current_cycles = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
-      Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
-    end
+    # @current_cycles = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
+    #   Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
+    # end
+    @cycle = Cycle.new(name: 'today', tenant: @current_tenant, studio: @current_studio)
   end
 
   def new
@@ -20,13 +21,16 @@ class StudiosController < ApplicationController
   end
 
   def create
-    @studio = Studio.new(
-      name: params[:name],
-      handle: params[:handle],
-    )
-    @studio.timezone = params[:timezone]
-    @studio.save!
-    @studio.add_user!(@current_user, roles: ['admin'])
+    ActiveRecord::Base.transaction do
+      @studio = Studio.create!(
+        name: params[:name],
+        handle: params[:handle],
+        created_by: @current_user,
+        timezone: params[:timezone],
+      )
+      @studio.add_user!(@current_user, roles: ['admin', 'representative'])
+      @studio.create_welcome_note!
+    end
     redirect_to @studio.path
   end
 
@@ -103,5 +107,6 @@ class StudiosController < ApplicationController
 
   def leave
   end
+
 
 end

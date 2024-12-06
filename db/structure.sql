@@ -362,6 +362,25 @@ CREATE TABLE public.pages (
 
 
 --
+-- Name: representation_sessions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.representation_sessions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    representative_user_id uuid NOT NULL,
+    trustee_user_id uuid NOT NULL,
+    began_at timestamp(6) without time zone NOT NULL,
+    ended_at timestamp(6) without time zone,
+    confirmed_understanding boolean DEFAULT false NOT NULL,
+    activity_log jsonb DEFAULT '{}'::jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -414,7 +433,10 @@ CREATE TABLE public.studios (
     handle character varying,
     settings jsonb DEFAULT '{}'::jsonb,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by_id uuid NOT NULL,
+    updated_by_id uuid NOT NULL,
+    trustee_user_id uuid
 );
 
 
@@ -451,6 +473,24 @@ CREATE TABLE public.tenants (
 
 
 --
+-- Name: trustee_permissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trustee_permissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    trustee_user_id uuid NOT NULL,
+    granting_user_id uuid NOT NULL,
+    trusted_user_id uuid NOT NULL,
+    description text DEFAULT ''::text NOT NULL,
+    relationship_phrase character varying DEFAULT '{trusted_user} on behalf of {granting_user}'::character varying NOT NULL,
+    permissions jsonb DEFAULT '{}'::jsonb,
+    expires_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -462,8 +502,8 @@ CREATE TABLE public.users (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     image_url character varying,
-    simulated boolean DEFAULT false,
-    parent_id uuid
+    parent_id uuid,
+    user_type character varying DEFAULT 'person'::character varying
 );
 
 
@@ -612,6 +652,14 @@ ALTER TABLE ONLY public.pages
 
 
 --
+-- Name: representation_sessions representation_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_sessions
+    ADD CONSTRAINT representation_sessions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -657,6 +705,14 @@ ALTER TABLE ONLY public.tenant_users
 
 ALTER TABLE ONLY public.tenants
     ADD CONSTRAINT tenants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trustee_permissions trustee_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trustee_permissions
+    ADD CONSTRAINT trustee_permissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -1207,6 +1263,34 @@ CREATE INDEX index_pages_on_user_id ON public.pages USING btree (user_id);
 
 
 --
+-- Name: index_representation_sessions_on_representative_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_sessions_on_representative_user_id ON public.representation_sessions USING btree (representative_user_id);
+
+
+--
+-- Name: index_representation_sessions_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_sessions_on_studio_id ON public.representation_sessions USING btree (studio_id);
+
+
+--
+-- Name: index_representation_sessions_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_sessions_on_tenant_id ON public.representation_sessions USING btree (tenant_id);
+
+
+--
+-- Name: index_representation_sessions_on_trustee_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_sessions_on_trustee_user_id ON public.representation_sessions USING btree (trustee_user_id);
+
+
+--
 -- Name: index_studio_invites_on_code; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1270,6 +1354,13 @@ CREATE INDEX index_studio_users_on_user_id ON public.studio_users USING btree (u
 
 
 --
+-- Name: index_studios_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studios_on_created_by_id ON public.studios USING btree (created_by_id);
+
+
+--
 -- Name: index_studios_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1281,6 +1372,13 @@ CREATE INDEX index_studios_on_tenant_id ON public.studios USING btree (tenant_id
 --
 
 CREATE UNIQUE INDEX index_studios_on_tenant_id_and_handle ON public.studios USING btree (tenant_id, handle);
+
+
+--
+-- Name: index_studios_on_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_studios_on_updated_by_id ON public.studios USING btree (updated_by_id);
 
 
 --
@@ -1323,6 +1421,27 @@ CREATE INDEX index_tenants_on_main_studio_id ON public.tenants USING btree (main
 --
 
 CREATE UNIQUE INDEX index_tenants_on_subdomain ON public.tenants USING btree (subdomain);
+
+
+--
+-- Name: index_trustee_permissions_on_granting_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trustee_permissions_on_granting_user_id ON public.trustee_permissions USING btree (granting_user_id);
+
+
+--
+-- Name: index_trustee_permissions_on_trusted_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trustee_permissions_on_trusted_user_id ON public.trustee_permissions USING btree (trusted_user_id);
+
+
+--
+-- Name: index_trustee_permissions_on_trustee_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trustee_permissions_on_trustee_user_id ON public.trustee_permissions USING btree (trustee_user_id);
 
 
 --
@@ -1480,6 +1599,14 @@ ALTER TABLE ONLY public.decision_participants
 
 
 --
+-- Name: representation_sessions fk_rails_33f2d734e7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_sessions
+    ADD CONSTRAINT fk_rails_33f2d734e7 FOREIGN KEY (representative_user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: custom_data_history_events fk_rails_37658b724a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1600,6 +1727,14 @@ ALTER TABLE ONLY public.note_history_events
 
 
 --
+-- Name: trustee_permissions fk_rails_61c22cd494; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trustee_permissions
+    ADD CONSTRAINT fk_rails_61c22cd494 FOREIGN KEY (trusted_user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: custom_data_history_events fk_rails_62e827a410; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1701,6 +1836,22 @@ ALTER TABLE ONLY public.pages
 
 ALTER TABLE ONLY public.custom_data_tables
     ADD CONSTRAINT fk_rails_84f28416f5 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: trustee_permissions fk_rails_8bee20bb10; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trustee_permissions
+    ADD CONSTRAINT fk_rails_8bee20bb10 FOREIGN KEY (trustee_user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: studios fk_rails_8d8050599b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studios
+    ADD CONSTRAINT fk_rails_8d8050599b FOREIGN KEY (updated_by_id) REFERENCES public.users(id);
 
 
 --
@@ -1808,11 +1959,35 @@ ALTER TABLE ONLY public.api_tokens
 
 
 --
+-- Name: representation_sessions fk_rails_d99c283120; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_sessions
+    ADD CONSTRAINT fk_rails_d99c283120 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: decisions fk_rails_db126ea214; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.decisions
     ADD CONSTRAINT fk_rails_db126ea214 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
+
+
+--
+-- Name: representation_sessions fk_rails_db6c6b2118; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_sessions
+    ADD CONSTRAINT fk_rails_db6c6b2118 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: trustee_permissions fk_rails_dc3eb15db3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trustee_permissions
+    ADD CONSTRAINT fk_rails_dc3eb15db3 FOREIGN KEY (granting_user_id) REFERENCES public.users(id);
 
 
 --
@@ -1864,6 +2039,14 @@ ALTER TABLE ONLY public.commitments
 
 
 --
+-- Name: representation_sessions fk_rails_ee2c2c283c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_sessions
+    ADD CONSTRAINT fk_rails_ee2c2c283c FOREIGN KEY (trustee_user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: decision_participants fk_rails_ef2bebed7c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1909,6 +2092,14 @@ ALTER TABLE ONLY public.commitment_participants
 
 ALTER TABLE ONLY public.decision_participants
     ADD CONSTRAINT fk_rails_f9c15d4765 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
+-- Name: studios fk_rails_fbb5f3e2b8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.studios
+    ADD CONSTRAINT fk_rails_fbb5f3e2b8 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
 
 
 --
@@ -1986,6 +2177,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241130040434'),
 ('20241130211736'),
 ('20241203033229'),
-('20241204200412');
+('20241204200412'),
+('20241205180447'),
+('20241205223939'),
+('20241205225353'),
+('20241206195305');
 
 

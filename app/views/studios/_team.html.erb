@@ -1,11 +1,14 @@
 <ul>
 <% @team.each do |u| %>
   <li>
-    <a href="/u/<%= u.handle %>" class="user-profile-link">
+    <a href="<%= u.path %>" class="user-profile-link">
       <img src="<%= u.image_url %>"/> <%= u.display_name %>
     </a>
     <% if u.studio_user.is_admin? %>
-      <span class="admin-badge">admin</span>
+      <span class="role-badge">admin</span>
+    <% end %>
+    <% if u.studio_user.is_representative? %>
+      <span class="role-badge" title="representatives can perform actions on behalf of the studio as a whole">representative</span>
     <% end %>
   </li>
 <% end %>

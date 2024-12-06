@@ -15,7 +15,7 @@
     <br/>
   <% end %>
   <% if @note.deadline > Time.now %>
-    Relevant until <strong><%= timeago(@note.deadline) %></strong><br/>
+    Relevance expires <strong><%= timeago(@note.deadline) %></strong><br/>
   <% else %>
     Relevance expired <strong><%= timeago(@note.deadline) %></strong><br/>
   <% end %>

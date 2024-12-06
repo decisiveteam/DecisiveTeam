@@ -56,7 +56,7 @@ class UsersController < ApplicationController
   end
 
   def stop_impersonating
-    session.delete(:impersonating)
+    clear_impersonations_and_representations!
     redirect_to current_parent_user.path
   end
 

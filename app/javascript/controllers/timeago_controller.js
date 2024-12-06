@@ -6,7 +6,7 @@ export default class extends Controller {
 
   connect() {
     this.refreshInterval = 60 * 1000;
-    this.updateTime();
+    // this.updateTime();
     this.startRefreshing();
   }
 

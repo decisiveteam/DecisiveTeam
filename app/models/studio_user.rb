@@ -34,4 +34,8 @@ class StudioUser < ApplicationRecord
     ).includes(:note).order(happened_at: :desc).limit(limit)
   end
 
+  def can_invite?
+    has_role?('admin') || studio.allow_invites?
+  end
+
 end

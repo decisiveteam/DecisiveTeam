@@ -2,6 +2,10 @@ class Studio < ApplicationRecord
   include CanPin
   self.implicit_order_column = "created_at"
   belongs_to :tenant
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
+  belongs_to :trustee_user, class_name: 'User'
+  before_validation :create_trustee!
   before_create :set_defaults
   tables = ActiveRecord::Base.connection.tables - [
     'tenants', 'users', 'tenant_users',
@@ -12,8 +16,14 @@ class Studio < ApplicationRecord
     has_many table.to_sym
   end
   has_many :users, through: :studio_users
-
   validate :handle_is_valid
+  validate :creator_is_not_trustee, on: :create
+
+  # NOTE: This is commented out because there is a bug where
+  # the corresponding note history event is not created
+  # when the note itself is created within a callback.
+  # So we rely on the controller to create the welcome note.
+  # after_create :create_welcome_note!
 
   def self.scope_thread_to_studio(subdomain:, handle:)
     tenant = Tenant.scope_thread_to_tenant(subdomain: subdomain)
@@ -45,11 +55,22 @@ class Studio < ApplicationRecord
   end
 
   def set_defaults
+    self.updated_by ||= self.created_by
     self.settings = {
-      'unlisted' => false,
+      'unlisted' => true,
       'invite_only' => true,
-    }.merge(self.settings || {})
-    self.settings['pinned'] ||= {}
+      'timezone' => 'UTC',
+      'allow_join_requests' => false,
+      'pages_enabled' => false,
+      'random_enabled' => false,
+      'pinned' => {},
+    }.merge(
+      self.settings || {}
+    )
+  end
+
+  def creator_is_not_trustee
+    errors.add(:created_by, "cannot be a trustee") if created_by.trustee?
   end
 
   def api_json(include: [])
@@ -101,12 +122,30 @@ class Studio < ApplicationRecord
     end
   end
 
+  def create_trustee!
+    return if self.trustee_user
+    trustee = User.create!(
+      name: self.name,
+      email: SecureRandom.uuid + '@not-a-real-email.com',
+      user_type: 'trustee',
+    )
+    tenant_user = TenantUser.create!(
+      tenant: tenant,
+      user: trustee,
+      display_name: trustee.name,
+      handle: SecureRandom.hex(16),
+    )
+    self.trustee_user = trustee
+  end
+
   def create_welcome_note!
     note = Note.create!(
       tenant: tenant,
       studio: self,
       title: 'Welcome to Harmonic Team',
-      text: 'This is a system generated note.'
+      text: 'This is a system generated note.',
+      created_by: trustee_user,
+      deadline: Time.current + 1.week,
     )
     pin_item!(note)
   end
@@ -191,6 +230,12 @@ class Studio < ApplicationRecord
       )
     end
     invite
+  end
+
+  def allow_invites?
+    open_to_all = !self.settings['invite_only']
+    all_members_can_invite = self.settings['all_members_can_invite']
+    open_to_all || all_members_can_invite
   end
 
 end

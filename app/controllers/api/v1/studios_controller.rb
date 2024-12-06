@@ -18,7 +18,11 @@ module Api::V1
         studio = Studio.create!(
           name: params[:name],
           handle: params[:handle],
+          created_by: current_user,
+          timezone: params[:timezone],
         )
+        studio.add_user!(current_user, roles: ['admin', 'representative'])
+        studio.create_welcome_note!
         render json: studio.api_json
       rescue ActiveRecord::RecordInvalid => e
         # TODO - Detect specific validation errors and return helpful error messages

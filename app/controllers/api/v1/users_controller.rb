@@ -16,7 +16,7 @@ module Api::V1
         user = User.create!(
           name: params[:name],
           email: SecureRandom.uuid + '@not-a-real-email.com',
-          simulated: true,
+          user_type: 'simulated',
           parent_id: current_user.id,
         )
         tenant_user = TenantUser.create!(

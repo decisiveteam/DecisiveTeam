@@ -13,6 +13,7 @@ class Random::BaseRandomController < BaseDualDomainController
   def shuffle(seed, items)
     hash = hash_with_secret([seed, items])
     shuffled_items = items.shuffle(random: Random.new(hash.to_i(16)))
+    [shuffled_items, hash]
   end
 
   def hash_with_secret(array)

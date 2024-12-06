@@ -11,11 +11,13 @@ class User < ApplicationRecord
   has_many :api_tokens
   has_many :simulated_users, class_name: 'User', foreign_key: 'parent_id'
 
+  validates :user_type, inclusion: { in: %w(person simulated trustee) }
   validate :simulated_user_must_have_parent
 
   def api_json
     {
       id: id,
+      user_type: user_type,
       email: email,
       display_name: display_name,
       handle: handle,
@@ -29,22 +31,65 @@ class User < ApplicationRecord
   end
 
   def simulated_user_must_have_parent
-    if parent_id.present? && simulated == false
+    if parent_id.present? && !simulated?
       errors.add(:parent_id, "can only be set for simulated users")
-    elsif parent_id.nil? && simulated == true
+    elsif parent_id.nil? && simulated?
       errors.add(:parent_id, "must be set for simulated users")
     end
-    if parent_id == id
+    if id && parent_id == id
       errors.add(:parent_id, "user cannot be its own parent")
     end
   end
 
+  def person?
+    user_type == 'person'
+  end
+
+  def simulated?
+    user_type == 'simulated'
+  end
+
+  def trustee?
+    user_type == 'trustee'
+  end
+
+  def studio_trustee?
+    trustee? && trustee_studio.present?
+  end
+
+  def trustee_studio
+    return nil unless trustee?
+    return @trustee_studio if defined?(@trustee_studio)
+    @trustee_studio = Studio.where(trustee_user: self).first
+  end
+
   def can_impersonate?(user)
-    user.simulated && user.parent_id == self.id && !user.archived?
+    is_parent = user.simulated? && user.parent_id == self.id && !user.archived?
+    return true if is_parent
+    if user.studio_trustee?
+      su = self.studio_users.find_by(studio_id: user.trustee_studio.id)
+      return su&.has_role?('representative')
+    end
+    false
+  end
+
+  def can_represent?(studio_or_user)
+    if studio_or_user.is_a?(Studio)
+      studio = studio_or_user
+      is_trustee_of_studio = self.trustee_studio == studio
+      return is_trustee_of_studio if self.trustee?
+      su = self.studio_users.find_by(studio_id: studio.id)
+      return su&.has_role?('representative')
+    elsif studio_or_user.is_a?(User)
+      user = studio_or_user
+      return can_impersonate?(user)
+      # TODO - check for trustee permissions for non-studio trustee users
+    end
+    false
   end
 
   def can_edit?(user)
-    user == self || (user.simulated && user.parent_id == self.id)
+    user == self || (user.simulated? && user.parent_id == self.id)
   end
 
   def archive!
@@ -104,7 +149,11 @@ class User < ApplicationRecord
   end
 
   def display_name
-    tenant_user.display_name
+    if trustee?
+      Studio.where(trustee_user: self).first.name
+    else
+      tenant_user.display_name
+    end
   end
 
   def handle=(handle)
@@ -116,7 +165,11 @@ class User < ApplicationRecord
   end
 
   def path
-    tenant_user.path
+    if trustee?
+      Studio.where(trustee_user: self).first.path
+    else
+      tenant_user.path
+    end
   end
 
   def settings

@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :check_auth_subdomain, :current_app, :current_tenant, :current_studio,
-                :current_path, :current_user, :current_resource
+                :current_path, :current_user, :current_resource, :current_representation_session
 
   def check_auth_subdomain
     if request.subdomain == auth_subdomain && controller_name != 'sessions'
@@ -105,6 +105,8 @@ class ApplicationController < ActionController::Base
       if user && parent_user&.can_impersonate?(user)
         @current_user = user
         @current_parent_user = parent_user
+      else
+        clear_impersonations_and_representations!
       end
     end
     if session[:user_id].present?
@@ -124,6 +126,8 @@ class ApplicationController < ActionController::Base
         if su.nil?
           if current_studio == current_tenant.main_studio
             current_studio.add_user!(@current_user) unless controller_name == 'sessions'
+          elsif current_user.trustee? && current_user.trustee_studio == current_studio
+            # TODO - decide how to handle this case. Trustee is not a member of the studio, but is the trustee.
           else
             # If this user has an invite to this studio, they will see the option to accept on the studio's join page.
             # Otherwise, they will see the studio's default join page, which may or may not allow them to join.
@@ -151,8 +155,40 @@ class ApplicationController < ActionController::Base
     @current_user
   end
 
+  def clear_impersonations_and_representations!
+    session.delete(:impersonating)
+    session.delete(:representation_session_id)
+    @current_user = @current_parent_user
+    @current_parent_user = nil
+    @current_representation_session&.end!
+    @current_representation_session = nil
+  end
+
   def current_parent_user
     @current_parent_user
+  end
+
+  def current_representation_session
+    return @current_representation_session if defined?(@current_representation_session)
+    if session[:representation_session_id].present?
+      @current_representation_session = RepresentationSession.unscoped.find_by(
+        trustee_user: current_user,
+        representative_user: current_parent_user,
+        studio: current_user.trustee_studio,
+        id: session[:representation_session_id]
+      )
+      if @current_representation_session.nil?
+        # TODO - not sure what to do here. What are the security concerns?
+        clear_impersonations_and_representations!
+        flass[:alert] = 'Representation session not found. Please try again.'
+      elsif @current_representation_session.expired?
+        clear_impersonations_and_representations!
+        flash[:alert] = 'Representation session expired.'
+      else
+        @current_representation_session.record_activity!(request: request)
+      end
+    end
+    @current_representation_session ||= nil
   end
 
   def current_resource_model

@@ -13,7 +13,6 @@ class Note < ApplicationRecord
   validates :title, presence: true
 
   after_create do
-    # TODO Reference user who created the note
     NoteHistoryEvent.create!(
       note: self,
       user: self.created_by,
@@ -23,7 +22,6 @@ class Note < ApplicationRecord
   end
 
   after_update do
-    # TODO Reference user who updated the note and include versioning
     NoteHistoryEvent.create!(
       note: self,
       user: self.updated_by,

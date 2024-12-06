@@ -43,8 +43,29 @@ class Tenant < ApplicationRecord
     Thread.current[:tenant_id]
   end
 
+  def path
+    "/"
+  end
+
   def set_defaults
-    self.settings ||= {}
+    self.settings = ({
+      timezone: 'UTC',
+      require_login: true,
+    }).merge(self.settings || {})
+  end
+
+  def timezone=(value)
+    if value.present?
+      @timezone = ActiveSupport::TimeZone[value]
+      set_defaults
+      self.settings = self.settings.merge('timezone' => @timezone.name)
+      self.main_studio.timezone = @timezone.name
+      self.main_studio.save!
+    end
+  end
+
+  def timezone
+    @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
   end
 
   def create_main_studio!

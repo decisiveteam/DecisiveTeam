@@ -47,6 +47,8 @@ Rails.application.routes.draw do
   get 'home' => 'home#index'
   get 'settings' => 'home#settings'
   get 'admin' => 'home#admin'
+  get 'admin/settings' => 'home#tenant_settings'
+  post 'admin/settings' => 'home#update_tenant_settings'
 
   get 'scratchpad' => 'home#scratchpad'
 
@@ -78,6 +80,12 @@ Rails.application.routes.draw do
   get "s/:studio_handle/invite" => 'studios#invite'
   get "s/:studio_handle/join" => 'studios#join'
   post "s/:studio_handle/join" => 'studios#accept_invite'
+  get 's/:studio_handle/represent' => 'studios#represent'
+  post 's/:studio_handle/represent' => 'representation_sessions#start_representing'
+  delete 's/:studio_handle/impersonate' => 'representation_sessions#stop_representing'
+  delete 's/:studio_handle/represent' => 'representation_sessions#stop_representing'
+  get 's/:studio_handle/representation-sessions' => 'representation_sessions#index'
+  get 's/:studio_handle/representation-sessions/:id' => 'representation_sessions#show'
 
   ['', 's/:studio_handle'].each do |prefix|
     get "#{prefix}/note" => 'notes#new'

@@ -26,6 +26,7 @@
   <button
     data-more-button-target="button"
     data-action="click->more-button#toggleMenu"
+    <% # BUG %>
     style="<%= @current_user.studio_user.is_admin? ? 'display:inline-block;' : 'display:none;' %>"
     >
     <%= octicon 'kebab-horizontal' %>
@@ -77,6 +78,12 @@
           </li>
         <% elsif option == 'invite' %>
           <% option = { link_to: "#{resource.path}/invite", icon: 'person-add', label: 'Invite Team Members' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'represent' %>
+          <% option = { link_to: "#{resource.path}/represent", icon: 'person-fill', label: 'Represent Studio' } %>
           <li>
             <%= octicon option[:icon] %>
             <%= link_to option[:label], option[:link_to] %>

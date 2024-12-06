@@ -16,19 +16,19 @@
     <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_studio.timezone.name %>
   </p>
 
-  <h2>Experimental Features</h2>
+  <!-- <h2>Experimental Features</h2>
   <p>
     <label>
       <%= form.check_box :pages_enabled, checked: @current_studio.pages_enabled? %>
-      Enable Pages (markdown webpages only accessible to studio members)
+      Enable <%= octicon 'note', style: 'margin-bottom:1px;' %> Pages (markdown webpages only visible to studio members)
     </label>
   </p>
   <p>
     <label>
       <%= form.check_box :random_enabled, checked: @current_studio.random_enabled? %>
-      Enable Randomness (coin toss, names from a hat, shuffle)
+      Enable <%= octicon 'broadcast', style: 'margin-bottom:1px;' %> Decision Beacons (randomly selected values announced at regular intervals)
     </label>
-  </p>
+  </p> -->
 
   <hr style="height:1px;" />
   <%= form.submit 'Save' %>

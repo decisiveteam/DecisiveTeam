@@ -1,0 +1,29 @@
+<h4 style="margin-bottom:0;">
+  <%= octicon 'tools' %>
+  <%= link_to 'Admin', '/admin' %>
+</h4>
+<h1 style="margin-top:0;">Tenant Settings</h1>
+<%= form_with(url: "/admin/settings") do |form| %>
+  <h2>Tenant Name</h2>
+  <p>
+    <%= form.text_field :name, placeholder: 'Tenant Name', value: @current_tenant.name %>
+  </p>
+
+  <h2>Default Time Zone</h2>
+  <p>
+    <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_tenant.timezone.name %>
+  </p>
+
+  <h2>Require Login</h2>
+  <p>
+    <%= form.check_box :require_login, checked: @current_tenant.require_login? %> Require login for all users
+  </p>
+
+  <!-- <h2>Home Page</h2>
+  <h2>About Page</h2>
+  <h2>Help Page</h2>
+  <h2>Contact Page</h2> -->
+
+  <hr style="height:1px;" />
+  <%= form.submit 'Save' %>
+<% end %>

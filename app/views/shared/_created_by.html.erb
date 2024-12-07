@@ -1,0 +1,5 @@
+<span style="display:inline-block;height:20px;">
+  Created <strong><%= timeago(resource.created_at) %></strong>
+  by <%= profile_pic(resource.created_by, size: 20, style: 'vertical-align:bottom;margin-right:0;margin-bottom:0px;') %>
+  <%= link_to resource.created_by.display_name, resource.created_by.path %><br/>
+</span>

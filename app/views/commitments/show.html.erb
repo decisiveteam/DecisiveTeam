@@ -8,6 +8,8 @@
 </h4>
 <h1 style="margin-top:0;"><%= @commitment.title %></h1>
 <p style="font-size:0.8em;">
+  <%= render 'shared/created_by', resource: @commitment %>
+  <br/>
   <% if @commitment.deadline && !@commitment.closed? %>
     Closing in <strong><%= countdown(@commitment.deadline) %></strong><br/>
   <% elsif @commitment.deadline && @commitment.closed? %>

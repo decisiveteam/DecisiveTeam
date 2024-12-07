@@ -20,9 +20,7 @@
   </p>
   <hr style="height:1px;" />
   <%= form.submit 'Start Decision' %>
-  <% if @current_studio != @current_tenant.main_studio %>
-    in <strong><%= @current_studio.name %></strong>
-  <% else %>
+  <% if @current_studio == @current_tenant.main_studio %>
     <p>Items created outside of a studio context do not display backlinks and do not show up in any cycle views.</p>
   <% end %>
 <% end %>

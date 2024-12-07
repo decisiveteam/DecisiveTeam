@@ -8,12 +8,12 @@
 </h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
-  <% if @decision.deadline.nil? %>
-    Created <strong><%= timeago(@decision.created_at) %></strong><br/>
-  <% elsif !@decision.closed? %>
-    Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
-  <% elsif @decision.closed? %>
+  <%= render 'shared/created_by', resource: @decision %>
+  <br/>
+  <% if @decision.closed? %>
     Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
+  <% else %>
+    Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
   <% end %>
   <br/>
 </p>

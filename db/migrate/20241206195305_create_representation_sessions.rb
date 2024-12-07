@@ -9,8 +9,10 @@ class CreateRepresentationSessions < ActiveRecord::Migration[7.0]
       t.datetime :ended_at
       t.boolean :confirmed_understanding, null: false, default: false
       t.jsonb :activity_log, default: {}
+      t.string :truncated_id, null: false, as: 'LEFT(id::text, 8)', stored: true
 
       t.timestamps
     end
+    add_index :representation_sessions, :truncated_id, unique: true
   end
 end

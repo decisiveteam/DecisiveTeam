@@ -1,20 +1,30 @@
-<h1>Scratchpad</h1>
+<span data-controller="scratchpad" data-scratchpad-url="<%= @current_user.path %>/scratchpad">
+<span style="float:right;">
+  <div data-action="click->scratchpad#toggleMode" style="cursor:pointer;margin-right:4px;">
+    <span data-scratchpad-target="editIcon" style="display:none;"><%= octicon 'pencil' %></span>
+    <span data-scratchpad-target="viewIcon"><%= octicon 'eye' %></span>
+  </div>
+</span>
 
-<p>
-  This is your personal scratchpad. What you write here is only visible to you. You can use your scratchpad for bookmarking links, keeping track of ideas, or anything else you want to jot down. It is always available through the top right menu.
-</p>
+<div data-scratchpad-target="editorDiv">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+  <textarea id="editor-textarea"><%= @current_user.scratchpad['text'] %></textarea>
+  <script>
+  window.simplemde = new SimpleMDE({
+    element: document.getElementById("editor-textarea"),
+    autoDownloadFontAwesome: false,
+    spellChecker: false,
+    status: false,
+    toolbar: false,
+    indentWithTabs: false,
+    tabSize: 2,
+  });
+  </script>
+</div>
 
-<textarea id="MyID"><%= @current_user.scratchpad['text'] %></textarea>
-<script>
-var simplemde = new SimpleMDE({
-  element: document.getElementById("MyID"),
-  autoDownloadFontAwesome: false,
-  spellChecker: false,
-  status: false,
-  toolbar: false,
-  indentWithTabs: false,
-});
-</script>
+<div data-scratchpad-target="viewDiv" style="display:none;">
+  <%= markdown(@current_user.scratchpad['text'], shift_headers: false) %>
+</div>
+</span>

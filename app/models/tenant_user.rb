@@ -41,6 +41,10 @@ class TenantUser < ApplicationRecord
     "/u/#{handle}"
   end
 
+  def url
+    "#{tenant.url}#{path}"
+  end
+
   def confirmed_read_note_events(limit: 10)
     NoteHistoryEvent.where(
       tenant_id: tenant_id,
@@ -51,6 +55,14 @@ class TenantUser < ApplicationRecord
 
   def scratchpad
     settings['scratchpad'] || default_scratchpad
+  end
+
+  def scratchpad_text
+    settings['scratchpad']['text'] || default_scratchpad_text
+  end
+
+  def scratchpad_text=(text)
+    settings['scratchpad']['text'] = text
   end
 
   def scratchpad_links(tenant:, studio:)
@@ -76,12 +88,36 @@ class TenantUser < ApplicationRecord
 
   def default_scratchpad_text
     <<~SCRATCH_PAD_TEXT
-      # Scratch pad
+      # Scratchpad
 
-      Anything you write here will be saved and accessible to you from any page. This text is only visible to you.
+      Your scratchpad is only visible to you. Use it to jot down ideas, bookmark links, or keep track of anything you need to remember.
 
-      The purpose of this feature is simply to provide a convenient place to save links and thoughts and any other info you might want to jot down so that you don't lose track of it.
+      <!--
+      You are currently in edit mode.
+      Click the 👁️ icon in the upper right to view the rendered markdown with clickable links.
+      -->
+
+      ## Special functionality of the scratchpad
+
+      When viewing notes, decisions, and commitments, you can click the [...] button in the upper right corner of the page and select "Append link to scratchpad" to add a link here.
+
+      Then when you create new notes, decisions, and commitments, the links on your scratchpad will be accessible via the 🔗 icon in the upper right corner of the creation form with a copy button for convenience.
+
+      ## Links
+
+      * [My Profile](#{url})
+
     SCRATCH_PAD_TEXT
+  end
+
+  def dismissed_notices
+    self.settings['dismissed_notices'] || []
+  end
+
+  def dismiss_notice!(notice_id)
+    self.settings['dismissed_notices'] ||= []
+    self.settings['dismissed_notices'] << notice_id
+    save!
   end
 
 end

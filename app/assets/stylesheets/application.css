@@ -426,6 +426,15 @@ select:focus {
   border-radius: 5px;
 }
 
+.profile-pic {
+  display: inline-block;
+  height: 2em;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: var(--color-border-default);
+  text-align: center;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

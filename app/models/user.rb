@@ -213,4 +213,8 @@ class User < ApplicationRecord
     end
   end
 
+  def studios_minus_main
+    studios.includes(:tenant).where('tenants.main_studio_id != studios.id')
+  end
+
 end

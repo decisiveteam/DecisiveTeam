@@ -27,20 +27,6 @@ export default class extends Controller {
     // this.plusMenuTarget.style.display = 'none'
   }
 
-  // togglePlusMenu() {
-  //   // get the computed x and y position of the button and then set the menu position, right aligned with the button
-  //   const rect = this.plusTarget.getBoundingClientRect()
-  //   this.plusMenuTarget.style.top = `${rect.bottom}px`
-  //   this.plusMenuTarget.style.right = `${window.innerWidth - rect.right}px`
-  //   this.plusMenuTarget.style.display = this.plusMenuTarget.style.display === 'none' ? 'block' : 'none'
-  //   this.menuTarget.style.display = 'none'
-  // }
-
-  toggleScratchpad() {
-    window.htScratchpad.toggleVisibility()
-    this.toggleMenu()
-  }
-
   get csrfToken() {
     return document.querySelector("meta[name='csrf-token']").content;
   }

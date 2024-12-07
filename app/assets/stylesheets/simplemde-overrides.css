@@ -1,0 +1,16 @@
+.markdown-body .CodeMirror {
+  background: unset;
+  color: unset;
+  border: unset;
+  font-family: "Source Code Pro", "Lucida Console", monospace;;
+}
+
+.markdown-body .CodeMirror-cursor {
+  background: var(--color-fg-default);
+  color: var(--color-fg-default);
+  border-color: var(--color-fg-default);
+}
+
+.markdown-body .CodeMirror-selectedtext {
+  color: var(--color-canvas-default);
+}

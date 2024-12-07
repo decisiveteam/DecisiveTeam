@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   get 'contact' => 'home#contact'
 
   resources :users, path: 'u', param: :handle, only: [:show] do
+    get 'scratchpad' => 'users#scratchpad', on: :member
     put 'scratchpad' => 'users#scratchpad', on: :member
     post 'scratchpad/append' => 'users#append_to_scratchpad', on: :member
     get 'settings', on: :member
@@ -82,10 +83,11 @@ Rails.application.routes.draw do
   post "s/:studio_handle/join" => 'studios#accept_invite'
   get 's/:studio_handle/represent' => 'studios#represent'
   post 's/:studio_handle/represent' => 'representation_sessions#start_representing'
+  get '/representing' => 'representation_sessions#representing'
   delete 's/:studio_handle/impersonate' => 'representation_sessions#stop_representing'
   delete 's/:studio_handle/represent' => 'representation_sessions#stop_representing'
-  get 's/:studio_handle/representation-sessions' => 'representation_sessions#index'
-  get 's/:studio_handle/representation-sessions/:id' => 'representation_sessions#show'
+  get 's/:studio_handle/representation' => 'representation_sessions#index'
+  get 's/:studio_handle/r/:id' => 'representation_sessions#show'
 
   ['', 's/:studio_handle'].each do |prefix|
     get "#{prefix}/note" => 'notes#new'

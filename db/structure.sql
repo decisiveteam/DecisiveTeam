@@ -375,6 +375,7 @@ CREATE TABLE public.representation_sessions (
     ended_at timestamp(6) without time zone,
     confirmed_understanding boolean DEFAULT false NOT NULL,
     activity_log jsonb DEFAULT '{}'::jsonb,
+    truncated_id character varying GENERATED ALWAYS AS ("left"((id)::text, 8)) STORED NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1281,6 +1282,13 @@ CREATE INDEX index_representation_sessions_on_studio_id ON public.representation
 --
 
 CREATE INDEX index_representation_sessions_on_tenant_id ON public.representation_sessions USING btree (tenant_id);
+
+
+--
+-- Name: index_representation_sessions_on_truncated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_representation_sessions_on_truncated_id ON public.representation_sessions USING btree (truncated_id);
 
 
 --

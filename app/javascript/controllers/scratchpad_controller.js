@@ -1,56 +1,25 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["editor"]
+  static targets = ["editIcon", "viewIcon", "editorDiv", "viewDiv"]
 
   connect() {
-    // This is hacky, but it makes it easier since there is only one scratchpad
-    // and different parts of the app need to access it, and the behavior is
-    // relatively simple.
-    window.htScratchpad = this
-
-    // this.visibilityToggleTarget = document.getElementById("scratchpad-visibility-toggle")
-    // this.visibilityToggleTarget.addEventListener("click", this.toggleVisibility.bind(this))
-    this.text = this.editorTarget.textContent
-    this.editor = ace.edit(this.editorTarget, {
-      mode: "ace/mode/markdown",
-      // theme: "ace/theme/monokai",
-      wrap: true,
-      showPrintMargin: false,
-      tabSize: 2,
-      useSoftTabs: true,
-      showGutter: false,
-      minLines: 10,
-      maxLines: 100,
-      autoScrollEditorIntoView: true
-    });
-    this.editor.on("change", this.updateEditor.bind(this))
-
-    document.addEventListener('click', (event) => {
-      const isClickInside = this.editorTarget.contains(event.target)
-      const isClickOn = event.target === this.editorTarget
-      const isEditorVisible = this.editorTarget.style.display === 'block'
-      if (!isClickInside && !isClickOn && isEditorVisible) {
-        this.editorTarget.style.display = 'none'
+    console.log("Connecting...")
+    this.editor = window.simplemde
+    this.text = this.editor.value()
+    this.mode = "markdown"
+    this.timeout = null
+    this.editor.codemirror.on("change", this.updateEditor.bind(this))
+    // on visibility change fetch the text in case it was updated in another tab
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        this.fetchText()
       }
     })
   }
 
   get csrfToken() {
     return document.querySelector("meta[name='csrf-token']").content;
-  }
-
-  toggleVisibility() {
-    const currentDisplay = this.editorTarget.style.display
-    if (currentDisplay === "none" || currentDisplay === "") {
-      setTimeout(() => {
-        this.editorTarget.style.display = "block"
-      }, 1)
-    } else {
-      setTimeout(() => {
-        this.editorTarget.style.display = "none"
-      }, 1)
-    }
   }
 
   updateEditor() {
@@ -60,36 +29,10 @@ export default class extends Controller {
     }, 1000)
   }
 
-  setText(text) {
-    this.editor.setValue(text)
-    this.saveText()
-  }
-
-  appendText(text) {
-    const url = this.editorTarget.dataset.url + "/append"
-    return fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": this.csrfToken,
-      },
-      body: JSON.stringify({ text: text }),
-    }).then(response => {
-      if (response.ok) {
-        return response.json()
-      } else {
-        console.error("Error appending text:", response)
-      }
-    }).then(responseBody => {
-      this.text = responseBody.text
-      this.editor.setValue(this.text)
-    })
-  }
-
   saveText() {
-    const text = this.editor.getValue()
+    const text = this.editor.value()
     if (text === this.text) return;
-    const url = this.editorTarget.dataset.url
+    const url = this.element.dataset.scratchpadUrl
     fetch(url, {
       method: "PUT",
       headers: {
@@ -99,11 +42,45 @@ export default class extends Controller {
       body: JSON.stringify({ text: text }),
     }).then(response => {
       if (response.ok) {
-        this.text = text
-        // console.log("Saved!")
+        return response.json()
       } else {
         console.error("Error saving text:", response)
       }
+    }).then(responseBody => {
+      this.text = responseBody.text
+      this.viewDivTarget.innerHTML = responseBody.html
+      console.log("Saved!")
     })
+  }
+
+  fetchText() {
+    const url = this.element.dataset.scratchpadUrl
+    fetch(url).then(response => {
+      if (response.ok) {
+        return response.json()
+      } else {
+        console.error("Error fetching text:", response)
+      }
+    }).then(responseBody => {
+      if (this.text === responseBody.text) return;
+      this.text = responseBody.text
+      this.editor.value(this.text)
+      this.viewDivTarget.innerHTML = responseBody.html
+    })
+  }
+
+  toggleMode() {
+    this.mode = this.mode === "markdown" ? "html" : "markdown"
+    if (this.mode === "html") {
+      this.viewIconTarget.style.display = 'none'
+      this.viewDivTarget.style.display = 'block'
+      this.editIconTarget.style.display = 'inline-block'
+      this.editorDivTarget.style.display = 'none'
+    } else {
+      this.viewIconTarget.style.display = 'inline-block'
+      this.viewDivTarget.style.display = 'none'
+      this.editIconTarget.style.display = 'none'
+      this.editorDivTarget.style.display = 'block'
+    }
   }
 }

@@ -1,13 +1,18 @@
 class RepresentationSessionsController < ApplicationController
 
   def index
+    @representatives = current_studio.representatives
+    if current_user.studio_user.is_representative?
+      # ???
+    end
     @page_title = 'Representation Sessions'
     @representation_sessions = current_tenant.representation_sessions
   end
 
   def show
     @page_title = 'Representation Session'
-    @representation_session = current_studio.representation_sessions.find(params[:id])
+    column = params[:id].length == 8 ? 'truncated_id' : 'id'
+    @representation_session = current_studio.representation_sessions.find_by!(column => params[:id])
   end
 
   def represent
@@ -39,12 +44,20 @@ class RepresentationSessionsController < ApplicationController
       confirmed_understanding: confirmed_understanding,
       began_at: Time.current,
     )
-    rep_session.begin!
+    rep_session.begin!(request: request)
     # NOTE - both cookies need to be set for ApplicationController#current_user
     # to find the corrent RepresentationSession outside the scope of current_studio
     session[:impersonating] = trustee.id
     session[:representation_session_id] = rep_session.id
-    redirect_to root_path
+    redirect_to '/representing'
+  end
+
+  def representing
+    @page_title = 'Representing'
+    @representation_session = current_representation_session
+    return redirect_to root_path unless @representation_session
+    @studio = @representation_session.studio
+    @other_studios = current_user.studios.where.not(id: @current_tenant.main_studio_id)
   end
 
   def stop_representing

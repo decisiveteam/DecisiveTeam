@@ -1,3 +1,56 @@
-<% @representation_sessions.each do |representation_session| %>
-  <h4><%= link_to representation_session.id, representation_session.path %></h4>
+<h4 style="margin:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / Representation
+</h4>
+<h1 style="margin-top:0;">Representation</h1>
+
+<p>Representation allows <%= @current_studio.name %> to act as a member of other studios.</p>
+
+<% if @current_studio.trustee_user.studios.empty? %>
+  <p>
+    <%= @current_studio.name %> is not currently a member of any other studios.
+  </p>
+<% else %>
+  <p>
+    <%= @current_studio.name %> is a member of the following studios:
+  </p>
+  <ul>
+    <% @current_studio.trustee_user.studios.each do |studio| %>
+      <li>
+        <%= link_to studio.name, studio.path %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Representatives</h2>
+
+<p>Representatives act on behalf of the studio as a whole through representation sessions during which their actions are recorded and made visible here.</p>
+
+<p><%= @current_studio.name %> currently has <%= @representatives.count %> representative<%= @representatives.count == 1 ? '' : 's' %>.</p>
+
+<ul>
+  <% @representatives.each do |representative| %>
+    <li>
+      <%= profile_pic(representative) %>
+      <%= link_to representative.display_name, representative.path %>
+      <span class="role-badge">representative</span>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Representation Sessions</h2>
+
+<% if @representation_sessions.empty? %>
+  <p>
+    No sessions have happened yet.
+  </p>
+<% else %>
+  <ul>
+    <% @representation_sessions.each do |representation_session| %>
+      <li>
+        <%= link_to "Session <code>#{representation_session.truncated_id}</code>".html_safe, representation_session.path %>
+        <span class="timeago">ended <%= timeago(representation_session.ended_at) %></span>
+      </li>
+    <% end %>
+  </ul>
 <% end %>

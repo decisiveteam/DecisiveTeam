@@ -25,10 +25,14 @@ class UsersController < ApplicationController
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
     return render '404' if tu.nil?
     return render plain: '403 Unauthorized' unless tu.user == current_user
-    if params[:text].present?
+    if request.method == 'GET'
+      html = MarkdownRenderer.render(tu.scratchpad['text'], shift_headers: false)
+      render json: { text: tu.scratchpad['text'], html: html }
+    elsif params[:text].present?
       tu.settings['scratchpad']['text'] = params[:text]
       tu.save!
-      render json: { success: true }
+      html = MarkdownRenderer.render(tu.scratchpad['text'], shift_headers: false)
+      render json: { text: tu.scratchpad['text'], html: html }
     else
       render status: 400, json: { error: 'Text is required' }
     end
@@ -57,7 +61,7 @@ class UsersController < ApplicationController
 
   def stop_impersonating
     clear_impersonations_and_representations!
-    redirect_to current_parent_user.path
+    redirect_to request.referrer
   end
 
 end

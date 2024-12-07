@@ -7,6 +7,10 @@ class RepresentationSession < ApplicationRecord
   validates :began_at, presence: true
   validates :confirmed_understanding, inclusion: { in: [true] }
 
+  def truncated_id
+    super || id.to_s[0..7]
+  end
+
   def api_json
     {
       id: id,
@@ -21,14 +25,13 @@ class RepresentationSession < ApplicationRecord
     }
   end
 
-  def begin!
+  def begin!(request:)
     # TODO - add a check for active representation session
     raise 'Must confirm understanding' unless confirmed_understanding
     # TODO - add more validations
-    if began_at.nil?
-      self.began_at = Time.current
-      save!
-    end
+    self.began_at = Time.current if began_at.nil?
+    record_activity!(request: request)
+    save!
   end
 
   def active?
@@ -72,12 +75,26 @@ class RepresentationSession < ApplicationRecord
     save!
   end
 
+  def title
+    "Representation Session #{truncated_id}"
+  end
+
   def path
-    "/s/#{studio.handle}/representation-sessions/#{id}"
+    "/s/#{studio.handle}/r/#{truncated_id}"
   end
 
   def url
     "#{tenant.url}#{path}"
+  end
+
+  def actions
+    # TODO - makes this more meaningful
+    actions = []
+    activity_log['activity'].each do |activity|
+      next unless activity['activity_type'] == 'request'
+      actions << activity['request']['path']
+    end
+    actions
   end
 
 end

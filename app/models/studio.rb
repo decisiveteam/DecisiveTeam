@@ -238,4 +238,8 @@ class Studio < ApplicationRecord
     open_to_all || all_members_can_invite
   end
 
+  def representatives
+    studio_users.where_has_role('representative').map(&:user)
+  end
+
 end

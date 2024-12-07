@@ -323,6 +323,10 @@ class Cycle
     }
   end
 
+  def total_count
+    counts.values.sum
+  end
+
   def backlinks
     # Link.backlink_leaderboard(start_date: start_date, end_date: end_date, tenant_id: @tenant.id)
     Link.where(tenant: @tenant, studio: @studio)

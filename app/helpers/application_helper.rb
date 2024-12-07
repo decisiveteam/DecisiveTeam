@@ -18,9 +18,9 @@ module ApplicationHelper
     </time>".html_safe
   end
 
-  def markdown(text)
+  def markdown(text, shift_headers: true)
     return "" unless text
-    MarkdownRenderer.render(text).html_safe
+    MarkdownRenderer.render(text, shift_headers: shift_headers).html_safe
   end
 
   def markdown_inline(text)
@@ -43,6 +43,15 @@ module ApplicationHelper
               end.join +
             "</ul>"
     html.html_safe
+  end
+
+  def profile_pic(user, size: 30)
+    if user.image_url
+      image_tag user.image_url, class: 'profile-pic', width: size, height: size, title: user.display_name, style: "width:#{size}px;height:#{size}px;line-height:#{size}px;"
+    else
+      initials = user.display_name.split.map(&:first).join
+      "<div class='profile-pic' title='#{user.display_name}' style='width:#{size}px;height:#{size}px;line-height:#{size}px;color:var(--color-fg-default);'><span>#{initials}</span></div>".html_safe
+    end
   end
 
 end

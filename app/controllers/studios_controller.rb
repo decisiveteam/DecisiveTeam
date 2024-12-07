@@ -7,10 +7,20 @@ class StudiosController < ApplicationController
     # @recently_closed_items = @current_studio.recently_closed_items
     @backlinks = @current_studio.backlink_leaderboard
     @team = @current_studio.team
-    # @current_cycles = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
-    #   Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
-    # end
+    # Start with today, then zoom out until we have significant data increase or we reach this year
     @cycle = Cycle.new(name: 'today', tenant: @current_tenant, studio: @current_studio)
+    if @cycle.total_count < 3
+      this_week = Cycle.new(name: 'this-week', tenant: @current_tenant, studio: @current_studio)
+      @cycle = this_week if this_week.total_count > @cycle.total_count
+    end
+    if @cycle.total_count < 3
+      this_month = Cycle.new(name: 'this-month', tenant: @current_tenant, studio: @current_studio)
+      @cycle = this_month if this_month.total_count > @cycle.total_count
+    end
+    if @cycle.total_count < 3
+      this_year = Cycle.new(name: 'this-year', tenant: @current_tenant, studio: @current_studio)
+      @cycle = this_year if this_year.total_count > @cycle.total_count
+    end
   end
 
   def new

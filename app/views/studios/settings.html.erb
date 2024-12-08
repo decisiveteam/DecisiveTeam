@@ -16,19 +16,23 @@
     <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_studio.timezone.name %>
   </p>
 
-  <!-- <h2>Experimental Features</h2>
-  <p>
-    <label>
-      <%= form.check_box :pages_enabled, checked: @current_studio.pages_enabled? %>
-      Enable <%= octicon 'note', style: 'margin-bottom:1px;' %> Pages (markdown webpages only visible to studio members)
-    </label>
-  </p>
-  <p>
-    <label>
-      <%= form.check_box :random_enabled, checked: @current_studio.random_enabled? %>
-      Enable <%= octicon 'broadcast', style: 'margin-bottom:1px;' %> Decision Beacons (randomly selected values announced at regular intervals)
-    </label>
-  </p> -->
+  <h2>Invitations</h2>
+  <fieldset>
+    <legend>Who can invite new members?</legend>
+    <%= form.radio_button :invitations, 'all_members', checked: @current_studio.all_members_can_invite? %>
+    <%= form.label :invitations_all_members, 'All members can invite' %><br>
+    <%= form.radio_button :invitations, 'only_admins', checked: !@current_studio.all_members_can_invite? %>
+    <%= form.label :invitations_only_admins, 'Only admins can invite' %>
+  </fieldset>
+
+  <h2>Representation</h2>
+  <fieldset>
+    <legend>Who can act as a representative of <%= @current_studio.name %> within other studios?</legend>
+    <%= form.radio_button :representation, 'any_member', checked: @current_studio.any_member_can_represent? %>
+    <%= form.label :representation_any_member, 'Any member can represent the studio' %><br>
+    <%= form.radio_button :representation, 'only_representatives', checked: !@current_studio.any_member_can_represent? %>
+    <%= form.label :representation_only_representatives, 'Only designated representatives can represent the studio' %>
+  </fieldset>
 
   <hr style="height:1px;" />
   <%= form.submit 'Save' %>

@@ -67,7 +67,7 @@ class SessionsController < ApplicationController
   # <logout>
   def destroy
     session.delete(:user_id)
-    session.delete(:impersonating)
+    clear_impersonations_and_representations!
     # Cookie deletion is not technically necessary,
     # but it guarantees that the user session does not get into a weird state.
     delete_token_cookie

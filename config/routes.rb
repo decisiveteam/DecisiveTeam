@@ -85,8 +85,8 @@ Rails.application.routes.draw do
   get 's/:studio_handle/represent' => 'studios#represent'
   post 's/:studio_handle/represent' => 'representation_sessions#start_representing'
   get '/representing' => 'representation_sessions#representing'
-  delete 's/:studio_handle/impersonate' => 'representation_sessions#stop_representing'
   delete 's/:studio_handle/represent' => 'representation_sessions#stop_representing'
+  delete 's/:studio_handle/r/:representation_session_id' => 'representation_sessions#stop_representing'
   get 's/:studio_handle/representation' => 'representation_sessions#index'
   get 's/:studio_handle/r/:id' => 'representation_sessions#show'
 

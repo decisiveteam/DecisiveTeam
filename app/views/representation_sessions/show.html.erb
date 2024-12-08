@@ -6,6 +6,15 @@
   Representation Session
 </h1>
 
+<% unless @representation_session.ended_at %>
+  <div class="active-sessions">
+    This session is currently active.
+    <% if @representation_session.representative_user == @current_user %>
+      <%= button_to 'End Session', @representation_session.path, method: :delete %>
+    <% end %>
+  </div>
+<% end %>
+
 <p style="font-size:0.8em;">
   Representative
   <%= profile_pic(@representation_session.representative_user, size: 20) %>
@@ -13,11 +22,12 @@
   <br/>
   Started <%= timeago(@representation_session.began_at) %>
   <br/>
-  Ended <%= timeago(@representation_session.ended_at) %>
-  <br/>
-  <% duration = (@representation_session.elapsed_time / 60).round %>
-  Duration <%= duration %> minute<%= duration == 1 ? '' : 's' %>
-  <br/>
+  <% if @representation_session.ended_at %>
+    Ended <%= timeago(@representation_session.ended_at) %>
+    <br/>
+    <% duration = (@representation_session.elapsed_time / 60).round %>
+    Duration <%= duration %> minute<%= duration == 1 ? '' : 's' %>
+  <% end %>
 </p>
 
 <h2>Actions</h2>

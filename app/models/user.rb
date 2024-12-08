@@ -68,7 +68,7 @@ class User < ApplicationRecord
     return true if is_parent
     if user.studio_trustee?
       su = self.studio_users.find_by(studio_id: user.trustee_studio.id)
-      return su&.has_role?('representative')
+      return su&.can_represent?
     end
     false
   end
@@ -79,7 +79,7 @@ class User < ApplicationRecord
       is_trustee_of_studio = self.trustee_studio == studio
       return is_trustee_of_studio if self.trustee?
       su = self.studio_users.find_by(studio_id: studio.id)
-      return su&.has_role?('representative')
+      return su&.can_represent?
     elsif studio_or_user.is_a?(User)
       user = studio_or_user
       return can_impersonate?(user)

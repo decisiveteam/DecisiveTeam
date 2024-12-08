@@ -4,7 +4,7 @@
     <div data-top-right-menu-target="button" class="top-menu-button" data-action="click->top-right-menu#toggleMenu">
       <%= profile_pic(@current_user) %>
     </div>
-    <div data-top-right-menu-target="menu" class="top-menu" style="display:none;<% if @current_parent_user %>min-width:185px;<% end %>">
+    <div data-top-right-menu-target="menu" class="top-menu" style="display:none;">
       <ul>
         <li>
           <%= octicon 'file' %>

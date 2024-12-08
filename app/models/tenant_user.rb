@@ -1,6 +1,7 @@
 class TenantUser < ApplicationRecord
   include CanPin
   include HasRoles
+  include HasDismissibleNotices
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   belongs_to :user
@@ -108,16 +109,6 @@ class TenantUser < ApplicationRecord
       * [My Profile](#{url})
 
     SCRATCH_PAD_TEXT
-  end
-
-  def dismissed_notices
-    self.settings['dismissed_notices'] || []
-  end
-
-  def dismiss_notice!(notice_id)
-    self.settings['dismissed_notices'] ||= []
-    self.settings['dismissed_notices'] << notice_id
-    save!
   end
 
 end

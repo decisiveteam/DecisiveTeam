@@ -1,5 +1,6 @@
 class StudioUser < ApplicationRecord
   include HasRoles
+  include HasDismissibleNotices
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   belongs_to :studio
@@ -44,6 +45,10 @@ class StudioUser < ApplicationRecord
 
   def can_invite?
     has_role?('admin') || studio.allow_invites?
+  end
+
+  def can_represent?
+    has_role?('representative') || studio.any_member_can_represent?
   end
 
 end

@@ -21,6 +21,14 @@ class StudiosController < ApplicationController
       this_year = Cycle.new(name: 'this-year', tenant: @current_tenant, studio: @current_studio)
       @cycle = this_year if this_year.total_count > @cycle.total_count
     end
+    unless @current_user.studio_user.dismissed_notices.include?('studio-welcome')
+      @current_user.studio_user.dismiss_notice!('studio-welcome')
+      if @current_studio.created_by == @current_user
+        flash[:notice] = "Welcome to your new studio! [Click here to invite your team](#{@current_studio.url}/invite)"
+      else
+        flash[:notice] = "Welcome to #{@current_studio.name}! You can start creating notes, decisions, and commitments by clicking the plus icon to the right of the page header."
+      end
+    end
   end
 
   def new
@@ -53,16 +61,14 @@ class StudiosController < ApplicationController
   end
 
   def update_settings
-    # TODO - only allow admins to update settings
+    if !@current_user.studio_user.is_admin?
+      return render status: 403, plain: '403 Unauthorized'
+    end
     @current_studio.name = params[:name]
     # @current_studio.handle = params[:handle] if params[:handle]
     @current_studio.timezone = params[:timezone]
-    if ['true', 'false', '1', '0'].include?(params[:pages_enabled])
-      @current_studio.settings['pages_enabled'] = params[:pages_enabled] == 'true' || params[:pages_enabled] == '1'
-    end
-    if ['true', 'false', '1', '0'].include?(params[:random_enabled])
-      @current_studio.settings['random_enabled'] = params[:random_enabled] == 'true' || params[:random_enabled] == '1'
-    end
+    @current_studio.settings['all_members_can_invite'] = params[:invitations] == 'all_members'
+    @current_studio.settings['any_member_can_represent'] = params[:representation] == 'any_member'
     @current_studio.save!
     redirect_to @current_studio.path
   end
@@ -72,6 +78,9 @@ class StudiosController < ApplicationController
   end
 
   def invite
+    unless @current_user.studio_user.can_invite?
+      return render layout: 'application', html: 'You do not have permission to invite members to this studio.'
+    end
     @page_title = 'Invite to Studio'
     @invite = @current_studio.find_or_create_shareable_invite(@current_user)
   end

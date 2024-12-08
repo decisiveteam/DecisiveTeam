@@ -58,11 +58,16 @@
           });
         </script>
       <% end %>
-      <% if @current_parent_user %>
+      <% if @current_simulated_user %>
         <div class="alert">
-          <% impersonating_or_representing = @current_user.simulated? ? 'impersonating' : 'currently acting as a representative of' %>
-          <span>You are <%= impersonating_or_representing %> <%= @current_user.display_name %>.</span>
-          <%= button_to "End Session", "#{@current_user.path}/impersonate", method: :delete %>
+          <span>You are impersonating simulated user <%= @current_simulated_user.display_name %>.</span>
+          <%= button_to "End Session", "#{@current_simulated_user.path}/impersonate", method: :delete %>
+        </div>
+      <% end %>
+      <% if @current_representation_session %>
+        <div class="alert">
+          <span><%= @current_simulated_user ? "As #{@current_simulated_user.display_name}, y" : 'Y' %>ou are acting as a representative of <%= @current_user.display_name %>.</span>
+          <%= button_to "End Session", "#{@current_user.path}/represent", method: :delete %>
         </div>
       <% end %>
       <%= yield %>

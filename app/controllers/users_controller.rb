@@ -53,9 +53,10 @@ class UsersController < ApplicationController
 
   def impersonate
     tu = current_tenant.tenant_users.find_by(handle: params[:handle])
-    return render '404' if tu.nil?
-    return render plain: '403 Unauthorized' unless current_user.can_impersonate?(tu.user)
-    session[:impersonating] = tu.user.id
+    return render status: 404, plain: '404 Not Found' if tu.nil?
+    return render status: 403, plain: '403 Unauthorized' unless current_user.can_impersonate?(tu.user)
+    return render status: 403, plain: '403 Unauthorized' unless tu.user.simulated?
+    session[:simulated_user_id] = tu.user.id
     redirect_to root_path
   end
 

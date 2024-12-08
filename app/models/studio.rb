@@ -60,7 +60,8 @@ class Studio < ApplicationRecord
       'unlisted' => true,
       'invite_only' => true,
       'timezone' => 'UTC',
-      'allow_join_requests' => false,
+      'all_members_can_invite' => false,
+      'any_member_can_represent' => false,
       'pages_enabled' => false,
       'random_enabled' => false,
       'pinned' => {},
@@ -241,6 +242,18 @@ class Studio < ApplicationRecord
 
   def representatives
     studio_users.where_has_role('representative').map(&:user)
+  end
+
+  def admins
+    studio_users.where_has_role('admin').map(&:user)
+  end
+
+  def all_members_can_invite?
+    self.settings['all_members_can_invite']
+  end
+
+  def any_member_can_represent?
+    self.settings['any_member_can_represent']
   end
 
 end

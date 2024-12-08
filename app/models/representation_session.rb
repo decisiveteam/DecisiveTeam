@@ -67,22 +67,22 @@ class RepresentationSession < ApplicationRecord
   end
 
   def validate_semantic_event!(semantic_event)
-    example = {
-      "timestamp": "2021-09-01T12:34:56Z",
-      "event_type": "create",
-      "studio_id": "12345678",
-      "main_resource": {
-        "type": "Note",
-        "id": "12345678",
-        "truncated_id": "12345678",
-      },
-      "sub_resources": [
-        {
-          "type": "Option",
-          "id": "87654321",
-        },
-      ],
-    }
+    # example = {
+    #   "timestamp": "2021-09-01T12:34:56Z",
+    #   "event_type": "create",
+    #   "studio_id": "12345678",
+    #   "main_resource": {
+    #     "type": "Note",
+    #     "id": "12345678",
+    #     "truncated_id": "12345678",
+    #   },
+    #   "sub_resources": [
+    #     {
+    #       "type": "Option",
+    #       "id": "87654321",
+    #     },
+    #   ],
+    # }
     valid_keys = [:timestamp, :event_type, :studio_id, :main_resource, :sub_resources].sort
     raise "Invalid semantic event keys #{semantic_event.keys}" unless semantic_event.keys.sort == valid_keys
     valid_event_types = %w(create update confirm add_option vote commit).sort

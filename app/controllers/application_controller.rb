@@ -97,99 +97,127 @@ class ApplicationController < ActionController::Base
     return @current_user if defined?(@current_user)
     if api_token_present?
       api_authorize!
+      # How do we handle representation through the API?
       return @current_user = @current_token&.user
     end
-    if session[:impersonating].present?
-      user = User.find_by(id: session[:impersonating])
-      parent_user = User.find_by(id: session[:user_id])
-      if user && parent_user&.can_impersonate?(user)
-        @current_user = user
-        @current_parent_user = parent_user
-      else
-        clear_impersonations_and_representations!
-      end
-    end
-    if session[:user_id].present?
-      @current_user ||= User.find_by(id: session[:user_id])
-      if @current_user
-        tu = current_tenant.tenant_users.find_by(user: @current_user)
-        if tu.nil?
-          # Sessions controller should have already handled this case.
-          raise 'User is not a member of this tenant' if current_tenant.require_login?
-        else
-          # This assignment prevents unnecessary reloading.
-          @current_user.tenant_user = tu
-        end
-      end
-      if @current_user
-        su = current_studio.studio_users.find_by(user: @current_user)
-        if su.nil?
-          if current_studio == current_tenant.main_studio
-            if controller_name == 'sessions' || @current_user.trustee?
-              # Do nothing
-            else
-              current_studio.add_user!(@current_user)
-            end
-          elsif current_user.trustee? && current_user.trustee_studio == current_studio
-            # TODO - decide how to handle this case. Trustee is not a member of the studio, but is the trustee.
-          else
-            # If this user has an invite to this studio, they will see the option to accept on the studio's join page.
-            # Otherwise, they will see the studio's default join page, which may or may not allow them to join.
-            path = "#{current_studio.path}/join"
-            redirect_to path unless request.path == path
-          end
-        else
-          # TODO Add last_seen_at to StudioUser instead of touch
-          su.touch if controller_name != 'sessions'
-          @current_user.studio_user = su
-        end
-      end
-    elsif @current_tenant.require_login? && controller_name != 'sessions'
-      if current_resource
-        path = current_resource.path
-        query_string = "?redirect_to_resource=#{path}"
-      elsif params[:code] && controller_name == 'studios'
-        # Studio invite code
-        query_string = "?code=#{params[:code]}"
-      end
-      redirect_to '/login' + (query_string || '')
+    @current_person_user = User.find_by(id: session[:user_id], user_type: 'person') if session[:user_id].present?
+    @current_simulated_user = User.find_by(id: session[:simulated_user_id], user_type: 'simulated') if session[:simulated_user_id].present?
+    @current_trustee_user = User.find_by(id: session[:trustee_user_id], user_type: 'trustee') if session[:trustee_user_id].present?
+    if @current_simulated_user && @current_person_user&.can_impersonate?(@current_simulated_user)
+      @current_user = @current_simulated_user
+    elsif @current_simulated_user
+      clear_impersonations_and_representations!
+      @current_simulated_user = nil
+      @current_user = @current_person_user
     else
-      @current_user = nil
+      @current_user = @current_person_user
+    end
+    if @current_trustee_user && @current_user&.can_represent?(@current_trustee_user)
+      @current_user = @current_trustee_user
+    elsif @current_trustee_user
+      clear_impersonations_and_representations!
+      @current_trustee_user = nil
+      @current_user = @current_person_user
+    end
+    @current_user ||= @current_person_user
+    if @current_user
+      validate_authenticated_access
+    else
+      validate_unauthenticated_access
     end
     @current_user
   end
 
+  def validate_authenticated_access
+    tu = current_tenant.tenant_users.find_by(user: @current_user)
+    if tu.nil?
+      # Sessions controller should have already handled this case.
+      raise 'User is not a member of this tenant' if current_tenant.require_login?
+    else
+      # This assignment prevents unnecessary reloading.
+      @current_user.tenant_user = tu
+    end
+    su = current_studio.studio_users.find_by(user: @current_user)
+    if su.nil?
+      if current_studio == current_tenant.main_studio
+        if controller_name == 'sessions' || @current_user.trustee?
+          # Do nothing
+        else
+          current_studio.add_user!(@current_user)
+        end
+      elsif current_user.trustee? && current_user.trustee_studio == current_studio
+        # TODO - decide how to handle this case. Trustee is not a member of the studio, but is the trustee.
+      else
+        # If this user has an invite to this studio, they will see the option to accept on the studio's join page.
+        # Otherwise, they will see the studio's default join page, which may or may not allow them to join.
+        path = "#{current_studio.path}/join"
+        redirect_to path unless request.path == path
+      end
+    else
+      # TODO Add last_seen_at to StudioUser instead of touch
+      su.touch if controller_name != 'sessions'
+      @current_user.studio_user = su
+    end
+  end
+
+  def validate_unauthenticated_access
+    return if @current_user || !@current_tenant.require_login? || controller_name == 'sessions'
+    if current_resource
+      path = current_resource.path
+      query_string = "?redirect_to_resource=#{path}"
+    elsif params[:code] && controller_name == 'studios'
+      # Studio invite code
+      query_string = "?code=#{params[:code]}"
+    end
+    redirect_to '/login' + (query_string || '')
+  end
+
   def clear_impersonations_and_representations!
-    session.delete(:impersonating)
+    session.delete(:simulated_user_id)
     session.delete(:representation_session_id)
-    @current_user = @current_parent_user
-    @current_parent_user = nil
+    session.delete(:trustee_user_id)
+    @current_user = @current_person_user
+    @current_simulated_user = nil
     @current_representation_session&.end!
     @current_representation_session = nil
   end
 
-  def current_parent_user
-    @current_parent_user
+  def current_person_user
+    @current_person_user
+  end
+
+  def current_simulated_user
+    @current_simulated_user
   end
 
   def current_representation_session
     return @current_representation_session if defined?(@current_representation_session)
     if session[:representation_session_id].present?
       @current_representation_session = RepresentationSession.unscoped.find_by(
-        trustee_user: current_user,
-        representative_user: current_parent_user,
-        studio: current_user.trustee_studio,
+        trustee_user: @current_user,
+        # Person can be impersonating a simulated user who is representing the studio via a representation session, all simultaneously.
+        representative_user: @current_simulated_user || @current_person_user,
+        studio: @current_user.trustee_studio,
         id: session[:representation_session_id]
       )
       if @current_representation_session.nil?
         # TODO - not sure what to do here. What are the security concerns?
         clear_impersonations_and_representations!
-        flass[:alert] = 'Representation session not found. Please try again.'
+        flash[:alert] = 'Representation session not found. Please try again.'
       elsif @current_representation_session.expired?
         clear_impersonations_and_representations!
         flash[:alert] = 'Representation session expired.'
       elsif !request.path.starts_with?('/representing') && !request.path.starts_with?('/s/')
-        redirect_to '/representing'
+        # Representation session should always be scoped to a studio or the /representing page.
+        # The one edge case exception is when a person user is impersonating a simulated user and
+        # is ending the impersonation before ending the representation session.
+        # In this case, the representation session should be ended automatically.
+        ending_impersonation = @current_simulated_user && request.path.ends_with?('/impersonate')
+        if ending_impersonation
+          # Allow request to proceed. UsersController#stop_impersonating will handle the end of the representation session.
+        else
+          redirect_to '/representing'
+        end
       end
     end
     @current_representation_session ||= nil

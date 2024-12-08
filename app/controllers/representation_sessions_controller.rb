@@ -6,7 +6,7 @@ class RepresentationSessionsController < ApplicationController
       # ???
     end
     @page_title = 'Representation Sessions'
-    @representation_sessions = current_tenant.representation_sessions
+    @representation_sessions = current_tenant.representation_sessions.order(ended_at: :desc).limit(100)
   end
 
   def show
@@ -44,7 +44,7 @@ class RepresentationSessionsController < ApplicationController
       confirmed_understanding: confirmed_understanding,
       began_at: Time.current,
     )
-    rep_session.begin!(request: request)
+    rep_session.begin!
     # NOTE - both cookies need to be set for ApplicationController#current_user
     # to find the corrent RepresentationSession outside the scope of current_studio
     session[:impersonating] = trustee.id

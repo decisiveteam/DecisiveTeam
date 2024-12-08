@@ -4,7 +4,34 @@ module Api::V1
       approval = Approval.find_by(associations) || Approval.new(associations)
       approval.value = params[:value]
       approval.stars = params[:stars]
-      approval.save!
+      ActiveRecord::Base.transaction do
+        approval.save!
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'vote',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Decision',
+                id: current_decision.id,
+                truncated_id: current_decision.truncated_id,
+              },
+              sub_resources: [
+                {
+                  type: 'Option',
+                  id: current_option.id,
+                },
+                {
+                  type: 'Approval',
+                  id: approval.id,
+                },
+              ],
+            }
+          )
+        end
+      end
       render json: approval
     end
 
@@ -13,7 +40,34 @@ module Api::V1
       return render json: { error: 'Approval not found' }, status: 404 unless approval
       approval.value = params[:value] if params[:value].present?
       approval.stars = params[:stars] if params[:stars].present?
-      approval.save!
+      ActiveRecord::Base.transaction do
+        approval.save!
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'vote',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Decision',
+                id: current_decision.id,
+                truncated_id: current_decision.truncated_id,
+              },
+              sub_resources: [
+                {
+                  type: 'Option',
+                  id: current_option.id,
+                },
+                {
+                  type: 'Approval',
+                  id: approval.id,
+                },
+              ],
+            }
+          )
+        end
+      end
       render json: approval
     end
 

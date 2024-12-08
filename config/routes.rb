@@ -26,6 +26,7 @@ Rails.application.routes.draw do
         resources :approvals
       end
       resources :commitments do
+        post :join, to: 'commitments#join'
         resources :participants
       end
       resources :cycles
@@ -137,6 +138,7 @@ Rails.application.routes.draw do
           resources :approvals
         end
         resources :commitments do
+          post :join, to: 'commitments#join'
           resources :participants
         end
         if prefix == 's/:studio_handle'

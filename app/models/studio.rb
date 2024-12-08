@@ -136,6 +136,7 @@ class Studio < ApplicationRecord
       handle: SecureRandom.hex(16),
     )
     self.trustee_user = trustee
+    save!
   end
 
   def create_welcome_note!

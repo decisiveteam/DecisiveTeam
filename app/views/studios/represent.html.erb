@@ -1,4 +1,8 @@
-<h4 style="margin-top:0px;margin-bottom:0;"><%= link_to @current_studio.name, @current_studio.path %></h4>
+<h4 style="margin-top:0px;margin-bottom:0;">
+  <%= link_to @current_studio.name, @current_studio.path %>
+  / <%= link_to 'Representation', @current_studio.path + '/representation' %>
+  / Represent
+</h4>
 <h1 style="margin-top:0;">Represent <%= @current_studio.name %></h1>
 <p>
   Through representation, studio <strong><%= @current_studio.name %></strong> can act as a singular unified entity and participate as a member of other studios.
@@ -41,7 +45,7 @@
 <h2>Begin a Representation Session</h2>
 <%= form_with url: @current_studio.path + '/represent', method: :post do |f| %>
   <p>
-    <%= f.check_box :understand, id: 'i-understand-checkbox' %> I understand that my actions during this session will be recorded and visible to all members of <%= @current_studio.name %>.
+    <%= f.check_box :understand, id: 'i-understand-checkbox' %> I understand that my actions during this session will be recorded and made visible to all members of <%= @current_studio.name %>.
   </p>
   <%= f.submit "Begin Session", class: 'button' %>
 <% end %>

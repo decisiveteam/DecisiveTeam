@@ -3,7 +3,15 @@
 </h4>
 <h1 style="margin-top:0;">Representation</h1>
 
-<p>Representation allows <%= @current_studio.name %> to act as a member of other studios.</p>
+<% if @current_user.studio_user.is_representative? %>
+  <p>
+    <a href="<%= @current_studio.path %>/represent">
+      <button>New Session</button>
+    </a>
+  </p>
+<% end %>
+
+<p>Representation allows this studio (<%= @current_studio.name %>) to act as an individual member of other studios.</p>
 
 <% if @current_studio.trustee_user.studios.empty? %>
   <p>
@@ -11,7 +19,7 @@
   </p>
 <% else %>
   <p>
-    <%= @current_studio.name %> is a member of the following studios:
+    <%= @current_studio.name %> is currently a member of the following studios:
   </p>
   <ul>
     <% @current_studio.trustee_user.studios.each do |studio| %>
@@ -24,7 +32,7 @@
 
 <h2>Representatives</h2>
 
-<p>Representatives act on behalf of the studio as a whole through representation sessions during which their actions are recorded and made visible here.</p>
+<p>Representatives act on behalf of <%= @current_studio.name %> through sessions during which their actions are recorded and made visible here.</p>
 
 <p><%= @current_studio.name %> currently has <%= @representatives.count %> representative<%= @representatives.count == 1 ? '' : 's' %>.</p>
 
@@ -49,6 +57,7 @@
     <% @representation_sessions.each do |representation_session| %>
       <li>
         <%= link_to "Session <code>#{representation_session.truncated_id}</code>".html_safe, representation_session.path %>
+        <%= representation_session.action_count %> action<%= representation_session.action_count == 1 ? '' : 's' %>,
         <span class="timeago">ended <%= timeago(representation_session.ended_at) %></span>
       </li>
     <% end %>

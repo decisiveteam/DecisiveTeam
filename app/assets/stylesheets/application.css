@@ -435,6 +435,14 @@ select:focus {
   text-align: center;
 }
 
+.more-button-menu .scratchpad-link-menu-a-tag {
+  color: var(--color-accent-fg);
+}
+
+.more-button-menu .scratchpad-link-menu-a-tag:hover {
+  text-decoration: underline;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

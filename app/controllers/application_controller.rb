@@ -125,7 +125,11 @@ class ApplicationController < ActionController::Base
         su = current_studio.studio_users.find_by(user: @current_user)
         if su.nil?
           if current_studio == current_tenant.main_studio
-            current_studio.add_user!(@current_user) unless controller_name == 'sessions'
+            if controller_name == 'sessions' || @current_user.trustee?
+              # Do nothing
+            else
+              current_studio.add_user!(@current_user)
+            end
           elsif current_user.trustee? && current_user.trustee_studio == current_studio
             # TODO - decide how to handle this case. Trustee is not a member of the studio, but is the trustee.
           else
@@ -184,8 +188,8 @@ class ApplicationController < ActionController::Base
       elsif @current_representation_session.expired?
         clear_impersonations_and_representations!
         flash[:alert] = 'Representation session expired.'
-      else
-        @current_representation_session.record_activity!(request: request)
+      elsif !request.path.starts_with?('/representing') && !request.path.starts_with?('/s/')
+        redirect_to '/representing'
       end
     end
     @current_representation_session ||= nil

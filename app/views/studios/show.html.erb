@@ -1,22 +1,27 @@
-<% options = @current_user.studio_user.is_admin? ? ['settings'] : [] %>
+<% options = [] %>
 <% new_page = @current_studio.pages_enabled? ? 'new_page' : nil %>
 <% new_randomness = @current_studio.random_enabled? ? 'new_randomness' : nil %>
 <% invite = @current_user.studio_user.can_invite? ? 'invite' : nil %>
-<% represent = @current_user.studio_user.is_representative? ? 'represent' : nil %>
-<% options << '---' if new_page || new_randomness || invite || represent %>
+<% representation = 'representation' %>
 <% options << new_page if new_page %>
 <% options << new_randomness if new_randomness %>
 <% options << invite if invite %>
-<% options << represent if represent %>
+<% options << representation if representation %>
+<% settings = @current_user.studio_user.is_admin? ? 'settings' : nil %>
+<% options << '---' if settings %>
+<% options << settings if settings %>
 <%= render 'shared/more_button', resource: @current_studio, options: options %>
 
 <h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
 <h1 style="margin-top:0;"><%= @current_studio.name %></h1>
 
-<h2>Pinned</h2>
+<h2><%= octicon 'pin', height: 24 %> Pinned</h2>
 <%= render 'pinned' %>
 
-<h2><a href="<%= @cycle.path %>"><%= @cycle.display_window %></a></h2>
+<h2>
+  <%= octicon 'calendar', height: 24 %>
+  <a href="<%= @cycle.path %>"><%= @cycle.display_window %></a>
+</h2>
 
 <h3>Notes</h3>
 <ul>
@@ -60,8 +65,11 @@
 <% end %>
 </ul>
 
+<h2>
+  <%= octicon 'file-symlink-file', height: 24 %>
+  Backlinks
+</h2>
 <% if @cycle.backlinks.any? %>
-  <h2>Backlinks</h2>
   <p>Items that are linked to by <%= @cycle.display_name.downcase %>'s active items.</p>
   <ul>
   <% @cycle.backlinks.each do |resource| %>
@@ -70,7 +78,12 @@
     </li>
   <% end %>
   </ul>
+<% else %>
+  <p><em>No items are linked to by <%= @cycle.display_name.downcase %>'s active items.</em></p>
 <% end %>
 
-<h2>Team</h2>
+<h2>
+  <%= octicon 'people', height: 24 %>
+  Team
+</h2>
 <%= render 'team' %>

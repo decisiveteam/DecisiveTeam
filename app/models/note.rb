@@ -65,7 +65,7 @@ class Note < ApplicationRecord
     note_history_events
   end
 
-  def confirm_read(user)
+  def confirm_read!(user)
     NoteHistoryEvent.create!(
       note: self,
       user: user,

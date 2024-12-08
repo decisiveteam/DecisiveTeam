@@ -1,8 +1,9 @@
 class LinkParser
   def self.parse(text, subdomain: nil, studio_handle: nil)
-    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
+    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision, 'r' => RepresentationSession }
     domain = "#{subdomain}.#{ENV['HOSTNAME']}" + (studio_handle ? "/s/#{studio_handle}" : '')
-    pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
+    prefixes = models.keys.join
+    pattern = Regexp.new("https://#{domain}/([#{prefixes}])/([0-9a-f-]+)")
     memo = {}
     text.gsub(pattern) do |match|
       prefix = $1
@@ -18,7 +19,7 @@ class LinkParser
   end
 
   def self.parse_path(path)
-    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
+    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision, 'r' => RepresentationSession }
     path_pieces = path.split('/')
     prefix = path_pieces[-2]
     id = path_pieces[-1]

@@ -13,6 +13,22 @@ module Api::V1
           deadline: params[:deadline],
           created_by: current_user,
         )
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'create',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Decision',
+                id: decision.id,
+                truncated_id: decision.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
         render json: decision
       rescue ActiveRecord::RecordInvalid => e
         # TODO - Detect specific validation errors and return helpful error messages
@@ -27,7 +43,25 @@ module Api::V1
         decision[attribute] = params[attribute] if params.has_key?(attribute)
       end
       decision.updated_by = current_user
-      decision.save!
+      ActiveRecord::Base.transaction do
+        decision.save!
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'update',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Decision',
+                id: decision.id,
+                truncated_id: decision.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
+      end
       render json: decision
     end
 

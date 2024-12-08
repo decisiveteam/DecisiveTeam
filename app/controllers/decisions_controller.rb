@@ -23,6 +23,22 @@ class DecisionsController < ApplicationController
           ).end_date,
           created_by: current_user,
         )
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'create',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Decision',
+                id: @decision.id,
+                truncated_id: @decision.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
       end
       redirect_to @decision.path
     rescue ActiveRecord::RecordInvalid => e
@@ -57,13 +73,35 @@ class DecisionsController < ApplicationController
   end
 
   def create_option_and_return_options_partial
-    # TODO check for duplicate option titles
-    Option.create!(
-      decision: current_decision,
-      decision_participant: current_decision_participant,
-      title: params[:title],
-      description: params[:description],
-    )
+    ActiveRecord::Base.transaction do
+      option = Option.create!(
+        decision: current_decision,
+        decision_participant: current_decision_participant,
+        title: params[:title],
+        description: params[:description],
+      )
+      if current_representation_session
+        current_representation_session.record_activity!(
+          request: request,
+          semantic_event: {
+            timestamp: Time.current,
+            event_type: 'add_option',
+            studio_id: current_studio.id,
+            main_resource: {
+              type: 'Decision',
+              id: current_decision.id,
+              truncated_id: current_decision.truncated_id,
+            },
+            sub_resources: [
+              {
+                type: 'Option',
+                id: option.id,
+              },
+            ],
+          }
+        )
+      end
+    end
     options_partial
   end
 

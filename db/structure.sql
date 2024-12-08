@@ -362,6 +362,23 @@ CREATE TABLE public.pages (
 
 
 --
+-- Name: representation_session_associations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.representation_session_associations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    representation_session_id uuid NOT NULL,
+    resource_type character varying NOT NULL,
+    resource_id uuid NOT NULL,
+    resource_studio_id uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: representation_sessions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -650,6 +667,14 @@ ALTER TABLE ONLY public.options
 
 ALTER TABLE ONLY public.pages
     ADD CONSTRAINT pages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: representation_session_associations representation_session_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_session_associations
+    ADD CONSTRAINT representation_session_associations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1264,6 +1289,48 @@ CREATE INDEX index_pages_on_user_id ON public.pages USING btree (user_id);
 
 
 --
+-- Name: index_rep_session_assoc_on_rep_session_and_resource; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_rep_session_assoc_on_rep_session_and_resource ON public.representation_session_associations USING btree (representation_session_id, resource_id, resource_type);
+
+
+--
+-- Name: index_rep_session_assoc_on_rep_session_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rep_session_assoc_on_rep_session_id ON public.representation_session_associations USING btree (representation_session_id);
+
+
+--
+-- Name: index_rep_session_assoc_on_resource; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rep_session_assoc_on_resource ON public.representation_session_associations USING btree (resource_type, resource_id);
+
+
+--
+-- Name: index_rep_session_assoc_on_resource_studio; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_rep_session_assoc_on_resource_studio ON public.representation_session_associations USING btree (resource_studio_id);
+
+
+--
+-- Name: index_representation_session_associations_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_session_associations_on_studio_id ON public.representation_session_associations USING btree (studio_id);
+
+
+--
+-- Name: index_representation_session_associations_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representation_session_associations_on_tenant_id ON public.representation_session_associations USING btree (tenant_id);
+
+
+--
 -- Name: index_representation_sessions_on_representative_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1583,6 +1650,14 @@ ALTER TABLE ONLY public.studio_invites
 
 
 --
+-- Name: representation_session_associations fk_rails_2959985639; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_session_associations
+    ADD CONSTRAINT fk_rails_2959985639 FOREIGN KEY (resource_studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: commitments fk_rails_2b0260c142; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1727,6 +1802,14 @@ ALTER TABLE ONLY public.studio_users
 
 
 --
+-- Name: representation_session_associations fk_rails_57828aec4a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_session_associations
+    ADD CONSTRAINT fk_rails_57828aec4a FOREIGN KEY (representation_session_id) REFERENCES public.representation_sessions(id);
+
+
+--
 -- Name: note_history_events fk_rails_601d54357c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1863,6 +1946,14 @@ ALTER TABLE ONLY public.studios
 
 
 --
+-- Name: representation_session_associations fk_rails_9127d7fed8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_session_associations
+    ADD CONSTRAINT fk_rails_9127d7fed8 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: note_history_events fk_rails_927b722124; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1964,6 +2055,14 @@ ALTER TABLE ONLY public.links
 
 ALTER TABLE ONLY public.api_tokens
     ADD CONSTRAINT fk_rails_ce1100e505 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
+-- Name: representation_session_associations fk_rails_d26514fc52; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.representation_session_associations
+    ADD CONSTRAINT fk_rails_d26514fc52 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
 
 
 --
@@ -2189,6 +2288,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241205180447'),
 ('20241205223939'),
 ('20241205225353'),
-('20241206195305');
+('20241206195305'),
+('20241207193204');
 
 

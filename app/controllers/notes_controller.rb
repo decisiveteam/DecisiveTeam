@@ -25,6 +25,22 @@ class NotesController < ApplicationController
       ActiveRecord::Base.transaction do
         @note.save!
         @current_note = @note
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'create',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Note',
+                id: @note.id,
+                truncated_id: @note.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
       end
       redirect_to @note.path
     rescue ActiveRecord::RecordInvalid => e
@@ -68,7 +84,27 @@ class NotesController < ApplicationController
     #   tenant: current_tenant,
     #   studio: current_studio,
     # ).end_date
-    @note.save! if @note.changed?
+    if @note.changed?
+      ActiveRecord::Base.transaction do
+        @note.save!
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'update',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Note',
+                id: @note.id,
+                truncated_id: @note.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
+      end
+    end
     redirect_to @note.path
   end
 
@@ -79,7 +115,28 @@ class NotesController < ApplicationController
     end
     @note = current_note
     @note_reader = NoteReader.new(note: @note, user: current_user)
-    @note.confirm_read(current_user)
+    ActiveRecord::Base.transaction do
+      confirmation = @note.confirm_read!(current_user)
+      if current_representation_session
+        current_representation_session.record_activity!(
+          request: request,
+          semantic_event: {
+            timestamp: Time.current,
+            event_type: 'confirm',
+            studio_id: current_studio.id,
+            main_resource: {
+              type: 'Note',
+              id: @note.id,
+              truncated_id: @note.truncated_id,
+            },
+            sub_resources: [{
+              type: 'NoteHistoryEvent',
+              id: confirmation.id,
+            }],
+          }
+        )
+      end
+    end
     render partial: 'confirm'
   end
 

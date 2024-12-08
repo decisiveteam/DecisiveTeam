@@ -5,6 +5,14 @@ class StudioUser < ApplicationRecord
   belongs_to :studio
   belongs_to :user
 
+  validate :trustee_users_not_member_of_main_studio
+
+  def trustee_users_not_member_of_main_studio
+    if user.trustee? && studio == tenant.main_studio
+      errors.add(:user, "Trustee users cannot be members of the main studio")
+    end
+  end
+
   def user
     @user ||= super
     @user.studio_user ||= self

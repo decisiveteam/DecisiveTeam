@@ -6,26 +6,60 @@
   Representation Session
 </h1>
 
-<ul>
-  <li>
-    <%= @representation_session.representative_user.display_name %> represented <%= @representation_session.studio.name %> <%= timeago(@representation_session.ended_at) %>.
-  </li>
-  <li>
-    <%= @representation_session.representative_user.display_name %> performed the following actions on behalf of <%= @representation_session.studio.name %>:
-    <ul>
-      <% @representation_session.actions.each do |action| %>
-        <li>
-          <%= action %>
-        </li>
-      <% end %>
-    </ul>
-  </li>
-</ul>
-
-<h2>JSON</h2>
-<p>
-  The following JSON describes the HTTP requests made during this session (<code>GET</code> requests excluded).
+<p style="font-size:0.8em;">
+  Representative
+  <%= profile_pic(@representation_session.representative_user, size: 20) %>
+  <%= link_to @representation_session.representative_user.display_name, @representation_session.representative_user.path %>
+  <br/>
+  Started <%= timeago(@representation_session.began_at) %>
+  <br/>
+  Ended <%= timeago(@representation_session.ended_at) %>
+  <br/>
+  <% duration = (@representation_session.elapsed_time / 60).round %>
+  Duration <%= duration %> minute<%= duration == 1 ? '' : 's' %>
+  <br/>
 </p>
-<pre>
-<%= JSON.pretty_generate(@representation_session.api_json) %>
-</pre>
+
+<h2>Actions</h2>
+
+<% if @representation_session.human_readable_activity_log.empty? %>
+  <p><em>No actions were performed during this session.</em></p>
+<% else %>
+  <p>
+    <%= @representation_session.representative_user.display_name %> performed the following actions on behalf of <%= @representation_session.studio.name %>:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>at</th>
+        <th>performed action</th>
+        <th>item</th>
+        <th>in studio</th>
+      </tr>
+    </thead>
+    <% @representation_session.human_readable_activity_log.each.with_index do |activity_item, i| %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= activity_item[:happened_at].to_time.in_time_zone(@current_studio.timezone.name).strftime('%H:%M %Z') %></td>
+        <td><%= activity_item[:verb_phrase] %></td>
+        <td>
+          <a href="<%= activity_item[:main_resource].path %>">
+            <%= activity_item[:main_resource].class.to_s %>
+            <code><%= activity_item[:main_resource].truncated_id %></code>
+          </a>
+        </td>
+        <td><%= link_to activity_item[:studio].name, activity_item[:studio].path %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%= backlinks(@representation_session) %>
+
+<div style="display:none;">
+  <h2>JSON</h2>
+  <pre>
+  <%= JSON.pretty_generate(@representation_session.api_json) %>
+  </pre>
+</div>

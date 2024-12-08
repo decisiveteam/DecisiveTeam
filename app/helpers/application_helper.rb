@@ -30,8 +30,10 @@ module ApplicationHelper
 
   def backlinks(record)
     return "" if record.backlinks.empty?
+    # For RepresentationSession we need to put a space between the n and the S
+    item_name = record.class.name.gsub(/([a-z])([A-Z])/, '\1 \2').downcase
     html =  "<h2>Backlinks</h2>" +
-            "<p>Items that link back to this #{record.class.name.downcase}:</p>" +
+            "<p>Items that link back to this #{item_name}:</p>" +
             "<ul>" +
               record.backlinks.map do |r|
                 model_name = r.class.name.downcase
@@ -49,8 +51,9 @@ module ApplicationHelper
     if user.image_url
       image_tag user.image_url, class: 'profile-pic', width: size, height: size, title: user.display_name, style: "width:#{size}px;height:#{size}px;line-height:#{size}px;" + style
     else
+      return ""
       initials = user.display_name.split.map(&:first).join
-      "<div class='profile-pic' title='#{user.display_name}' style='width:#{size}px;height:#{size}px;line-height:#{size}px;color:var(--color-fg-default);#{style}'><span>#{initials}</span></div>".html_safe
+      "<div class='profile-pic' title='#{user.display_name}' style='display:inline-block;width:#{size}px;height:#{size}px;line-height:#{size}px;color:var(--color-fg-default);#{style}'><span>#{initials}</span></div>".html_safe
     end
   end
 

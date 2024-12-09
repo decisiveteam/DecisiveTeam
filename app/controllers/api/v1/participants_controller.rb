@@ -38,15 +38,15 @@ module Api::V1
     def current_commitment
       return @current_commitment if defined?(@current_commitment)
       commitment_id = params[:commitment_id]
-      column_name = commitment_id.to_s.length == 8 ? :truncated_id : :id
-      @current_commitment = Commitment.find_by(column_name => commitment_id)
+      return @current_commitment = nil unless commitment_id
+      @current_commitment = Commitment.find(commitment_id)
     end
 
     def current_decision
       return @current_decision if defined?(@current_decision)
       decision_id = params[:decision_id]
-      column_name = decision_id.to_s.length == 8 ? :truncated_id : :id
-      @current_decision = Decision.find_by(column_name => decision_id)
+      return @current_decision = nil unless decision_id
+      @current_decision = Decision.find(decision_id)
     end
 
   end

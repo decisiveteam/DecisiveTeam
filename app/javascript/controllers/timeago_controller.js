@@ -6,7 +6,9 @@ export default class extends Controller {
 
   connect() {
     this.refreshInterval = 60 * 1000;
-    // this.updateTime();
+    if (this.element.textContent === "...") {
+      this.updateTime();
+    }
     this.startRefreshing();
   }
 

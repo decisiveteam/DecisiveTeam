@@ -74,6 +74,40 @@
     <%= form.time_zone_select :timezone %>
   </p>
 
+  <h2>Tempo</h2>
+
+  <p>
+    How frequently should studio members check in (approximately)?
+  </p>
+  <p>
+    This determines the primary cycle duration.
+  </p>
+  <p>
+    <%= form.select :tempo, [['Daily', 'daily'], ['Weekly', 'weekly'], ['Monthly', 'monthly']] %>
+  </p>
+
+  <h2>Synchronization Mode</h2>
+
+  <p>
+    Which metaphor best describes how your studio will be organized?
+  </p>
+  <p>
+    This determines default permissions for new members. You can always change these settings later.
+  </p>
+  <p>
+    <fieldset>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'improv', checked: true %>
+        <strong>Improv</strong> (no formal leadership roles)
+      </label>
+      <br/>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'orchestra', checked: false %>
+        <strong>Orchestra</strong> (has formal leadership roles)
+      </label>
+    </fieldset>
+  </p>
+
   <hr style="height:1px;" />
   <%= form.submit 'Create Studio' %>
 <% end %>

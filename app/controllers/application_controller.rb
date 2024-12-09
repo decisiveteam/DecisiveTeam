@@ -257,8 +257,8 @@ class ApplicationController < ActionController::Base
     else
       decision_id = params[:decision_id]
     end
-    column_name = decision_id.to_s.length == 8 ? :truncated_id : :id
-    @current_decision = Decision.find_by(column_name => decision_id)
+    return @current_decision = nil unless decision_id
+    @current_decision = Decision.find(decision_id)
   end
 
   def current_decision_participant
@@ -305,8 +305,8 @@ class ApplicationController < ActionController::Base
     else
       commitment_id = params[:commitment_id]
     end
-    column_name = commitment_id.to_s.length == 8 ? :truncated_id : :id
-    @current_commitment = Commitment.find_by(column_name => commitment_id)
+    return @current_commitment = nil unless commitment_id
+    @current_commitment = Commitment.find(commitment_id)
   end
 
   def current_commitment_participant
@@ -340,8 +340,8 @@ class ApplicationController < ActionController::Base
     else
       note_id = params[:note_id]
     end
-    column_name = note_id.to_s.length == 8 ? :truncated_id : :id
-    @current_note = Note.find_by(column_name => note_id)
+    return @current_note = nil unless note_id
+    @current_note = Note.find(note_id)
   end
 
   def duration_param

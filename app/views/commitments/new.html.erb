@@ -1,4 +1,7 @@
-<h1><i class="commitment-icon large-icon"></i> Commitment</h1>
+<h4 style="display:inline-block;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="commitment-icon"></i> Commitment
+</h4>
+<%= render 'shared/scratchpad_links' %>
 <%= form_with do |form| %>
   <div>
     <%= form.text_field :title, placeholder: 'Title' %>

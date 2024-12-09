@@ -16,6 +16,37 @@
     <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_studio.timezone.name %>
   </p>
 
+  <h2>Tempo</h2>
+
+  <p>
+    How frequently should studio members check in (approximately)?
+  </p>
+  <p>
+    This determines the primary cycle duration.
+  </p>
+  <p>
+    <%= form.select :tempo, [['Daily', 'daily'], ['Weekly', 'weekly'], ['Monthly', 'monthly']], selected: @current_studio.tempo %>
+  </p>
+
+  <h2>Synchronization Mode</h2>
+
+  <p>
+    Which metaphor best describes how your studio is organized?
+  </p>
+  <p>
+    <fieldset>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'improv', checked: @current_studio.improv? %>
+        <strong>Improv</strong> (no formal leadership roles)
+      </label>
+      <br/>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'orchestra', checked: @current_studio.orchestra? %>
+        <strong>Orchestra</strong> (has formal leadership roles)
+      </label>
+    </fieldset>
+  </p>
+
   <h2>Invitations</h2>
   <fieldset>
     <legend>Who can invite new members?</legend>

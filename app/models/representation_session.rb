@@ -1,5 +1,6 @@
 class RepresentationSession < ApplicationRecord
   include Linkable
+  include HasTruncatedId
   belongs_to :tenant
   belongs_to :studio
   belongs_to :representative_user, class_name: 'User'
@@ -8,10 +9,6 @@ class RepresentationSession < ApplicationRecord
 
   validates :began_at, presence: true
   validates :confirmed_understanding, inclusion: { in: [true] }
-
-  def truncated_id
-    super || id.to_s[0..7]
-  end
 
   def parse_and_create_link_records!
     # This method is overriding the method in the Linkable module

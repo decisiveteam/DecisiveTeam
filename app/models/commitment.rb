@@ -2,6 +2,7 @@ class Commitment < ApplicationRecord
   include Tracked
   include Linkable
   include Pinnable
+  include HasTruncatedId
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
@@ -13,11 +14,6 @@ class Commitment < ApplicationRecord
   validates :title, presence: true
   validates :critical_mass, presence: true, numericality: { greater_than: 0 }
   validates :deadline, presence: true
-
-  def truncated_id
-    # TODO Fix the bug that causes this to be nil on first save
-    super || self.id.to_s[0..7]
-  end
 
   def api_json(include: [])
     response = {

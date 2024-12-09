@@ -7,20 +7,7 @@ class StudiosController < ApplicationController
     # @recently_closed_items = @current_studio.recently_closed_items
     @backlinks = @current_studio.backlink_leaderboard
     @team = @current_studio.team
-    # Start with today, then zoom out until we have significant data increase or we reach this year
-    @cycle = Cycle.new(name: 'today', tenant: @current_tenant, studio: @current_studio)
-    if @cycle.total_count < 3
-      this_week = Cycle.new(name: 'this-week', tenant: @current_tenant, studio: @current_studio)
-      @cycle = this_week if this_week.total_count > @cycle.total_count
-    end
-    if @cycle.total_count < 3
-      this_month = Cycle.new(name: 'this-month', tenant: @current_tenant, studio: @current_studio)
-      @cycle = this_month if this_month.total_count > @cycle.total_count
-    end
-    if @cycle.total_count < 3
-      this_year = Cycle.new(name: 'this-year', tenant: @current_tenant, studio: @current_studio)
-      @cycle = this_year if this_year.total_count > @cycle.total_count
-    end
+    @cycle = Cycle.new_from_tempo(tenant: @current_tenant, studio: @current_studio)
     unless @current_user.studio_user.dismissed_notices.include?('studio-welcome')
       @current_user.studio_user.dismiss_notice!('studio-welcome')
       if @current_studio.created_by == @current_user
@@ -45,6 +32,8 @@ class StudiosController < ApplicationController
         handle: params[:handle],
         created_by: @current_user,
         timezone: params[:timezone],
+        tempo: params[:tempo],
+        synchronization_mode: params[:synchronization_mode],
       )
       @studio.add_user!(@current_user, roles: ['admin', 'representative'])
       @studio.create_welcome_note!
@@ -67,10 +56,13 @@ class StudiosController < ApplicationController
     @current_studio.name = params[:name]
     # @current_studio.handle = params[:handle] if params[:handle]
     @current_studio.timezone = params[:timezone]
+    @current_studio.tempo = params[:tempo]
+    @current_studio.synchronization_mode = params[:synchronization_mode]
     @current_studio.settings['all_members_can_invite'] = params[:invitations] == 'all_members'
     @current_studio.settings['any_member_can_represent'] = params[:representation] == 'any_member'
     @current_studio.save!
-    redirect_to @current_studio.path
+    flash[:notice] = "Settings successfully updated. [Return to studio homepage.](#{@current_studio.url})"
+    redirect_to request.referrer
   end
 
   def team

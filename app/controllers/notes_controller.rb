@@ -3,7 +3,7 @@ class NotesController < ApplicationController
   def new
     @page_title = "Note"
     @page_description = "Make a note for your team"
-    @end_of_cycle_options = Cycle.end_of_cycle_options
+    @end_of_cycle_options = Cycle.end_of_cycle_options(tempo: current_studio.tempo)
     @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
     @note = Note.new(
       title: params[:title],
@@ -47,7 +47,7 @@ class NotesController < ApplicationController
       e.record.errors.full_messages.each do |msg|
         flash.now[:alert] = msg
       end
-      @end_of_cycle_options = Cycle.end_of_cycle_options
+      @end_of_cycle_options = Cycle.end_of_cycle_options(tempo: current_studio.tempo)
       @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
       @note = Note.new(
         title: model_params[:title],

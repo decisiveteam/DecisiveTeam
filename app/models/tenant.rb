@@ -29,6 +29,7 @@ class Tenant < ApplicationRecord
     if tenant
       self.current_subdomain = tenant.subdomain
       self.current_id = tenant.id
+      self.current_main_studio_id = tenant.main_studio_id
     else
       raise "Invalid subdomain"
     end
@@ -41,6 +42,10 @@ class Tenant < ApplicationRecord
 
   def self.current_id
     Thread.current[:tenant_id]
+  end
+
+  def self.current_main_studio_id
+    Thread.current[:main_studio_id]
   end
 
   def path
@@ -132,5 +137,9 @@ class Tenant < ApplicationRecord
 
   def self.current_id=(id)
     Thread.current[:tenant_id] = id
+  end
+
+  def self.current_main_studio_id=(id)
+    Thread.current[:main_studio_id] = id
   end
 end

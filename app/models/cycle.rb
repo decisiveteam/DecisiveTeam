@@ -1,8 +1,8 @@
 class Cycle
   attr_accessor :name
 
-  def self.end_of_cycle_options
-    [
+  def self.end_of_cycle_options(tempo:)
+    full_list = [
       'end of day today',
       'end of day tomorrow',
       'end of this week',
@@ -12,11 +12,36 @@ class Cycle
       'end of this year',
       'end of next year',
     ]
+    case tempo
+    when 'daily'
+      full_list
+    when 'weekly'
+      full_list - ['end of day today', 'end of day tomorrow']
+    when 'monthly'
+      full_list - ['end of day today', 'end of day tomorrow', 'end of this week', 'end of next week']
+    else
+      raise 'Invalid tempo'
+    end
   end
 
   def self.new_from_end_of_cycle_option(end_of_cycle:, tenant:, studio:)
     cycle = end_of_cycle.downcase.gsub(' ', '-').split(/end-of-(?:day-)?/).last
     new(name: cycle, tenant: tenant, studio: studio)
+  end
+
+  def self.new_from_tempo(tenant:, studio:)
+    case studio.tempo
+    when 'daily'
+      new(name: 'today', tenant: tenant, studio: studio)
+    when 'weekly'
+      new(name: 'this-week', tenant: tenant, studio: studio)
+    when 'monthly'
+      new(name: 'this-month', tenant: tenant, studio: studio)
+    when 'yearly'
+      new(name: 'this-year', tenant: tenant, studio: studio)
+    else
+      raise 'Invalid tempo'
+    end
   end
 
   def initialize(name:, tenant:, studio:, params: {}, current_user: nil)

@@ -62,6 +62,8 @@ class Studio < ApplicationRecord
       'timezone' => 'UTC',
       'all_members_can_invite' => false,
       'any_member_can_represent' => false,
+      'tempo' => 'weekly',
+      'synchronization_mode' => 'improv',
       'pages_enabled' => false,
       'random_enabled' => false,
       'pinned' => {},
@@ -94,6 +96,36 @@ class Studio < ApplicationRecord
 
   def timezone
     @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
+  end
+
+  def tempo=(value)
+    if ['daily', 'weekly', 'monthly'].include?(value)
+      set_defaults
+      self.settings = self.settings.merge('tempo' => value)
+    end
+  end
+
+  def tempo
+    self.settings['tempo'] || 'weekly'
+  end
+
+  def synchronization_mode=(value)
+    if ['improv', 'orchestra'].include?(value)
+      set_defaults
+      self.settings = self.settings.merge('synchronization_mode' => value)
+    end
+  end
+
+  def synchronization_mode
+    self.settings['synchronization_mode'] || 'improv'
+  end
+
+  def improv?
+    self.synchronization_mode == 'improv'
+  end
+
+  def orchestra?
+    self.synchronization_mode == 'orchestra'
   end
 
   def pages_enabled?
@@ -165,7 +197,7 @@ class Studio < ApplicationRecord
   end
 
   def is_main_studio?
-    self.tenant.main_studio_id == self.id
+    (Tenant.current_main_studio_id || self.tenant.main_studio_id) == self.id
   end
 
   def path_prefix

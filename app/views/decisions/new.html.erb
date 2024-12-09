@@ -1,6 +1,7 @@
 <h4 style="display:inline-block;">
   <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="decision-icon"></i> Decision
 </h4>
+<%= render 'shared/scratchpad_links' %>
 <%= form_with do |form| %>
   <div>
     <%= form.text_field :question, placeholder: 'Question that this decision will answer', value: @decision.question %>

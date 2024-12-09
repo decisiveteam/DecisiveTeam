@@ -2,6 +2,7 @@ class Note < ApplicationRecord
   include Tracked
   include Linkable
   include Pinnable
+  include HasTruncatedId
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
@@ -28,11 +29,6 @@ class Note < ApplicationRecord
       event_type: 'update',
       happened_at: self.updated_at
     )
-  end
-
-  def truncated_id
-    # TODO Fix the bug that causes this to be nil on first save
-    super || self.id.to_s[0..7]
   end
 
   def api_json(include: [])

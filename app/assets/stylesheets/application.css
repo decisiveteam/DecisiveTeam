@@ -478,6 +478,18 @@ ul.attachments-list {
   background-color: var(--color-canvas-subtle);
 }
 
+.tooltip-info {
+  position: absolute;
+  display: inline-block;
+  max-width: 400px;
+  background-color: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 8px;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

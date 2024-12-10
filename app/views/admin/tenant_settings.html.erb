@@ -16,12 +16,23 @@
 
   <h2>Require Login</h2>
   <p>
-    <%= form.check_box :require_login, checked: @current_tenant.require_login? %> Require login for all users
+    <%= form.check_box :require_login, checked: @current_tenant.require_login? %>
+    Require login for all users
   </p>
 
   <h2>Allow File Uploads</h2>
   <p>
-    <%= form.check_box :allow_file_uploads, checked: @current_tenant.allow_file_uploads? %> Allow users to attach files to notes and decisions
+    <%= form.check_box :allow_file_uploads, checked: @current_tenant.allow_file_uploads? %>
+    Allow users to attach files to notes, decisions, and commitments
+  </p>
+
+  <h2>Enable API</h2>
+  <p>
+    This overrides studio settings if disabled, but does not override studio settings if enabled.
+    Both tenant settings and studio settings must have the API enabled for it to be accessible for a given studio.
+  </p>
+  <p>
+    <%= form.check_box :api_enabled, checked: @current_tenant.api_enabled? %> Enable API access
   </p>
 
   <!-- <h2>Home Page</h2>

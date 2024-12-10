@@ -25,10 +25,6 @@
     Subdomain: <code><%= @current_tenant.subdomain %></code>
   </li>
   <li>
-    ID: <code><%= @current_tenant.id %></code>
-    <%= render 'shared/copy_button', text: @current_tenant.id %>
-  </li>
-  <li>
     Created: <%= timeago(@current_tenant.created_at) %>
   </li>
   <li>
@@ -74,18 +70,34 @@
 <%= JSON.pretty_generate(@current_tenant.main_studio.settings) %>
 </pre>
 
+<h3>Other Studios</h3>
+
+<ul>
+  <% @current_tenant.studios.order(created_at: :desc).each do |studio| %>
+    <% next if studio == @current_tenant.main_studio %>
+    <li>
+      <a href="<%= studio.path %>">
+        <%= studio.name %>
+      </a>
+      created <%= timeago(studio.created_at) %>
+    </li>
+  <% end %>
+</ul>
+
 <% if @current_tenant.subdomain == ENV['PRIMARY_SUBDOMAIN'] %>
   <h2><%= octicon "tools", height: 32 %>
   System Settings</h2>
 
   <p>Because <code><%= ENV['PRIMARY_SUBDOMAIN'] %></code> is the primary subdomain for this instance of Harmonic Team, you can see and create other tenants here.</p>
 
-  <h3>Tenants</h3>
+  <h3>Other Tenants</h3>
   <ul>
   <% Tenant.all.each do |tenant| %>
+    <% next if tenant.subdomain == ENV['PRIMARY_SUBDOMAIN'] %>
+    <% next if tenant.subdomain == ENV['AUTH_SUBDOMAIN'] %>
     <li>
       <%= tenant.name %>
-      <a href="<%= tenant.path %>">
+      <a href="/admin/tenants/<%= tenant.subdomain %>">
         <code><%= tenant.subdomain %></code>
       </a>
     </li>

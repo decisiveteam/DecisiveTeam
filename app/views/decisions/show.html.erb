@@ -34,3 +34,18 @@
 </span>
 <%= backlinks(@decision) %>
 </span>
+
+<h2>Voters</h2>
+
+<% if @decision.voters.empty? %>
+  <em>No voters yet.</em>
+<% end %>
+
+<ul>
+  <% @decision.voters.each do |voter| %>
+    <li>
+      <%= profile_pic(voter) %>
+      <%= voter.display_name %>
+    </li>
+  <% end %>
+</ul>

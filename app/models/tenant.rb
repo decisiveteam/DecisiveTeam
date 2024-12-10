@@ -60,6 +60,7 @@ class Tenant < ApplicationRecord
       require_invite: true,
       # auth_providers: ['github'],
       allow_file_uploads: false,
+      api_enabled: false,
     }).merge(self.settings || {})
   end
 
@@ -79,6 +80,15 @@ class Tenant < ApplicationRecord
 
   def allow_file_uploads?
     settings['allow_file_uploads'].to_s == 'true'
+  end
+
+  def api_enabled?
+    settings['api_enabled'].to_s == 'true'
+  end
+
+  def enable_api!
+    self.settings['api_enabled'] = true
+    save!
   end
 
   def create_main_studio!(created_by:)

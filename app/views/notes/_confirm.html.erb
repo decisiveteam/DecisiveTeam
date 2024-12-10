@@ -16,6 +16,7 @@
         data-note-target="confirmButtonMessage"
         >Click this button to confirm that you have read the updated note.
       </span>
+      <%= render 'awareness_indicators_tooltip' %>
     </p>
   <% elsif @note_reader.confirmed_read? %>
     <p>
@@ -23,6 +24,7 @@
         Confirmed
       </button>
       <span>You have confirmed reading this note.</span>
+      <%= render 'awareness_indicators_tooltip' %>
     </p>
   <% else %>
     <p>
@@ -37,6 +39,7 @@
         data-note-target="confirmButtonMessage"
         >Click this button to confirm that you have read this note.
       </span>
+      <%= render 'awareness_indicators_tooltip' %>
     </p>
   <% end %>
 <% else %>

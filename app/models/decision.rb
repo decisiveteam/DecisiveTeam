@@ -107,6 +107,16 @@ class Decision < ApplicationRecord
     approvals.distinct.count(:decision_participant_id)
   end
 
+  def voters
+    return @voters if defined?(@voters)
+    # TODO - clean this up
+    @voters = DecisionParticipant.where(
+      id: approvals.distinct.pluck(:decision_participant_id)
+    ).includes(:user).map do |dp|
+      dp.user
+    end
+  end
+
   def path_prefix
     'd'
   end

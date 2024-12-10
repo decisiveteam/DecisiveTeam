@@ -13,11 +13,10 @@ class AdminController < ApplicationController
   def update_tenant_settings
     @current_tenant.name = params[:name]
     @current_tenant.timezone = params[:timezone]
-    if ['true', 'false', '1', '0'].include?(params[:require_login])
-      @current_tenant.settings['require_login'] = params[:require_login] == 'true' || params[:require_login] == '1'
-    end
-    if ['true', 'false', '1', '0'].include?(params[:allow_file_uploads])
-      @current_tenant.settings['allow_file_uploads'] = params[:allow_file_uploads] == 'true' || params[:allow_file_uploads] == '1'
+    ['api_enabled', 'require_login', 'allow_file_uploads'].each do |setting|
+      if ['true', 'false', '1', '0'].include?(params[setting])
+        @current_tenant.settings[setting] = params[setting] == 'true' || params[setting] == '1'
+      end
     end
     # TODO - Home page, About page, Help page, Contact page
     @current_tenant.save!
@@ -55,8 +54,9 @@ class AdminController < ApplicationController
 
   def show_tenant
     return render status: 403, plain: '403 Unauthorized' unless is_main_tenant?
-    @tenant = Tenant.find_by(subdomain: params[:subdomain])
-    @page_title = @tenant.name
+    @showing_tenant = Tenant.find_by(subdomain: params[:subdomain])
+    @current_user_is_admin_of_showing_tenant = @showing_tenant.is_admin?(@current_user)
+    @page_title = @showing_tenant.name
   end
 
   private

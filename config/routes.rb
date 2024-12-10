@@ -53,6 +53,11 @@ Rails.application.routes.draw do
   get 'help' => 'home#help'
   get 'contact' => 'home#contact'
 
+  get 'learn' => 'learn#index'
+  get 'learn/awareness-indicators' => 'learn#awareness_indicators'
+  get 'learn/acceptance-voting' => 'learn#acceptance_voting'
+  get 'learn/reciprocal-commitment' => 'learn#reciprocal_commitment'
+
   get 'admin' => 'admin#admin'
   get 'admin/settings' => 'admin#tenant_settings'
   post 'admin/settings' => 'admin#update_tenant_settings'

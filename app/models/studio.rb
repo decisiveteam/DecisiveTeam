@@ -66,6 +66,7 @@ class Studio < ApplicationRecord
       'synchronization_mode' => 'improv',
       'pages_enabled' => false,
       'random_enabled' => false,
+      'api_enabled' => false,
       'pinned' => {},
     }.merge(
       self.settings || {}
@@ -84,6 +85,15 @@ class Studio < ApplicationRecord
       timezone: timezone.name,
       # settings: settings, # if current_user is admin
     }
+  end
+
+  def api_enabled?
+    self.settings['api_enabled'].to_s == 'true'
+  end
+
+  def enable_api!
+    self.settings['api_enabled'] = true
+    save!
   end
 
   def timezone=(value)

@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
   end
 
   def api_authorize!
-    api_enabled = true # TODO add to .env
+    api_enabled = current_tenant.api_enabled? && current_studio.api_enabled?
     return render json: { error: 'API not enabled' }, status: 403 unless api_enabled
     return render json: { error: 'API only supports JSON or Markdown formats' }, status: 401 unless json_or_markdown_request?
     current_token || render(json: { error: 'Unauthorized' }, status: 401)
@@ -132,7 +132,9 @@ class ApplicationController < ActionController::Base
     tu = current_tenant.tenant_users.find_by(user: @current_user)
     if tu.nil?
       # Sessions controller should have already handled this case.
-      raise 'User is not a member of this tenant' if current_tenant.require_login?
+      if @current_tenant.require_login? && controller_name != 'sessions'
+        render status: 403, layout: 'application', template: 'sessions/403_to_logout'
+      end
     else
       # This assignment prevents unnecessary reloading.
       @current_user.tenant_user = tu

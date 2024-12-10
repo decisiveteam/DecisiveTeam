@@ -25,7 +25,10 @@
       </span>
     </p>
   <% end %>
-  <p>Commitments only take effect if critical mass is achieved.</p>
+  <p>
+    Commitments only take effect if critical mass is achieved.
+    <%= render 'reciprocal_commitment_tooltip' %>
+  </p>
 <% else %>
   <div class="auth-required-message">
     <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @commitment.path } %> to join this commitment.

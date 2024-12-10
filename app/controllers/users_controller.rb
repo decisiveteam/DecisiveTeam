@@ -19,6 +19,7 @@ class UsersController < ApplicationController
     return render '404' if tu.nil?
     return render plain: '403 Unauthorized' unless tu.user == current_user
     @current_user.tenant_user = tu
+    @simulated_users = @current_user.simulated_users.includes(:tenant_users).where(tenant_users: {tenant_id: @current_tenant.id})
   end
 
   def scratchpad

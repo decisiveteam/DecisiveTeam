@@ -38,7 +38,7 @@
 <% end %>
 <%= button_to 'Create Token', "#{@current_user.path}/settings/tokens/new", method: :get, class: 'button' %>
 
-<% if @current_user.simulated_users.any? %>
+<% if @simulated_users.any? %>
   <h2>Simulated Users</h2>
   <p>Simulated users can only be created through the API.</p>
   <table>
@@ -48,7 +48,7 @@
       <th>Profile</th>
       <th>Impersonate</th>
     </tr>
-    <% @current_user.simulated_users.each do |simulated_user| %>
+    <% @simulated_users.each do |simulated_user| %>
       <tr>
         <td><%= simulated_user.name %></td>
         <td><%= timeago(simulated_user.created_at) %></td>
@@ -63,7 +63,7 @@
   </table>
   <h2>Simulated User API Tokens</h2>
   <p>Simulated users can have their own API tokens, which you as the owner are responsible for.</p>
-  <% @current_user.simulated_users.each do |simulated_user| %>
+  <% @simulated_users.each do |simulated_user| %>
     <% if simulated_user.api_tokens.any? %>
       <h3><%= simulated_user.name %></h3>
       <table>

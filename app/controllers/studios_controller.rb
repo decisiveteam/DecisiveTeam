@@ -7,7 +7,7 @@ class StudiosController < ApplicationController
     # @recently_closed_items = @current_studio.recently_closed_items
     @backlinks = @current_studio.backlink_leaderboard
     @team = @current_studio.team
-    @cycle = Cycle.new_from_tempo(tenant: @current_tenant, studio: @current_studio)
+    @cycle = current_cycle
     unless @current_user.studio_user.dismissed_notices.include?('studio-welcome')
       @current_user.studio_user.dismiss_notice!('studio-welcome')
       if @current_studio.created_by == @current_user
@@ -60,6 +60,7 @@ class StudiosController < ApplicationController
     @current_studio.synchronization_mode = params[:synchronization_mode]
     @current_studio.settings['all_members_can_invite'] = params[:invitations] == 'all_members'
     @current_studio.settings['any_member_can_represent'] = params[:representation] == 'any_member'
+    @current_studio.updated_by = @current_user if @current_studio.changed?
     @current_studio.save!
     flash[:notice] = "Settings successfully updated. [Return to studio homepage.](#{@current_studio.url})"
     redirect_to request.referrer

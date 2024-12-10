@@ -4,11 +4,17 @@
 <%= render 'shared/scratchpad_links' %>
 <%= form_with do |form| %>
   <div>
-    <%= form.text_field :title, placeholder: 'Title' %>
+    <%= form.text_field :title, placeholder: 'Action that this commitment will initiate' %>
   </div>
   <div>
     <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
   </div>
+  <% if @current_tenant.allow_file_uploads? %>
+    <div>
+      <%= form.label :files, "Attach files" %>
+      <%= form.file_field :files, multiple: true %>
+    </div>
+  <% end %>
   <h2>Critical Mass</h2>
   <p>
     At least <%= form.number_field :critical_mass, value: 1, style: 'width:48px;' %> participant(s) required for this commitment to take effect.

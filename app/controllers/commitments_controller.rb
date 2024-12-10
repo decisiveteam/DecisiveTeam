@@ -25,6 +25,9 @@ class CommitmentsController < ApplicationController
     begin
       ActiveRecord::Base.transaction do
         @commitment.save!
+        if model_params[:files] && @current_tenant.allow_file_uploads?
+          @commitment.attach!(model_params[:files])
+        end
         @current_commitment = @commitment
         if current_representation_session
           current_representation_session.record_activity!(

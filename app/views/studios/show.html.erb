@@ -10,6 +10,7 @@
 <% settings = @current_user.studio_user.is_admin? ? 'settings' : nil %>
 <% options << '---' if settings %>
 <% options << settings if settings %>
+<% options << 'manage_team' if @current_user.studio_user.is_admin? %>
 <%= render 'shared/more_button', resource: @current_studio, options: options %>
 
 <h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
@@ -27,7 +28,7 @@
 <ul>
 <% @cycle.notes.each do |note| %>
   <li>
-    <a href="<%= note.path %>"><i class="note-icon"></i> <%= note.title %></a>
+    <a href="<%= note.path %>"><i class="note-icon"></i> <%= note.title %></a> <%= note.attachments.any? ? octicon('paperclip') : '' %>
   </li>
 <% end %>
 <% if @cycle.notes.empty? %>

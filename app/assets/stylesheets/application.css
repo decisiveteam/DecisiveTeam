@@ -463,6 +463,21 @@ select:focus {
   margin-bottom: 0 !important;
 }
 
+ul.attachments-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attachments-list li {
+  display: inline-block;
+  padding: 5px 5px 5px 10px;
+  margin: 0 0 5px 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 5px;
+  background-color: var(--color-canvas-subtle);
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

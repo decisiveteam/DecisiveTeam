@@ -1,5 +1,6 @@
 <h4 style="margin-bottom:0;">
   <%= link_to @current_studio.name, @current_studio.path || '/' %>
+  / Settings
 </h4>
 <h1 style="margin-top:0;">Settings</h1>
 <%= form_with(url: "#{@current_studio.path}/settings") do |form| %>
@@ -31,7 +32,7 @@
   <h2>Synchronization Mode</h2>
 
   <p>
-    Which metaphor best describes how your studio is organized?
+    Which metaphor best describes how this studio is organized?
   </p>
   <p>
     <fieldset>

@@ -1,0 +1,16 @@
+<h1>New Tenant</h1>
+
+<%= form_with(url: '/admin/tenants') do |form| %>
+  <h2>Tenant Name</h2>
+  <p>
+    <%= form.text_field :name, placeholder: 'Tenant Name' %>
+  </p>
+
+  <h2>Subdomain</h2>
+  <p>
+    <%= form.text_field :subdomain, placeholder: 'subdomain' %>
+  </p>
+
+  <hr style="height:1px;" />
+  <%= form.submit 'Create' %>
+<% end %>

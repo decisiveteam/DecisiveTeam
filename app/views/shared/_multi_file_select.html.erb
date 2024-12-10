@@ -1,0 +1,6 @@
+<% if @current_tenant.allow_file_uploads? %>
+  <div>
+    <%= form.label :files, "Attach files" %>
+    <%= form.file_field :files, multiple: true %>
+  </div>
+<% end %>

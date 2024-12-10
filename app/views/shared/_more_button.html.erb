@@ -78,6 +78,12 @@
             <%= octicon option[:icon] %>
             <%= link_to option[:label], option[:link_to] %>
           </li>
+        <% elsif option == 'manage_team' %>
+          <% option = { link_to: "#{resource.path}/team", icon: 'people', label: 'Manage Team' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
         <% elsif option == 'invite' %>
           <% option = { link_to: "#{resource.path}/invite", icon: 'person-add', label: 'Invite Team Members' } %>
           <li>

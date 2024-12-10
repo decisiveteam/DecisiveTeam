@@ -1,5 +1,23 @@
 <% if @current_user %>
-  <% if @note_reader.confirmed_read? %>
+  <% if @note_reader.confirmed_read_but_note_updated? %>
+    <p style="margin-bottom:0;">
+      <em>Note updated since you last confirmed reading. Reconfirm to acknowledge the changes.</em>
+    </p>
+    <p>
+      <br/>
+      <button
+        data-action="click->note#confirm mouseenter->note#confirmButtonMouseEnter mouseleave->note#confirmButtonMouseLeave"
+        data-note-target="confirmButton"
+        data-url="<%= @note.path + '/confirm.html' %>"
+        >
+        Confirm
+      </button>
+      <span
+        data-note-target="confirmButtonMessage"
+        >Click this button to confirm that you have read the updated note.
+      </span>
+    </p>
+  <% elsif @note_reader.confirmed_read? %>
     <p>
       <button style="background:#dfdfdf;color:#9f9f9f;cursor:default;">
         Confirmed

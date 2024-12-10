@@ -4,11 +4,17 @@
 <%= render 'shared/scratchpad_links' %>
 <%= form_with do |form| %>
   <div style="margin-bottom:8px;">
-    <%= form.text_field :title, placeholder: 'Title', value: @note.title %>
+    <%= form.text_field :title, placeholder: 'Fact that this note will communicate', value: @note.title %>
   </div>
   <div>
     <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;', value: @note.text %>
   </div>
+  <% if @current_tenant.allow_file_uploads? %>
+    <div>
+      <%= form.label :files, "Attach files" %>
+      <%= form.file_field :files, multiple: true %>
+    </div>
+  <% end %>
   <h2>Relevance Duration</h2>
   <p>
     This note will be considered relevant until

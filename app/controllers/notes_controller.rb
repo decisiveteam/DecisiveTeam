@@ -24,6 +24,9 @@ class NotesController < ApplicationController
     begin
       ActiveRecord::Base.transaction do
         @note.save!
+        if model_params[:files] && @current_tenant.allow_file_uploads?
+          @note.attach!(model_params[:files])
+        end
         @current_note = @note
         if current_representation_session
           current_representation_session.record_activity!(
@@ -79,12 +82,19 @@ class NotesController < ApplicationController
     return render '404', status: 404 unless @note
     @note.title = model_params[:title]
     @note.text = model_params[:text]
+    # Add files to note, but don't remove existing files
+    if model_params[:files]
+      model_params[:files].each do |file|
+        @note.files.attach(file)
+      end
+    end
     # @note.deadline = Cycle.new_from_end_of_cycle_option(
     #   end_of_cycle: params[:end_of_cycle],
     #   tenant: current_tenant,
     #   studio: current_studio,
     # ).end_date
-    if @note.changed?
+    if @note.changed? || @note.files_changed?
+      @note.updated_by = current_user
       ActiveRecord::Base.transaction do
         @note.save!
         if current_representation_session
@@ -144,17 +154,6 @@ class NotesController < ApplicationController
     @note = current_note
     return render '404', status: 404 unless @note
     render partial: 'history_log'
-  end
-
-  def edit_display_name_and_return_partial
-    @note = current_note
-    return render '404', status: 404 unless @note
-    ActiveRecord::Base.transaction do
-      @note_reader = NoteReader.new(note: @note, user: current_user)
-      current_user.name = params[:name]
-      current_user.save!
-    end
-    render partial: 'confirm'
   end
 
 end

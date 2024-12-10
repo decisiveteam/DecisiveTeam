@@ -168,7 +168,7 @@ class User < ApplicationRecord
     if trustee?
       Studio.where(trustee_user: self).first.path
     else
-      tenant_user.path
+      tenant_user&.path
     end
   end
 
@@ -182,6 +182,10 @@ class User < ApplicationRecord
 
   def pin_item!(item)
     tenant_user.pin_item!(item)
+  end
+
+  def unpin_item!(item)
+    tenant_user.unpin_item!(item)
   end
 
   def has_pinned?(item)

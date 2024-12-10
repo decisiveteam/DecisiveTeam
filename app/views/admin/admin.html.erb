@@ -73,3 +73,22 @@
 <pre>
 <%= JSON.pretty_generate(@current_tenant.main_studio.settings) %>
 </pre>
+
+<% if @current_tenant.subdomain == ENV['PRIMARY_SUBDOMAIN'] %>
+  <h2><%= octicon "tools", height: 32 %>
+  System Settings</h2>
+
+  <p>Because <code><%= ENV['PRIMARY_SUBDOMAIN'] %></code> is the primary subdomain for this instance of Harmonic Team, you can see and create other tenants here.</p>
+
+  <h3>Tenants</h3>
+  <ul>
+  <% Tenant.all.each do |tenant| %>
+    <li>
+      <%= tenant.name %>
+      <a href="<%= tenant.path %>">
+        <code><%= tenant.subdomain %></code>
+      </a>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

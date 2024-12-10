@@ -217,7 +217,10 @@ class Cycle
   end
 
   def resources(model)
-    rs = model.where(tenant_id: @tenant.id, studio_id: @studio.id).where('created_at < ?', end_date).where('deadline > ?', start_date)
+    # What if updated_at is after deadline?
+    rs = model.where(tenant_id: @tenant.id, studio_id: @studio.id)
+              .where('created_at < ?', end_date)
+              .where('deadline > ?', start_date)
     if filters.present?
       filters.each do |filter|
         rs = rs.where(filter)

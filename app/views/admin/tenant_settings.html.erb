@@ -19,6 +19,11 @@
     <%= form.check_box :require_login, checked: @current_tenant.require_login? %> Require login for all users
   </p>
 
+  <h2>Allow File Uploads</h2>
+  <p>
+    <%= form.check_box :allow_file_uploads, checked: @current_tenant.allow_file_uploads? %> Allow users to attach files to notes and decisions
+  </p>
+
   <!-- <h2>Home Page</h2>
   <h2>About Page</h2>
   <h2>Help Page</h2>

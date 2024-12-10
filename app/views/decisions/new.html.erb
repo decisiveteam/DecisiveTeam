@@ -9,6 +9,12 @@
   <div style="margin-top:8px;">
     <%= form.text_area :description, placeholder: 'Description (optional)', value: @decision.description %>
   </div>
+  <% if @current_tenant.allow_file_uploads? %>
+    <div>
+      <%= form.label :files, "Attach files" %>
+      <%= form.file_field :files, multiple: true %>
+    </div>
+  <% end %>
   <h3>Options</h3>
   <p>
     <%= form.select :options_open, options_for_select([['Everyone', true], ['Just you', false]], selected: 'Everyone') %>

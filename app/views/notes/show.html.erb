@@ -9,16 +9,14 @@
 <h1 style="margin-top:0;"><%= @note.title %></h1>
 <p style="font-size:0.8em;">
   <%= render 'shared/created_by', resource: @note %>
-  <br/>
-  <% if @note.deadline > Time.now %>
-    Relevance expires <strong><%= timeago(@note.deadline) %></strong><br/>
-  <% else %>
-    Relevance expired <strong><%= timeago(@note.deadline) %></strong><br/>
-  <% end %>
-  <br/>
 </p>
+<%= render 'shared/attachments_section', resource: @note %>
 <div class="user-generated-markdown">
-  <%= markdown(@note.text) %>
+  <% if @note.text.present? %>
+    <%= markdown(@note.text) %>
+  <% else %>
+    <p style="opacity:0.6;"><em>empty note</em></p>
+  <% end %>
 </div>
 <h2>Confirm</h2>
 <div data-note-target="confirmSection">

@@ -3,6 +3,7 @@ class Decision < ApplicationRecord
   include Linkable
   include Pinnable
   include HasTruncatedId
+  include Attachable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id

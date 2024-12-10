@@ -35,4 +35,9 @@ class CyclesController < ApplicationController
     @filter_options = @cycle.filter_options
   end
 
+  def redirect_to_show
+    # If people go to /cycle/... instead of /cycles/...
+    redirect_to "#{@current_studio.path}/cycles/#{params[:cycle]}"
+  end
+
 end

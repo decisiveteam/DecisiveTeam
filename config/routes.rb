@@ -47,15 +47,20 @@ Rails.application.routes.draw do
   root 'home#index'
   get 'home' => 'home#index'
   get 'settings' => 'home#settings'
-  get 'admin' => 'home#admin'
-  get 'admin/settings' => 'home#tenant_settings'
-  post 'admin/settings' => 'home#update_tenant_settings'
-
   get 'scratchpad' => 'home#scratchpad'
 
   get 'about' => 'home#about'
   get 'help' => 'home#help'
   get 'contact' => 'home#contact'
+
+  get 'admin' => 'admin#admin'
+  get 'admin/settings' => 'admin#tenant_settings'
+  post 'admin/settings' => 'admin#update_tenant_settings'
+  get 'admin/tenants' => 'admin#tenants'
+  get 'admin/tenants/new' => 'admin#new_tenant'
+  post 'admin/tenants' => 'admin#create_tenant'
+  get 'admin/tenants/:subdomain/complete' => 'admin#complete_tenant_creation'
+  get 'admin/tenants/:subdomain' => 'admin#show_tenant'
 
   resources :users, path: 'u', param: :handle, only: [:show] do
     get 'scratchpad' => 'users#scratchpad', on: :member
@@ -76,6 +81,7 @@ Rails.application.routes.draw do
   get 's/:studio_handle' => 'studios#show'
   get "s/:studio_handle/cycles" => 'cycles#index'
   get "s/:studio_handle/cycles/:cycle" => 'cycles#show'
+  get "s/:studio_handle/cycle/:cycle" => 'cycles#redirect_to_show'
   get "s/:studio_handle/team" => 'studios#team'
   get "s/:studio_handle/settings" => 'studios#settings'
   post "s/:studio_handle/settings" => 'studios#update_settings'
@@ -98,8 +104,8 @@ Rails.application.routes.draw do
       post '/edit' => 'notes#update'
       get '/history.html' => 'notes#history_log_partial'
       post '/confirm.html' => 'notes#confirm_and_return_partial'
-      put '/edit_display_name.html' => 'notes#edit_display_name_and_return_partial'
       put '/pin' => 'notes#pin'
+      get '/attachments/:name' => 'attachments#show'
     end
 
     get "#{prefix}/decide" => 'decisions#new'
@@ -109,6 +115,7 @@ Rails.application.routes.draw do
       get '/options.html' => 'decisions#options_partial'
       post '/options.html' => 'decisions#create_option_and_return_options_partial'
       put '/pin' => 'decisions#pin'
+      get '/attachments/:name' => 'attachments#show'
     end
 
     get "#{prefix}/commit" => 'commitments#new'
@@ -117,8 +124,8 @@ Rails.application.routes.draw do
       get '/status.html' => 'commitments#status_partial'
       get '/participants.html' => 'commitments#participants_list_items_partial'
       post '/join.html' => 'commitments#join_and_return_partial'
-      put '/edit_display_name.html' => 'commitments#edit_display_name_and_return_partial'
       put '/pin' => 'commitments#pin'
+      get '/attachments/:name' => 'attachments#show'
     end
 
     namespace :api, path: "#{prefix}/api" do

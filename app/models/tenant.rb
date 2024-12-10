@@ -2,9 +2,10 @@ class Tenant < ApplicationRecord
   self.implicit_order_column = "created_at"
   has_many :tenant_users
   has_many :users, through: :tenant_users
-  belongs_to :main_studio, class_name: 'Studio'
+  belongs_to :main_studio, class_name: 'Studio', optional: true # Only optional so that we can create the main studio after the tenant is created
   before_create :set_defaults
-  after_create :create_main_studio!
+  # Admin controller handles this. Callbacks are buggy.
+  # after_create :create_main_studio!
 
   tables = ActiveRecord::Base.connection.tables - [
     'tenants', 'users', 'oauth_identities',
@@ -56,6 +57,9 @@ class Tenant < ApplicationRecord
     self.settings = ({
       timezone: 'UTC',
       require_login: true,
+      require_invite: true,
+      # auth_providers: ['github'],
+      allow_file_uploads: false,
     }).merge(self.settings || {})
   end
 
@@ -73,10 +77,15 @@ class Tenant < ApplicationRecord
     @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
   end
 
-  def create_main_studio!
+  def allow_file_uploads?
+    settings['allow_file_uploads'].to_s == 'true'
+  end
+
+  def create_main_studio!(created_by:)
     self.main_studio = studios.create!(
       name: "#{self.subdomain}.#{ENV['HOSTNAME']}",
-      handle: SecureRandom.hex(16)
+      handle: SecureRandom.hex(16),
+      created_by: created_by,
     )
     save!
   end

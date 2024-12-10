@@ -1,0 +1,13 @@
+<h1>Tenants</h1>
+
+<ul>
+<% @tenants.each do |tenant| %>
+  <li>
+    <a href="https://<%= tenant.subdomain %>.<%= ENV['HOSTNAME'] %>">
+      <code><%= tenant.subdomain %></code> <%= tenant.name %>
+    </a>
+  </li>
+<% end %>
+</ul>
+
+<%= button_to 'New Tenant', '/admin/tenants/new', method: :get %>

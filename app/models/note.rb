@@ -3,6 +3,7 @@ class Note < ApplicationRecord
   include Linkable
   include Pinnable
   include HasTruncatedId
+  include Attachable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
@@ -62,12 +63,21 @@ class Note < ApplicationRecord
   end
 
   def confirm_read!(user)
-    NoteHistoryEvent.create!(
+    existing_confirmation = NoteHistoryEvent.find_by(
       note: self,
       user: user,
-      event_type: 'read_confirmation',
-      happened_at: Time.current
+      event_type: 'read_confirmation'
     )
+    if existing_confirmation && existing_confirmation.happened_at > self.updated_at
+      return existing_confirmation
+    else
+      NoteHistoryEvent.create!(
+        note: self,
+        user: user,
+        event_type: 'read_confirmation',
+        happened_at: Time.current
+      )
+    end
   end
 
   def user_has_read?(user)

@@ -28,6 +28,48 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: active_storage_attachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_attachments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying NOT NULL,
+    record_type character varying NOT NULL,
+    record_id uuid NOT NULL,
+    blob_id uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: active_storage_blobs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_blobs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    key character varying NOT NULL,
+    filename character varying NOT NULL,
+    content_type character varying,
+    metadata text,
+    service_name character varying NOT NULL,
+    byte_size bigint NOT NULL,
+    checksum character varying,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: active_storage_variant_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_variant_records (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    blob_id uuid NOT NULL,
+    variation_digest character varying NOT NULL
+);
+
+
+--
 -- Name: api_tokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -71,6 +113,26 @@ CREATE TABLE public.approvals (
 CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: attachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.attachments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    studio_id uuid NOT NULL,
+    attachable_type character varying NOT NULL,
+    attachable_id uuid NOT NULL,
+    name character varying NOT NULL,
+    content_type character varying NOT NULL,
+    byte_size bigint NOT NULL,
+    created_by_id uuid NOT NULL,
+    updated_by_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -526,6 +588,30 @@ CREATE TABLE public.users (
 
 
 --
+-- Name: active_storage_attachments active_storage_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT active_storage_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_blobs active_storage_blobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_blobs
+    ADD CONSTRAINT active_storage_blobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_variant_records active_storage_variant_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: api_tokens api_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -547,6 +633,14 @@ ALTER TABLE ONLY public.approvals
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: attachments attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.attachments
+    ADD CONSTRAINT attachments_pkey PRIMARY KEY (id);
 
 
 --
@@ -750,6 +844,34 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: index_active_storage_attachments_on_blob_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_active_storage_attachments_on_blob_id ON public.active_storage_attachments USING btree (blob_id);
+
+
+--
+-- Name: index_active_storage_attachments_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_attachments_uniqueness ON public.active_storage_attachments USING btree (record_type, record_id, name, blob_id);
+
+
+--
+-- Name: index_active_storage_blobs_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_blobs USING btree (key);
+
+
+--
+-- Name: index_active_storage_variant_records_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
 -- Name: index_api_tokens_on_tenant_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -817,6 +939,48 @@ CREATE INDEX index_approvals_on_studio_id ON public.approvals USING btree (studi
 --
 
 CREATE INDEX index_approvals_on_tenant_id ON public.approvals USING btree (tenant_id);
+
+
+--
+-- Name: index_attachments_on_attachable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_attachments_on_attachable ON public.attachments USING btree (attachable_type, attachable_id);
+
+
+--
+-- Name: index_attachments_on_created_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_attachments_on_created_by_id ON public.attachments USING btree (created_by_id);
+
+
+--
+-- Name: index_attachments_on_studio_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_attachments_on_studio_id ON public.attachments USING btree (studio_id);
+
+
+--
+-- Name: index_attachments_on_tenant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_attachments_on_tenant_id ON public.attachments USING btree (tenant_id);
+
+
+--
+-- Name: index_attachments_on_tenant_studio_attachable_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_attachments_on_tenant_studio_attachable_name ON public.attachments USING btree (tenant_id, studio_id, attachable_id, name);
+
+
+--
+-- Name: index_attachments_on_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_attachments_on_updated_by_id ON public.attachments USING btree (updated_by_id);
 
 
 --
@@ -1714,6 +1878,14 @@ ALTER TABLE ONLY public.approvals
 
 
 --
+-- Name: attachments fk_rails_39994d8597; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.attachments
+    ADD CONSTRAINT fk_rails_39994d8597 FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: custom_data_configs fk_rails_3a16ee90b1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1930,6 +2102,14 @@ ALTER TABLE ONLY public.custom_data_tables
 
 
 --
+-- Name: attachments fk_rails_87cce8e128; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.attachments
+    ADD CONSTRAINT fk_rails_87cce8e128 FOREIGN KEY (studio_id) REFERENCES public.studios(id);
+
+
+--
 -- Name: trustee_permissions fk_rails_8bee20bb10; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1962,6 +2142,14 @@ ALTER TABLE ONLY public.note_history_events
 
 
 --
+-- Name: active_storage_variant_records fk_rails_993965df05; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
 -- Name: options fk_rails_9d942eefce; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1983,6 +2171,14 @@ ALTER TABLE ONLY public.custom_data_associations
 
 ALTER TABLE ONLY public.approvals
     ADD CONSTRAINT fk_rails_a6ed1157e1 FOREIGN KEY (decision_participant_id) REFERENCES public.decision_participants(id);
+
+
+--
+-- Name: attachments fk_rails_a7d5052ac1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.attachments
+    ADD CONSTRAINT fk_rails_a7d5052ac1 FOREIGN KEY (updated_by_id) REFERENCES public.users(id);
 
 
 --
@@ -2026,6 +2222,14 @@ ALTER TABLE ONLY public.custom_data_configs
 
 
 --
+-- Name: active_storage_attachments fk_rails_c3b3935057; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
 -- Name: pages fk_rails_c7f006a55b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2039,6 +2243,14 @@ ALTER TABLE ONLY public.pages
 
 ALTER TABLE ONLY public.commitment_participants
     ADD CONSTRAINT fk_rails_ca2dcc834c FOREIGN KEY (commitment_id) REFERENCES public.commitments(id);
+
+
+--
+-- Name: attachments fk_rails_ca54061570; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.attachments
+    ADD CONSTRAINT fk_rails_ca54061570 FOREIGN KEY (created_by_id) REFERENCES public.users(id);
 
 
 --
@@ -2289,6 +2501,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241205223939'),
 ('20241205225353'),
 ('20241206195305'),
-('20241207193204');
+('20241207193204'),
+('20241209070422'),
+('20241209163149');
 
 

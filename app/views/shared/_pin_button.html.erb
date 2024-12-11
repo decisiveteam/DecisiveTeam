@@ -1,0 +1,9 @@
+<span
+  data-controller="pin"
+  data-pin-url="<%= @pinnable.path %>/pin"
+  data-pin-target="pinButton"
+  data-is-pinned="<%= @is_pinned %>"
+  title="<%= @pin_click_title %>"
+  style="float:right;cursor:pointer;opacity:<%= @is_pinned ? '1' : '0.2' %>">
+    <i class="pin-icon" data-pin-target="icon"></i>
+  </span>

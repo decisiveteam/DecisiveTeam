@@ -1,18 +1,59 @@
 class Decision < ApplicationRecord
   include Tracked
+  include Linkable
+  include Pinnable
+  include HasTruncatedId
+  include Attachable
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   before_validation :set_tenant_id
+  belongs_to :studio
+  before_validation :set_studio_id
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
-  belongs_to :created_by, class_name: 'DecisionParticipant', foreign_key: 'created_by_id', optional: true
 
   validates :question, presence: true
 
-  def truncated_id
-    # TODO Fix the bug that causes this to be nil on first save
-    super || self.id.to_s[0..7]
+  def self.api_json
+    map { |decision| decision.api_json }
+  end
+
+  def api_json(include: [])
+    response = {
+      id: id,
+      truncated_id: truncated_id,
+      question: question,
+      description: description,
+      options_open: options_open,
+      deadline: deadline,
+      created_at: created_at,
+      updated_at: updated_at,
+      # participants: decision_participants.map(&:api_json),
+      # options: options.map(&:api_json),
+      # approvals: approvals.map(&:api_json),
+      # results: results.map(&:api_json),
+      # history_events: history_events.map(&:api_json),
+      # backlinks: backlinks.map(&:api_json),
+    }
+    if include.include?('participants')
+      response.merge!({ participants: participants.map(&:api_json) })
+    end
+    if include.include?('options')
+      response.merge!({ options: options.map(&:api_json) })
+    end
+    if include.include?('approvals')
+      response.merge!({ approvals: approvals.map(&:api_json) })
+    end
+    if include.include?('results')
+      response.merge!({ results: results.map(&:api_json) })
+    end
+    if include.include?('backlinks')
+      response.merge!({ backlinks: backlinks.map(&:api_json) })
+    end
+    response
   end
 
   def title
@@ -25,7 +66,7 @@ class Decision < ApplicationRecord
 
   def can_add_options?(participant)
     return false if closed?
-    return false if auth_required? && !participant.authenticated?
+    return false if !participant.authenticated?
     return true if options_open?
     return true if participant == created_by
     return false if participant.nil?
@@ -48,7 +89,10 @@ class Decision < ApplicationRecord
     @results = DecisionResult.where(
       tenant_id: tenant_id,
       decision_id: self.id
-    )
+    ).map.with_index do |result, index|
+      result.position = index + 1
+      result
+    end
   end
 
   def view_count
@@ -61,6 +105,16 @@ class Decision < ApplicationRecord
 
   def voter_count
     approvals.distinct.count(:decision_participant_id)
+  end
+
+  def voters
+    return @voters if defined?(@voters)
+    # TODO - clean this up
+    @voters = DecisionParticipant.where(
+      id: approvals.distinct.pluck(:decision_participant_id)
+    ).includes(:user).map do |dp|
+      dp.user
+    end
   end
 
   def path_prefix

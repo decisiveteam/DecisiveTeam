@@ -20,7 +20,7 @@ RSpec.configure do |config|
     'v1/swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'Decisive Team API V1',
+        title: 'Harmonic Team API V1',
         version: 'v1'
       },
       paths: {},
@@ -44,5 +44,5 @@ RSpec.configure do |config|
   # the key, this may want to be changed to avoid putting yaml in json files.
   # Defaults to json. Accepts ':json' and ':yaml'.
   config.swagger_format = :yaml
-  
+
 end

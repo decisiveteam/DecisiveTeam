@@ -1,2 +1,36 @@
-<h1>Welcome to Decisive Team</h1>
-<a href="/decide"><button>Make a decision</button></a>
+<h1><%= octicon "home", height: 32, style: 'padding-bottom:3px;' %> <%= @current_tenant.domain %></h1>
+
+<% if @current_user %>
+  <h2>Your Studios</h2>
+  <% if @studios.any? %>
+    <ul>
+      <% @studios.each do |studio| %>
+        <li>
+          <a href="<%= studio.path %>"><%= studio.name %></a>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No studios yet.</p>
+  <% end %>
+  <p><a href="/studios/new"><button>New Studio</button></a></p>
+
+  <h2>Create</h2>
+  <p>
+    <i class="note-icon large-icon" style="height:2em;float:left;margin-right:12px"></i>
+    <a href="/note"><button>New Note</button></a>
+  </p>
+  <p>
+    <i class="decision-icon large-icon" style="height:2em;float:left;margin-right:12px"></i>
+    <a href="/decide"><button>New Decision</button></a>
+  </p>
+  <p>
+    <i class="commitment-icon large-icon" style="height:2em;float:left;margin-right:12px"></i>
+    <a href="/commit"><button>New Commitment</button></a>
+  </p>
+  <p>
+    Items created outside of a studio context do not display backlinks and do not show up in any cycle views.
+  </p>
+<% else %>
+  <p><a href="/login">Log in</a></p>
+<% end %>

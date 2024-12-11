@@ -1,0 +1,33 @@
+<h1>Representing <%= @studio.name %></h1>
+
+<p>
+  You are now representing <%= @studio.name %>. Your actions during this session are being recorded and will be visible to all members of <%= @studio.name %>.
+</p>
+<p>
+  The message box above will remain visible until you end the session.
+</p>
+
+<h2>Other Studios</h2>
+
+<% if @other_studios.empty? %>
+  <p>
+    <%= @studio.name %> is not a member of any other studios yet.
+    Once <%= @studio.name %> is invited to join other studios, they will appear here.
+  </p>
+  <p>
+    Since there are no other studios to participate in, there is nothing for you to do as a representative at this time.
+    You can end the session by clicking the "End Session" button above.
+  </p>
+<% else %>
+  <p>
+    <%= @studio.name %> is a member of the following studios:
+  </p>
+
+  <ul>
+    <% @other_studios.each do |s| %>
+      <li>
+        <a href="<%= s.path %>"><%= s.name %></a>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

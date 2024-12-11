@@ -1,0 +1,6 @@
+<h1>Settings</h1>
+<p>Name: <%= @current_tenant.name %></p>
+<p>Subdomain: <%= @current_tenant.subdomain %></p>
+
+<h2>JSON</h2>
+<p><%= @current_tenant.settings.to_json %></p>

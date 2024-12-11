@@ -1,0 +1,14 @@
+<% if resource.attachments.any? %>
+  <ul class="attachments-list">
+    <% resource.attachments.each do |attachment| %>
+      <li>
+        <% if attachment.content_type.start_with?('image') %>
+          <%= image_tag attachment.file, style: 'height:1em;' %>
+        <% else %>
+          <%= octicon 'paperclip' %>
+        <% end %>
+        <%= link_to attachment.filename, attachment.path %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

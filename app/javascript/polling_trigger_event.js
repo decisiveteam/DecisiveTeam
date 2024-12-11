@@ -8,7 +8,7 @@ const triggerPolling = () => {
     document.dispatchEvent(event);
     clearTimeout(currentTimeout)
     currentTimeout = setTimeout(triggerPolling, POLLING_INTERVAL);
-    console.log("polling");
+    // console.log("polling");
   }
 };
 triggerPolling();

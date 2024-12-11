@@ -1,0 +1,96 @@
+<h1>Your Settings</h1>
+<h2>Connected Accounts</h2>
+<ul>
+<% @current_user.oauth_identities.each do |identity| %>
+  <li>
+    <%= identity.provider.titleize %> (<a href="<%= identity.url %>"><%= identity.username %></a>)
+    Connected <%= time_ago_in_words(identity.created_at) %> ago
+  </li>
+<% end %>
+</ul>
+
+<h2>API Tokens</h2>
+<% if @current_user.api_tokens.any? %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Token</th>
+      <th>Created</th>
+      <th>Last Used</th>
+      <th>Expires</th>
+      <th>Active</th>
+      <th>View</th>
+    </tr>
+    <% @current_user.api_tokens.each do |token| %>
+      <tr>
+        <td><%= token.name || 'Unnamed' %></td>
+        <td><%= token.obfuscated_token %></td>
+        <td><%= timeago(token.created_at) %></td>
+        <td><%= token.last_used_at ? timeago(token.last_used_at) : 'Never' %></td>
+        <td><%= timeago(token.expires_at) %></td>
+        <td><%= token.active? ? 'Yes' : 'No' %></td>
+        <td><%= link_to 'View', token.path %></td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>No API tokens.</p>
+<% end %>
+<%= button_to 'Create Token', "#{@current_user.path}/settings/tokens/new", method: :get, class: 'button' %>
+
+<% if @simulated_users.any? %>
+  <h2>Simulated Users</h2>
+  <p>Simulated users can only be created through the API.</p>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Created</th>
+      <th>Profile</th>
+      <th>Impersonate</th>
+    </tr>
+    <% @simulated_users.each do |simulated_user| %>
+      <tr>
+        <td><%= simulated_user.name %></td>
+        <td><%= timeago(simulated_user.created_at) %></td>
+        <td><%= link_to 'View', simulated_user.path %></td>
+        <% if simulated_user.archived? %>
+          <td>Archived</td>
+        <% else %>
+          <td><%= button_to 'Impersonate', "#{simulated_user.path}/impersonate", method: :post %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+  <h2>Simulated User API Tokens</h2>
+  <p>Simulated users can have their own API tokens, which you as the owner are responsible for.</p>
+  <% @simulated_users.each do |simulated_user| %>
+    <% if simulated_user.api_tokens.any? %>
+      <h3><%= simulated_user.name %></h3>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Token</th>
+          <th>Created</th>
+          <th>Last Used</th>
+          <th>Expires</th>
+          <th>Active</th>
+          <th>View</th>
+        </tr>
+        <% simulated_user.api_tokens.each do |token| %>
+          <tr>
+            <td><%= token.name || 'Unnamed' %></td>
+            <td><%= token.obfuscated_token %></td>
+            <td><%= timeago(token.created_at) %></td>
+            <td><%= token.last_used_at ? timeago(token.last_used_at) : 'Never' %></td>
+            <td><%= timeago(token.expires_at) %></td>
+            <td><%= token.active? ? 'Yes' : 'No' %></td>
+            <td><%= link_to 'View', token.path %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <h3><%= simulated_user.name %></h3>
+      <p><%= simulated_user.name %> has no API tokens.</p>
+    <% end %>
+  <% end %>
+<% end %>

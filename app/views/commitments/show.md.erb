@@ -1,0 +1,50 @@
+# Commitment: [<%= @commitment.title %>](<%= @commitment.path %>)
+
+| created_at | <%= @commitment.created_at %> |
+| updated_at | <%= @commitment.updated_at %> |
+| deadline | <%= @commitment.deadline %> |
+| time remaining | <%= @commitment.deadline > Time.now ? distance_of_time_in_words(Time.now, @commitment.deadline) : 'Deadline passed' %> |
+
+## Status
+
+Progress bar: `<%= '#' * (@commitment.progress_percentage / 2) %><%= '_' * ((100 - @commitment.progress_percentage) / 2) %>` <%= @commitment.progress_percentage %>%
+
+<% s_or_no_s = @commitment.critical_mass == 1 ? '' : 's' %>
+<% person_or_people = @commitment.participant_count == 1 ? 'person' : 'people' %>
+<% is_or_are = @commitment.participant_count == 1 ? 'is' : 'are' %>
+__<%= @commitment.critical_mass %>__ participant<%= s_or_no_s %> needed to reach critical mass.
+__<%= @commitment.participant_count %>__ <%= person_or_people %> <%= is_or_are %> committed to participating<%= @commitment.critical_mass_achieved? ? '' : ' if critical mass is achieved' %>.
+<% unless @commitment.critical_mass_achieved? %>
+<% s_or_no_s = @commitment.remaining_needed_for_critical_mass == 1 ? '' : 's' %>
+__<%= @commitment.remaining_needed_for_critical_mass %>__ more participant<%= s_or_no_s %> needed to reach critical mass.
+<% end %>
+<% if @commitment.critical_mass_achieved? %>
+Critical mass achieved! 🎉
+<% end %>
+
+## Participants
+
+<% @commitment.committed_participants.order(committed_at: :desc).limit(@participants_list_limit).each do |participant| %>
+* __<%= participant.name || 'Anonymous' %>__ committed <%= time_ago_in_words(participant.committed_at) %> ago.
+<% end %>
+<% if @commitment.participant_count > @participants_list_limit %>
+* + <%= @commitment.participant_count - @participants_list_limit %> more</span>
+<% elsif @commitment.participant_count == 0 %>
+No participants yet.
+<% end %>
+
+<%= render 'shared/backlinks', resource: @commitment %>
+## Actions
+
+### Join
+
+Make the following API call to join this commitment.
+
+`POST <%= @current_studio.path %>/api/v1/commitments/<%= @commitment.id %>/join`
+
+Data:
+```json
+{
+  "committed": true
+}
+```

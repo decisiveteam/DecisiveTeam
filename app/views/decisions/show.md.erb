@@ -1,0 +1,52 @@
+# Decision: [<%= @decision.question %>](<%= @decision.path %>)
+
+| created_at | <%= @decision.created_at %> |
+| updated_at | <%= @decision.updated_at %> |
+| deadline | <%= @decision.deadline %> |
+| time remaining | <%= @decision.deadline > Time.now ? distance_of_time_in_words(Time.now, @decision.deadline) : 'Deadline passed' %> |
+
+<% if @decision.description.present? %>
+## Description
+
+<%= @decision.description %>
+<% end %>
+
+## Options
+
+<% if @decision.options.empty? %>
+No options yet.
+<% else %>
+Check ✅ all options that you would accept. Star ⭐️ options you prefer.
+
+<% @decision.options.order(:created_at).each do |option| %>
+<% approval = @approvals.where(option: option).first || Approval.new(value: 0) %>
+* [<%= approval.value == 1 ? '✅' : ' ' %>] [<%= approval.stars == 1 ? '⭐️' : ' ' %>] <%= option.title %>
+<% end %>
+<% end %>
+
+## <%= @decision.closed? ? "Final" : "Current" %> Results
+
+Results are sorted first by acceptance ✅, then by preference ⭐, then by random digits 🎲.
+
+|   |   | ✅ | ⭐ | 🎲 |
+|---|---|---|---|---|
+<% if @decision.results.empty? %>
+| 0 | Add options to see results. | 0 | 0 | 0 |
+<% end %>
+<% @decision.results.each.with_index do |result, index| %>
+| <%= index + 1 %> | <%= result.option_title %> | <%= (result.approved_yes || 0) %> | <%= (result.stars || 0) %> | <%= result.random_id.slice(0, 3) + "..." %> |
+<% end %>
+
+## Participants
+
+<%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>,
+<%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
+
+<%= render 'shared/backlinks', resource: @decision %>
+
+## Actions
+
+Add options
+
+Vote
+

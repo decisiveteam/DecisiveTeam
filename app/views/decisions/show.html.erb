@@ -1,17 +1,21 @@
 <span data-controller="decision" data-decision-id="<%= @decision.id %>">
-<h4 style="margin-top:0px;">Decision</h4>
+<%= render 'shared/more_button', resource: @decision, options: ['copy', 'appendLink', 'pin', 'settings'] %>
+<h4 style="margin-top:0px;margin-bottom:0;">
+  <a href="<%= @current_studio.path || '/' %>"><%= @current_studio.name %></a> /
+  <span style="white-space:nowrap;">
+    <i class="decision-icon"></i> Decision <code><%= @decision.truncated_id %></code>
+  </span>
+</h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
-  Created <strong><%= timeago(@decision.created_at) %></strong><br/>
-  <% if @decision.deadline && !@decision.closed? %>
-    Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
-  <% elsif @decision.deadline && @decision.closed? %>
+  <%= render 'shared/created_by', resource: @decision %>
+  <br/>
+  <% if @decision.closed? %>
     Closed <strong><%= timeago(@decision.deadline) %></strong><br/>
+  <% else %>
+    Closing in <strong><%= countdown(@decision.deadline) %></strong><br/>
   <% end %>
-  Share this decision: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
-    <input type="text" value="<%= @decision.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
-  </span><br/>
+  <br/>
 </p>
 <% if @decision.description && @decision.description.length > 0 %>
   <h2>Description</h2>
@@ -28,4 +32,20 @@
   >
   <%= render 'results' %>
 </span>
+<%= backlinks(@decision) %>
 </span>
+
+<h2>Voters</h2>
+
+<% if @decision.voters.empty? %>
+  <em>No voters yet.</em>
+<% end %>
+
+<ul>
+  <% @decision.voters.each do |voter| %>
+    <li>
+      <%= profile_pic(voter) %>
+      <%= voter.display_name %>
+    </li>
+  <% end %>
+</ul>

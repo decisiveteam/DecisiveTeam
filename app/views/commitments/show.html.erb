@@ -1,17 +1,21 @@
 <span data-controller="commitment" data-commitment-id="<%= @commitment.id %>">
-<h4 style="margin-top:0px;">Commitment</h4>
+<%= render 'shared/more_button', resource: @commitment, options: ['copy', 'appendLink', 'pin', 'settings'] %>
+<h4 style="margin-top:0px;margin-bottom:0;">
+  <a href="<%= @current_studio.path || '/' %>"><%= @current_studio.name %></a> /
+  <span style="white-space:nowrap;">
+    <i class="commitment-icon"></i> Commitment <code><%= @commitment.truncated_id %></code>
+  </span>
+</h4>
 <h1 style="margin-top:0;"><%= @commitment.title %></h1>
 <p style="font-size:0.8em;">
+  <%= render 'shared/created_by', resource: @commitment %>
+  <br/>
   <% if @commitment.deadline && !@commitment.closed? %>
     Closing in <strong><%= countdown(@commitment.deadline) %></strong><br/>
   <% elsif @commitment.deadline && @commitment.closed? %>
     Closed <strong><%= timeago(@commitment.deadline) %></strong><br/>
   <% end %>
-  Status: <%= @commitment.status_message %><br/>
-  Share this commitment: <span data-controller="clipboard" data-clipboard-success-content="Copied!">
-    <input type="text" value="<%= @commitment.shareable_link %>" data-clipboard-target="source" style="display:none;"/>
-    <span class="text-only-button" data-action="click->clipboard#copy" data-clipboard-target="button">Copy link to clipboard</span>
-  </span><br/>
+  <br/>
 </p>
 <span data-commitment-target="statusSection" data-url="<%= @commitment.path + '/status.html' %>">
   <%= render 'status' %>
@@ -20,11 +24,13 @@
   <h2>Description</h2>
   <div class="user-generated-markdown"><%= markdown(@commitment.description) %></div>
 <% end %>
-<h2>Join</h2>
-<div data-commitment-target="joinSection">
-  <%= render 'join' %>
-</div>
+<% unless @commitment.closed? %>
+  <h2>Join</h2>
+  <div data-commitment-target="joinSection">
+    <%= render 'join' %>
+  </div>
+<% end %>
 <h2>Participants</h2>
 <%= render 'participants' %>
-
+<%= backlinks(@commitment) %>
 </span>

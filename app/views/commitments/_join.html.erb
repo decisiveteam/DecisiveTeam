@@ -3,9 +3,6 @@
     This commitment is closed.
   </p>
 <% elsif @current_user %>
-  <p>
-    <%= render 'logged_in_as' %>
-  </p>
   <% if @commitment_participant.committed? %>
     <p>
       <button style="background:#dfdfdf;color:#9f9f9f;cursor:default;">
@@ -23,18 +20,17 @@
         Commit to participating
       </button>
       <span
-        style="font-style:italic;"
         data-commitment-target="joinButtonMessage"
-        >Your name and commitment will be
-        <span class="highlighted">
-          publicly visible.
-        </span>
+        >Your commitment will be visible to all members of <%= @current_studio.name %>.
       </span>
     </p>
   <% end %>
-  <p>Commitments only take effect if critical mass is achieved.</p>
+  <p>
+    Commitments only take effect if critical mass is achieved.
+    <%= render 'reciprocal_commitment_tooltip' %>
+  </p>
 <% else %>
   <div class="auth-required-message">
-    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to join this commitment.
+    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @commitment.path } %> to join this commitment.
   </div>
 <% end %>

@@ -1,0 +1,25 @@
+<h1>Login</h1>
+<p>
+  Log in to <code><%= "#{@original_tenant.subdomain}.#{ENV['HOSTNAME']}" %></code>
+  <% if @redirect_to_resource %>
+    to view <code><%= @redirect_to_resource %></code>
+  <% elsif @studio_invite_code %>
+    to accept this invite.
+  <% end %>
+</p>
+<% @original_tenant.auth_providers.each do |provider| %>
+  <% provider = provider.downcase %>
+  <% if provider == "github" %>
+    <%= button_to "Log in with GitHub", "/auth/github", method: :post %>
+  <% elsif provider == "google" %>
+    <%= button_to "Log in with Google", "/auth/google_oauth2", method: :post %>
+  <% elsif provider == "twitter" %>
+    <%= button_to "Log in with Twitter", "/auth/twitter", method: :post %>
+  <% elsif provider == "facebook" %>
+    <%= button_to "Log in with Facebook", "/auth/facebook", method: :post %>
+  <% elsif provider == "linkedin" %>
+    <%= button_to "Log in with LinkedIn", "/auth/linkedin", method: :post %>
+  <% elsif provider == "microsoft" %>
+    <%= button_to "Log in with Microsoft", "/auth/microsoft_v2_auth", method: :post %>
+  <% end %>
+<% end %>

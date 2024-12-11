@@ -1,0 +1,36 @@
+<img src="<%= @showing_user.image_url %>" style="height:64px;float:left;margin-right:12px;" />
+<h1><%= @showing_user.display_name %><%= @showing_user.archived? ? ' (Archived)' : '' %></h1>
+<p><%= @showing_user.handle %></p>
+<% if @showing_user.id == @current_user.id %>
+  <p><a href="<%= @current_user.path %>/settings">Settings</a></p>
+<% end %>
+
+<h2>Pinned</h2>
+<%= render 'pinned' %>
+
+<% if @showing_user.id == @current_user.id %>
+  <hr/>
+  <p>Items below are only visible to you.</p>
+  <h2>Notes</h2>
+
+  <h3>Confirmed Read</h3>
+  <%= render 'confirmed_read_notes' %>
+
+  <h2>Decisions</h2>
+  <ul>
+  <% @decision_participants.each do |p| %>
+    <li>
+      <a href="<%= p.decision.path %>"><i class="decision-icon"></i> <%= p.decision.question %></a>
+    </li>
+  <% end %>
+  </ul>
+
+  <h2>Commitments</h2>
+  <ul>
+  <% @commitment_participants.each do |p| %>
+    <li>
+      <a href="<%= p.commitment.path %>"><i class="commitment-icon"></i> <%= p.commitment.title %></a>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

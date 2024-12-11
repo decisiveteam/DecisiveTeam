@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: Decisive Team API V1
+  title: Harmonic Team API V1
   version: v1
 paths:
 servers:

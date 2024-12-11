@@ -157,6 +157,11 @@ GEM
       rack (>= 1.2, < 4)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
+    octicons (19.12.0)
+    octicons_helper (19.12.0)
+      actionview
+      octicons (= 19.12.0)
+      railties
     omniauth (2.1.1)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -164,6 +169,9 @@ GEM
     omniauth-auth0 (3.1.1)
       omniauth (~> 2)
       omniauth-oauth2 (~> 1)
+    omniauth-github (2.0.1)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.8)
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
@@ -312,7 +320,9 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   nokogiri
+  octicons_helper
   omniauth-auth0 (~> 3.0)
+  omniauth-github
   omniauth-rails_csrf_protection (~> 1.0)
   pg
   puma (~> 5.6)

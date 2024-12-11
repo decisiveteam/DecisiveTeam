@@ -1,0 +1,13 @@
+<h1>Steps to complete tenant creation</h1>
+
+<p>
+  You have successfully created tenant <%= @tenant.name %> with subdomain <code><%= @tenant.subdomain %></code>.
+</p>
+<p>
+  To complete the setup process, you need to update DNS records for the subdomain <code><%= @tenant.subdomain %></code> to point to the IP address of the server.
+</p>
+<p>
+  You may also need to update the Caddyfile to include the new subdomain and fetch an SSL cert from Lets Encrypt, which will require an app restart.
+</p>
+
+<a href="/admin/tenants">Back to Tenants</a>

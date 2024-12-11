@@ -35,7 +35,7 @@ export default class extends Controller {
     const oneHour = oneMinute * 60;
     const oneDay = oneHour * 24;
     const oneYear = oneDay * 365;
-    
+
     const years = Math.floor(distance / oneYear);
     const days = Math.floor((distance % oneYear) / oneDay);
     const hours = Math.floor((distance % oneDay) / oneHour);
@@ -51,8 +51,8 @@ export default class extends Controller {
     values = values.slice(nonZeroIndex, unitIndex + 1);
 
     const textChunks = keys.map((key, index) => `${values[index]}${formatUnit(key, values[index])}`);
-    
-    // textChunks[textChunks.length - 1] = "and " + textChunks[textChunks.length - 1]; 
+
+    // textChunks[textChunks.length - 1] = "and " + textChunks[textChunks.length - 1];
 
     this.timeTarget.innerHTML = textChunks.join(" : ");
 

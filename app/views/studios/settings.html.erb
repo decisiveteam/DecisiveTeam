@@ -1,0 +1,89 @@
+<h4 style="margin-bottom:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %>
+  / Settings
+</h4>
+<h1 style="margin-top:0;">Settings</h1>
+<%= form_with(url: "#{@current_studio.path}/settings") do |form| %>
+  <h2>Studio Name</h2>
+  <p>
+    <%= form.text_field :name, placeholder: 'Studio Name', value: @current_studio.name %>
+  </p>
+
+  <h2>Time Zone</h2>
+  <p>
+    The studio time zone determines when cycles begin and end.
+  </p>
+  <p>
+    <%= form.time_zone_select :timezone, ActiveSupport::TimeZone.all, default: @current_studio.timezone.name %>
+  </p>
+
+  <h2>Tempo</h2>
+
+  <p>
+    How frequently should studio members check in (approximately)?
+  </p>
+  <p>
+    This determines the primary cycle duration.
+  </p>
+  <p>
+    <%= form.select :tempo, [['Daily', 'daily'], ['Weekly', 'weekly'], ['Monthly', 'monthly']], selected: @current_studio.tempo %>
+  </p>
+
+  <h2>Synchronization Mode</h2>
+
+  <p>
+    Which metaphor best describes how this studio is organized?
+  </p>
+  <p>
+    <fieldset>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'improv', checked: @current_studio.improv? %>
+        <strong>Improv</strong> (no formal leadership roles)
+      </label>
+      <br/>
+      <label>
+        <%= form.radio_button :synchronization_mode, 'orchestra', checked: @current_studio.orchestra? %>
+        <strong>Orchestra</strong> (has formal leadership roles)
+      </label>
+    </fieldset>
+  </p>
+
+  <h2>Invitations</h2>
+  <fieldset>
+    <legend>Who can invite new members?</legend>
+    <%= form.radio_button :invitations, 'all_members', checked: @current_studio.all_members_can_invite? %>
+    <%= form.label :invitations_all_members, 'All members can invite' %><br>
+    <%= form.radio_button :invitations, 'only_admins', checked: !@current_studio.all_members_can_invite? %>
+    <%= form.label :invitations_only_admins, 'Only admins can invite' %>
+  </fieldset>
+
+  <h2>Representation</h2>
+  <fieldset>
+    <legend>Who can act as a representative of <%= @current_studio.name %> within other studios?</legend>
+    <%= form.radio_button :representation, 'any_member', checked: @current_studio.any_member_can_represent? %>
+    <%= form.label :representation_any_member, 'Any member can represent the studio' %><br>
+    <%= form.radio_button :representation, 'only_representatives', checked: !@current_studio.any_member_can_represent? %>
+    <%= form.label :representation_only_representatives, 'Only designated representatives can represent the studio' %>
+  </fieldset>
+
+  <% if @current_tenant.allow_file_uploads? %>
+    <h2>File Attachments</h2>
+    <p>
+      <%= form.check_box :allow_file_uploads, checked: @current_studio.allow_file_uploads? %>
+      Allow users to attach files to notes, decisions, and commitments
+    </p>
+    <p>
+      Current usage:
+      <%= @current_studio.file_storage_usage_in_human_size %> of <%= @current_studio.file_storage_limit_in_human_size %>
+      <% if ENV['SAAS_MODE'] == 'true' %>
+        <%= button_to 'Purchase more space', '/billing', method: :get %>
+      <% else %>
+        <br/>
+        Increase limit: <%= form.number_field :file_storage_limit, value: @current_studio.file_storage_limit / 1.megabyte, style: 'width: 100px;' %> MB
+      <% end %>
+    </p>
+  <% end %>
+
+  <hr style="height:1px;" />
+  <%= form.submit 'Save' %>
+<% end %>

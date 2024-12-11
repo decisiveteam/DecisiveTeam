@@ -1,5 +1,8 @@
-<% @note.history_events.order(happened_at: :desc).each do |event| %>
+<% @note.history_events.includes(:user).order(happened_at: :desc).each do |event| %>
   <li>
+    <% if event.user %>
+      <a href="<%= event.user.path %>" class="user-profile-link"><%= profile_pic(event.user, size: 25) %> <%= event.user.display_name %></a>
+    <% end %>
     <%= event.description %> <strong><%= timeago(event.happened_at) %></strong>
   </li>
 <% end %>

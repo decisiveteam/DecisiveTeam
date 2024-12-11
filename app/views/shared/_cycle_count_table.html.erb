@@ -1,0 +1,34 @@
+<table>
+  <thead>
+    <tr style="border:none;">
+      <th style="border:none;"></th>
+      <% cycles.each do |cycle| %>
+        <th>
+          <a
+            title="<%= cycle.display_window %>"
+            href="<%= cycle.path %>"
+          ><%= cycle.display_name %>
+          </a>
+        </th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% ['Notes', 'Decisions', 'Commitments'].each do |type| %>
+      <% count_key = type.downcase.to_sym %>
+      <tr>
+        <td><i class="<%= type.singularize.downcase %>-icon"></i> <strong><%= type %></strong></td>
+        <% cycles.each do |cycle| %>
+          <% c = cycle.counts[count_key] %>
+          <td>
+            <% if c == 0 %>
+              <span style="opacity:0.2;">0</span>
+            <% else %>
+              <%= c %>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -19,11 +19,18 @@ class MarkdownRenderer
     fenced_code_blocks: true
   )
 
-  def self.render(content)
+  def self.render(content, shift_headers: true, display_references: true)
     raw_html = @@markdown.render(content.to_s)
     sanitized_html = sanitize(raw_html)
-    shifted_header_html = shift_headers(sanitized_html)
-    display_refereces(shifted_header_html)
+    if shift_headers
+      output = shift_headers(sanitized_html)
+    else
+      output = sanitized_html
+    end
+    if display_references
+      output = display_refereces(output)
+    end
+    output
   end
 
   def self.render_inline(content)
@@ -79,22 +86,14 @@ class MarkdownRenderer
   end
 
   def self.display_refereces(html)
-    models = { 'n' => Note, 'c' => Commitment, 'd' => Decision }
-    domain = "#{Tenant.current_subdomain}.#{ENV['HOSTNAME']}"
-    pattern = Regexp.new("https://#{domain}/([ncd])/([0-9a-f-]+)")
+    link_parser = LinkParser.new(subdomain: Tenant.current_subdomain, studio_handle: Studio.current_handle)
     doc = Nokogiri::HTML.fragment(html)
     doc.search('a').each do |a|
-      if a['href'] && a['href'].match?(pattern)
-        matches = a.content.scan(pattern)
-        matches.each do |m, id|
-          model = models[m]
-          column_name = id.length == 8 ? :truncated_id : :id
-          resource = model.find_by(column_name => id)
-          a['title'] = resource.title if resource
-          if resource && a.content == a['href']
-            a['class'] = "resource-link-#{model.name.downcase}"
-            a.content = id
-          end
+      a['href'] && link_parser.parse(a['href']) do |resource|
+        if a.content == a['href']
+          model_name = resource.class.name.downcase
+          # a['class'] = "resource-link-#{model_name}"
+          a.inner_html = "<i class='#{model_name}-icon'></i> #{resource.title}"
         end
       end
     end

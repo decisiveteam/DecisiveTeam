@@ -23,10 +23,10 @@
           <td style="opacity:<%= (result.approved_yes || 0) > 0 ? 1 : 0.2 %>;"><%= (result.approved_yes || 0) %></td>
           <td style="opacity:<%= (result.stars || 0) > 0 ? 1 : 0.2 %>;"><%= (result.stars || 0) %></td>
           <% random_id_is_relevant = result.is_sorting_factor?(prev_result, 'random_id') || result.is_sorting_factor?(next_result, 'random_id') %>
-          <% random_id_rjusted = result.random_id.to_s.rjust(9, '0') %>
+          <% random_id = result.random_id %>
           <td style="font-size:0.8em;"
-              title="<%= random_id_rjusted %>"
-              ><%= random_id_is_relevant ?  (random_id_rjusted.slice(0, 3) + "...") : "" %>
+              title="<%= random_id %>"
+              ><%= random_id_is_relevant ?  (random_id.slice(0, 3) + "...") : "" %>
           </td>
         </tr>
       <% end %>
@@ -35,10 +35,4 @@
   <p>
     Results are sorted first by acceptance ✅, then by preference ⭐, then by random digits 🎲.
   </p>
-  <span data-decision-results-target="message" style="font-size:0.8em;">
-    <!-- Views: <%= @decision.view_count %><br/> -->
-    Participants:
-    <%= @decision.option_contributor_count %> option contributor<%= @decision.option_contributor_count == 1 ? "" : "s" %>,
-    <%= @voter_count %> voter<%= @voter_count == 1 ? "" : "s" %>
-  </span>
 </span>

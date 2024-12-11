@@ -1,0 +1,11 @@
+<% if @pinned_items.length > 0 %>
+  <ul>
+    <% @pinned_items.each do |item| %>
+      <li>
+        <a href="<%= item[:item].path %>"><i class="<%= item[:item].class.name.downcase %>-icon"></i> <%= item[:item].title %></a> pinned <%= timeago(item[:pinned_at]) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No pinned items yet.</p>
+<% end %>

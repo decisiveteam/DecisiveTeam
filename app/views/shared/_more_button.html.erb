@@ -1,0 +1,123 @@
+<span data-controller="more-button" class="more-button">
+  <div
+    data-more-button-target="plus"
+    data-action="click->more-button#togglePlusMenu"
+    style="display:inline-block;float:none;width:36px;text-align:center;margin-right:12px;"
+    >
+    <%= octicon 'plus' %><%= octicon 'triangle-down' %>
+    </div>
+    <div data-more-button-target="plusMenu" class="top-menu" style="display:none;">
+    <ul>
+      <li>
+        <i class="note-icon" style="height:1.5em;float:left;margin-right:12px"></i>
+        <a href="<%= @current_studio.path %>/note">New Note</a>
+      </li>
+      <li>
+        <i class="decision-icon" style="height:1.5em;float:left;margin-right:12px"></i>
+        <a href="<%= @current_studio.path %>/decide">New Decision</a>
+      </li>
+      <li>
+        <i class="commitment-icon" style="height:1.5em;float:left;margin-right:12px"></i>
+        <a href="<%= @current_studio.path %>/commit">New Commitment</a>
+      </li>
+    </ul>
+  </div>
+
+  <button
+    data-more-button-target="button"
+    data-action="click->more-button#toggleMenu"
+    >
+    <%= octicon 'kebab-horizontal' %>
+  </button>
+  <div data-more-button-target="menu" class="more-button-menu">
+    <ul>
+      <% options.each do |option| %>
+        <% # Options are 'copy', 'appendLink', 'pin', 'edit', 'settings', 'invite' %>
+        <% if option == 'copy' %>
+          <% option = { icon: 'copy', label: 'Copy link to clipboard', clipboard_text: resource.shareable_link } %>
+          <li data-controller="clipboard">
+            <input type="text" value="<%= option[:clipboard_text] %>" data-clipboard-target="source" style="display:none;"/>
+            <span data-action="click->clipboard#copy" data-clipboard-target="button">
+              <%= octicon option[:icon] %>
+              <%= option[:label] %>
+            </span>
+            <span data-clipboard-target="successMessage" style="display:none;">
+              <%= octicon option[:icon] %>
+              Copied!
+            </span>
+          </li>
+        <% elsif option == 'appendLink' %>
+          <% option = { action: 'appendLink', icon: 'file-moved', label: 'Append link to scratchpad', resource: resource } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <span
+              data-action="click->more-button#appendLink"
+              data-link="* [<%= option[:resource].title %>](<%= option[:resource].shareable_link %>)"
+              data-url="<%= @current_user.path %>/scratchpad/append"
+              >
+              <%= option[:label] %>
+            </span>
+          </li>
+        <% elsif option == 'pin' %>
+          <% option = { action: 'pin', icon: 'pin', url: "#{resource.path}/pin", label: "#{@is_pinned ? 'Unpin from' : 'Pin to'} #{@current_studio == @current_tenant.main_studio ? 'your profile' : 'studio homepage' }" } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <span  data-action="click->more-button#pin" data-url="<%= option[:url] %>">
+              <%= option[:label] %>
+            </span>
+          </li>
+        <% elsif option == 'edit' %>
+          <% option = { link_to: "#{resource.path}/edit", icon: 'pencil', label: 'Edit' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'settings' %>
+          <% option = { link_to: "#{resource.path}/settings", icon: 'gear', label: 'Settings' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'manage_team' %>
+          <% option = { link_to: "#{resource.path}/team", icon: 'people', label: 'Manage Team' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'invite' %>
+          <% option = { link_to: "#{resource.path}/invite", icon: 'person-add', label: 'Invite Team Members' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'representation' %>
+          <% option = { link_to: "#{resource.path}/representation", icon: 'feed-person', label: 'Representation' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'new_page' %>
+          <% option = { link_to: "#{@current_studio.path}/pages/new", icon: 'note', label: 'New Page' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == 'new_randomness' %>
+          <% option = { link_to: "#{@current_studio.path}/random/new", icon: 'light-bulb', label: 'New Randomness' } %>
+          <li>
+            <%= octicon option[:icon] %>
+            <%= link_to option[:label], option[:link_to] %>
+          </li>
+        <% elsif option == '---' %>
+          <li>
+            <hr style="height:1px;margin:0;" />
+          </li>
+        <% else %>
+          <li>
+            <%= option %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</span>

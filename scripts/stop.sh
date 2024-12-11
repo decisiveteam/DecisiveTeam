@@ -3,6 +3,6 @@ cd "$(dirname "$0")/.."
 
 set -e
 
-echo -e "Stopping Decisive Team..."
+echo -e "Stopping Harmonic Team..."
 docker-compose down
-echo -e "Decisive Team is now stopped."
+echo -e "Harmonic Team is now stopped."

@@ -1,7 +1,7 @@
 module Api::V1
-  class ResultsController < BaseController    
+  class ResultsController < BaseController
     def index
-      render json: current_decision.results
+      render json: current_decision.results.map(&:api_json)
     end
 
     def show

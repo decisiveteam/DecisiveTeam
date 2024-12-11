@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= @page_title || @current_app_title %></title>
+    <title><%= @page_title || 'Harmonic Team' %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" type="image/png" href="/<%= @current_app %>-favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/<%= @current_app %>-favicon-16x16.png" sizes="16x16">
@@ -23,26 +23,53 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <style>
-    .logo {
-      background-image: url(/<%= @current_app %>-icon.svg);
-    }
-    </style>
   </head>
 
   <body>
-    <a href="/"><i alt="decisive team" class="logo"></i></a>
-    <div style="float:right;">
-      <% if @current_user %>
-        <img src="<%= @current_user.picture_url %>" title="<%= @current_user.name %>" style="height: 2em; border-radius: 50%; margin: 0.5em;">
-        <%= button_to 'Logout', '/auth/logout', method: :get, data: { turbo: false } %>
-      <% else %>
-        <div style="display:none;">
-          <%= button_to 'Login', '/auth/auth0', method: :post, data: { turbo: false } %>
+    <% if controller_name != 'sessions' %>
+      <nav style="display:block;min-height:16px;">
+        <%= render 'layouts/top_left_menu' %>
+        <% unless @current_representation_session %>
+          <%= render 'layouts/top_right_menu' %>
+        <% end %>
+      </nav>
+    <% end %>
+    <div class="markdown-body">
+      <% if notice || alert %>
+        <% if notice %>
+          <div class="notice" style="display:<%= notice ? 'block' : 'none' %>;">
+            <%= markdown_inline(notice) %>
+            <span class="dismiss-button">&times;</span>
+          </div>
+        <% end %>
+        <% if alert %>
+          <div class="alert" style="display:<%= alert ? 'block' : 'none' %>;">
+            <%= markdown_inline(alert) %>
+            <span class="dismiss-button">&times;</span>
+          </div>
+        <% end %>
+        <script>
+          [document.querySelector('.notice'), document.querySelector('.alert')].forEach(function(el) {
+            if (!el) return;
+            const dismissButton = el.querySelector('.dismiss-button');
+            dismissButton.addEventListener('click', function() {
+              el.remove();
+            });
+          });
+        </script>
+      <% end %>
+      <% if @current_simulated_user %>
+        <div class="alert">
+          <span>You are impersonating simulated user <%= @current_simulated_user.display_name %>.</span>
+          <%= button_to "End Session", "#{@current_simulated_user.path}/impersonate", method: :delete %>
         </div>
       <% end %>
-    </div>
-    <div class="markdown-body">
+      <% if @current_representation_session %>
+        <div class="alert">
+          <span><%= @current_simulated_user ? "As #{@current_simulated_user.display_name}, y" : 'Y' %>ou are acting as a representative of <%= @current_user.display_name %>.</span>
+          <%= button_to "End Session", "#{@current_user.path}/represent", method: :delete %>
+        </div>
+      <% end %>
       <%= yield %>
     </div>
   </body>

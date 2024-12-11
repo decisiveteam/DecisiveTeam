@@ -4,6 +4,6 @@ export default class extends Controller {
   static targets = ["icon"]
 
   log(event) {
-    console.log(event)
+    // console.log(event)
   }
 }

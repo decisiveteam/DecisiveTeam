@@ -1,8 +1,10 @@
 class CommitmentsController < ApplicationController
 
   def new
-    @page_title = "Coordinate"
-    @page_description = "Coordinate with your team"
+    @page_title = "Commit"
+    @page_description = "Start a group commitment"
+    @end_of_cycle_options = Cycle.end_of_cycle_options(tempo: current_studio.tempo)
+    @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
     @commitment = Commitment.new(
       title: params[:title],
     )
@@ -13,12 +15,36 @@ class CommitmentsController < ApplicationController
       title: model_params[:title],
       description: model_params[:description],
       critical_mass: model_params[:critical_mass],
-      deadline: Time.now + duration_param,
+      deadline: params[:end_of_cycle] == '1 hour from now' ? 1.hour.from_now : Cycle.new_from_end_of_cycle_option(
+        end_of_cycle: params[:end_of_cycle],
+        tenant: current_tenant,
+        studio: current_studio,
+      ).end_date,
+      created_by: current_user,
     )
     begin
       ActiveRecord::Base.transaction do
         @commitment.save!
+        if model_params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
+          @commitment.attach!(model_params[:files])
+        end
         @current_commitment = @commitment
+        if current_representation_session
+          current_representation_session.record_activity!(
+            request: request,
+            semantic_event: {
+              timestamp: Time.current,
+              event_type: 'create',
+              studio_id: current_studio.id,
+              main_resource: {
+                type: 'Commitment',
+                id: @commitment.id,
+                truncated_id: @commitment.truncated_id,
+              },
+              sub_resources: [],
+            }
+          )
+        end
       end
       redirect_to @commitment.path
     rescue ActiveRecord::RecordInvalid => e
@@ -35,12 +61,11 @@ class CommitmentsController < ApplicationController
       @commitment_participant_name = @commitment_participant.name || current_user.name
     else
       @commitment_participant_name = @commitment_participant.name
-      # ID used in login redirect
-      session[:encrypted_participant_id] = encrypt(@commitment_participant.id)
     end
     @participants_list_limit = 10
     @page_title = @commitment.title
     @page_description = "Coordinate with your team"
+    set_pin_vars
   end
 
   def status_partial
@@ -62,7 +87,30 @@ class CommitmentsController < ApplicationController
     @commitment_participant_name = @commitment_participant.name || current_user.name
     @commitment_participant.committed = true if params[:committed].to_s == 'true'
     @commitment_participant.name = @commitment_participant_name
-    @commitment_participant.save!
+    ActiveRecord::Base.transaction do
+      @commitment_participant.save!
+      if current_representation_session
+        current_representation_session.record_activity!(
+          request: request,
+          semantic_event: {
+            timestamp: Time.current,
+            event_type: 'commit',
+            studio_id: current_studio.id,
+            main_resource: {
+              type: 'Commitment',
+              id: @commitment.id,
+              truncated_id: @commitment.truncated_id,
+            },
+            sub_resources: [
+              {
+                type: 'CommitmentParticipant',
+                id: @commitment_participant.id,
+              }
+            ],
+          }
+        )
+      end
+    end
     render partial: 'join'
   end
 
@@ -72,20 +120,6 @@ class CommitmentsController < ApplicationController
     @participants_list_limit = params[:limit].to_i if params[:limit].present?
     @participants_list_limit = 20 if @participants_list_limit < 1
     render partial: 'participants_list_items'
-  end
-
-  def edit_display_name_and_return_partial
-    @commitment = current_commitment
-    return render '404', status: 404 unless @commitment
-    ActiveRecord::Base.transaction do
-      @commitment_participant = current_commitment_participant
-      current_user.name = params[:name]
-      @commitment_participant.name = params[:name]
-      current_user.save!
-      @commitment_participant.save!
-    end
-    @commitment_participant_name = @commitment_participant.name
-    render partial: 'join'
   end
 
   private

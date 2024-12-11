@@ -1,0 +1,75 @@
+<%= render 'shared/more_button', resource: @representation_session, options: ['copy', 'appendLink'] %>
+<h4 style="margin:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <%= link_to 'Representation', "#{@current_studio.path}/representation" %> / Session <code><%= @representation_session.truncated_id %></code>
+</h4>
+<h1 style="margin-top:0;">
+  Representation Session
+</h1>
+
+<% unless @representation_session.ended_at %>
+  <div class="active-sessions">
+    This session is currently active.
+    <% if @representation_session.representative_user == @current_user %>
+      <%= button_to 'End Session', @representation_session.path, method: :delete %>
+    <% end %>
+  </div>
+<% end %>
+
+<p style="font-size:0.8em;">
+  Representative
+  <%= profile_pic(@representation_session.representative_user, size: 20) %>
+  <%= link_to @representation_session.representative_user.display_name, @representation_session.representative_user.path %>
+  <br/>
+  Started <%= timeago(@representation_session.began_at) %>
+  <br/>
+  <% if @representation_session.ended_at %>
+    Ended <%= timeago(@representation_session.ended_at) %>
+    <br/>
+    <% duration = (@representation_session.elapsed_time / 60).round %>
+    Duration <%= duration %> minute<%= duration == 1 ? '' : 's' %>
+  <% end %>
+</p>
+
+<h2>Actions</h2>
+
+<% if @representation_session.human_readable_activity_log.empty? %>
+  <p><em>No actions were performed during this session.</em></p>
+<% else %>
+  <p>
+    <%= @representation_session.representative_user.display_name %> performed the following actions on behalf of <%= @representation_session.studio.name %>:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>at</th>
+        <th>performed action</th>
+        <th>item</th>
+        <th>in studio</th>
+      </tr>
+    </thead>
+    <% @representation_session.human_readable_activity_log.each.with_index do |activity_item, i| %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= activity_item[:happened_at].to_time.in_time_zone(@current_studio.timezone.name).strftime('%H:%M %Z') %></td>
+        <td><%= activity_item[:verb_phrase] %></td>
+        <td>
+          <a href="<%= activity_item[:main_resource].path %>">
+            <%= activity_item[:main_resource].class.to_s %>
+            <code><%= activity_item[:main_resource].truncated_id %></code>
+          </a>
+        </td>
+        <td><%= link_to activity_item[:studio].name, activity_item[:studio].path %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%= backlinks(@representation_session) %>
+
+<div style="display:none;">
+  <h2>JSON</h2>
+  <pre>
+  <%= JSON.pretty_generate(@representation_session.api_json) %>
+  </pre>
+</div>

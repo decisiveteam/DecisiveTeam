@@ -1,13 +1,30 @@
 <% if @current_user %>
-  <p>
-    <%= render 'logged_in_as' %>
-  </p>
-  <% if @note_reader.confirmed_read? %>
+  <% if @note_reader.confirmed_read_but_note_updated? %>
+    <p style="margin-bottom:0;">
+      <em>Note updated since you last confirmed reading. Reconfirm to acknowledge the changes.</em>
+    </p>
+    <p>
+      <br/>
+      <button
+        data-action="click->note#confirm mouseenter->note#confirmButtonMouseEnter mouseleave->note#confirmButtonMouseLeave"
+        data-note-target="confirmButton"
+        data-url="<%= @note.path + '/confirm.html' %>"
+        >
+        Confirm
+      </button>
+      <span
+        data-note-target="confirmButtonMessage"
+        >Click this button to confirm that you have read the updated note.
+      </span>
+      <%= render 'awareness_indicators_tooltip' %>
+    </p>
+  <% elsif @note_reader.confirmed_read? %>
     <p>
       <button style="background:#dfdfdf;color:#9f9f9f;cursor:default;">
         Confirmed
       </button>
-      <span style="font-style:italic;">You have confirmed reading this note.</span>
+      <span>You have confirmed reading this note.</span>
+      <%= render 'awareness_indicators_tooltip' %>
     </p>
   <% else %>
     <p>
@@ -19,14 +36,14 @@
         Confirm
       </button>
       <span
-        style="font-style:italic;"
         data-note-target="confirmButtonMessage"
         >Click this button to confirm that you have read this note.
       </span>
+      <%= render 'awareness_indicators_tooltip' %>
     </p>
   <% end %>
 <% else %>
   <div class="auth-required-message">
-    <%= button_to 'Log in', '/auth/auth0', method: :post, data: {turbo: false} %> to confirm reading this note.
+    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @note.path } %> to confirm reading this note.
   </div>
 <% end %>

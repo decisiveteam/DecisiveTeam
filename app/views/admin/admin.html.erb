@@ -1,0 +1,106 @@
+<h1><%= octicon "tools", height: 32 %> Admin</h1>
+
+<code><%= @current_tenant.subdomain %><span style="opacity:0.6">.<%= ENV['HOSTNAME'] %></span></code>
+
+<h3>Admin Users</h3>
+
+<ul>
+  <% @current_tenant.admin_users.each do |user| %>
+    <li>
+      <%= user.display_name %>
+      <a href="<%= user.path %>">
+        <code><%= user.handle %></code>
+      </a>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Tenant Details</h2>
+
+<ul>
+  <li>
+    Name: <code><%= @current_tenant.name %></code>
+  </li>
+  <li>
+    Subdomain: <code><%= @current_tenant.subdomain %></code>
+  </li>
+  <li>
+    Created: <%= timeago(@current_tenant.created_at) %>
+  </li>
+  <li>
+    Updated: <%= timeago(@current_tenant.updated_at) %>
+  </li>
+</ul>
+
+<h3>Tenant Settings</h3>
+<%= link_to "Edit Settings", '/admin/settings' %>
+
+<pre>
+<%= JSON.pretty_generate(@current_tenant.settings) %>
+</pre>
+
+<h2>Main Studio</h2>
+
+<p>
+  The main studio is the default studio at the base path (i.e. <code><%= @current_tenant.domain %>/</code>).
+  When the app describes data as being "outside of a studio context", that means that the data is associated with the main studio.
+</p>
+
+<ul>
+  <li>
+    Name: <code><%= @current_tenant.main_studio.name %></code>
+  </li>
+  <li>
+    ID: <code><%= @current_tenant.main_studio.id %></code>
+    <%= render 'shared/copy_button', text: @current_tenant.main_studio.id %>
+  </li>
+  <li>
+    Notes: <%= @current_tenant.main_studio.notes.count %>
+  </li>
+  <li>
+    Decisions: <%= @current_tenant.main_studio.decisions.count %>
+  </li>
+  <li>
+    Commitments: <%= @current_tenant.main_studio.commitments.count %>
+  </li>
+</ul>
+
+<h3>Main Studio Settings</h3>
+<pre>
+<%= JSON.pretty_generate(@current_tenant.main_studio.settings) %>
+</pre>
+
+<h3>Other Studios</h3>
+
+<ul>
+  <% @current_tenant.studios.order(created_at: :desc).each do |studio| %>
+    <% next if studio == @current_tenant.main_studio %>
+    <li>
+      <a href="<%= studio.path %>">
+        <%= studio.name %>
+      </a>
+      created <%= timeago(studio.created_at) %>
+    </li>
+  <% end %>
+</ul>
+
+<% if @current_tenant.subdomain == ENV['PRIMARY_SUBDOMAIN'] %>
+  <h2><%= octicon "tools", height: 32 %>
+  System Settings</h2>
+
+  <p>Because <code><%= ENV['PRIMARY_SUBDOMAIN'] %></code> is the primary subdomain for this instance of Harmonic Team, you can see and create other tenants here.</p>
+
+  <h3>Other Tenants</h3>
+  <ul>
+  <% Tenant.all.each do |tenant| %>
+    <% next if tenant.subdomain == ENV['PRIMARY_SUBDOMAIN'] %>
+    <% next if tenant.subdomain == ENV['AUTH_SUBDOMAIN'] %>
+    <li>
+      <%= tenant.name %>
+      <a href="/admin/tenants/<%= tenant.subdomain %>">
+        <code><%= tenant.subdomain %></code>
+      </a>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

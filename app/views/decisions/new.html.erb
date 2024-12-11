@@ -1,35 +1,28 @@
-<h1>Make a Decision</h1>
-<p>Making a group decision with Decisive Team is a 3 step process:</p>
-<%= form_with(model: [@decision]) do |form| %>
-  <h2>1. Ask a question</h2>
-  <p style="margin-bottom:2px;">Type the <strong>question</strong> that this decision will answer.</p>
+<h4 style="display:inline-block;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="decision-icon"></i> Decision
+</h4>
+<%= render 'shared/scratchpad_links' %>
+<%= form_with do |form| %>
   <div>
-    <%= form.text_field :question, placeholder: 'Question' %>
-  </div> 
-  <p style="margin-bottom:2px;margin-top:16px;">Add a <strong>description</strong> to provide context. (optional)</p>
-  <div>
-    <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
-  </div> 
-  <h2>2. Gather options</h2>
+    <%= form.text_field :question, placeholder: 'Question that this decision will answer', value: @decision.question %>
+  </div>
+  <div style="margin-top:8px;">
+    <%= form.text_area :description, placeholder: 'Description (optional)', value: @decision.description %>
+  </div>
+  <%= render 'shared/multi_file_select', form: form %>
+  <h3>Options</h3>
   <p>
     <%= form.select :options_open, options_for_select([['Everyone', true], ['Just you', false]], selected: 'Everyone') %>
     will be able to add options on the decision page.
   </p>
-  <h2>3. Make a decision</h2>
+  <h3>Deadline</h3>
   <p>
-    <%= form.number_field :duration, value: 24, style: 'width:48px;' %>
-    <%= form.select :duration_unit, options_for_select(['minute(s)','hour(s)', 'day(s)', 'week(s)'], selected: 'hour(s)') %>
-    will be given for everyone to vote.
+    Voting will close at
+    <%= form.select :end_of_cycle, options_for_select(@end_of_cycle_options, selected: @end_of_cycle_options[1]) %>
   </p>
-  <fieldset>
-    <legend><strong>Authentication</strong></legend>
-    <%= form.radio_button :auth_required, 'true', checked: true %> 
-    <%= form.label :auth_required, 'Require login to participate (recommended) 🔒', value: true %><br/>
-
-    <%= form.radio_button :auth_required, 'false', checked: false %> 
-    <%= form.label :auth_required, 'Allow anonymous participation (more convenient, less secure)', value: false %><br/>
-  </fieldset>
   <hr style="height:1px;" />
-  <p>Go to the decision page and share the link with your team.</p>
-  <%= form.submit 'Go to decision page' %>
+  <%= form.submit 'Start Decision' %>
+  <% if @current_studio == @current_tenant.main_studio %>
+    <p>Items created outside of a studio context do not display backlinks and do not show up in any cycle views.</p>
+  <% end %>
 <% end %>

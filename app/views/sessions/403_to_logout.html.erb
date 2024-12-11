@@ -1,0 +1,10 @@
+<h1>403 Unauthorized</h1>
+
+<p>
+  You are not authorized to view this page.
+</p>
+
+<p>
+  Currently logged in as <%= @current_user.name %>, email <%= @current_user.email %>
+  <%= button_to 'Log out', '/logout', method: :delete %>
+</p>

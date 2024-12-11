@@ -1,0 +1,26 @@
+<span data-controller="scratchpad-links" class="more-button">
+  <span
+    data-action="click->scratchpad-links#toggleMenu"
+    data-scratchpad-links-target="button"
+    >
+    <%= octicon 'link' %>
+  </span>
+  <span data-scratchpad-links-target="menu" class="more-button-menu">
+    <ul>
+      <li>
+        <h4>Scratchpad links</h4>
+      </li>
+      <% @scratchpad_links.each do |link| %>
+        <li title="<%= link[:type] %>: <%= link[:title] %>">
+          <span title="Copy link to clipboard">
+            <%= render 'shared/copy_button', text: link[:url] %>
+          </span>
+          <code><%= link[:type].downcase[0] %>/<%= link[:id] %></code>
+          <a href="<%= link[:url] %>" class="scratchpad-link-menu-a-tag" target="_blank">
+            <%= link[:title].truncate(30) %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </span>
+</span>

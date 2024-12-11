@@ -1,0 +1,90 @@
+<% options = [] %>
+<% new_page = @current_studio.pages_enabled? ? 'new_page' : nil %>
+<% new_randomness = @current_studio.random_enabled? ? 'new_randomness' : nil %>
+<% invite = @current_user.studio_user.can_invite? ? 'invite' : nil %>
+<% representation = 'representation' %>
+<% options << new_page if new_page %>
+<% options << new_randomness if new_randomness %>
+<% options << invite if invite %>
+<% options << representation if representation %>
+<% settings = @current_user.studio_user.is_admin? ? 'settings' : nil %>
+<% options << '---' if settings %>
+<% options << settings if settings %>
+<% options << 'manage_team' if @current_user.studio_user.is_admin? %>
+<%= render 'shared/more_button', resource: @current_studio, options: options %>
+
+<h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
+<h1 style="margin-top:0;"><%= @current_studio.name %></h1>
+
+<h2><%= octicon 'pin', height: 24 %> Pinned</h2>
+<%= render 'pinned' %>
+
+<h2>
+  <%= octicon 'calendar', height: 24 %>
+  <a href="<%= @cycle.path %>"><%= @cycle.display_window %></a>
+</h2>
+
+<h3>Notes</h3>
+<ul>
+<% @cycle.notes.each do |note| %>
+  <li>
+    <a href="<%= note.path %>"><i class="note-icon"></i> <%= note.title %></a> <%= note.attachments.any? ? octicon('paperclip') : '' %>
+  </li>
+<% end %>
+<% if @cycle.notes.empty? %>
+  <li>
+    <em>No active notes <%= @cycle.display_name.downcase %>.</em>
+  </li>
+<% end %>
+</ul>
+
+<h3>Decisions</h3>
+<ul>
+<% @cycle.decisions.each do |decision| %>
+  <li>
+    <a href="<%= decision.path %>"><i class="decision-icon"></i> <%= decision.question %></a>
+  </li>
+<% end %>
+<% if @cycle.decisions.empty? %>
+  <li>
+    <em>No active decisions <%= @cycle.display_name.downcase %>.</em>
+  </li>
+<% end %>
+</ul>
+
+<h3>Commitments</h3>
+<ul>
+<% @cycle.commitments.each do |commitment| %>
+  <li>
+    <a href="<%= commitment.path %>"><i class="commitment-icon"></i> <%= commitment.title %></a>
+  </li>
+<% end %>
+<% if @cycle.commitments.empty? %>
+  <li>
+    <em>No active commitments <%= @cycle.display_name.downcase %>.</em>
+  </li>
+<% end %>
+</ul>
+
+<h2>
+  <%= octicon 'file-symlink-file', height: 24 %>
+  Backlinks
+</h2>
+<% if @cycle.backlinks.any? %>
+  <p>Items that are linked to by <%= @cycle.display_name.downcase %>'s active items.</p>
+  <ul>
+  <% @cycle.backlinks.each do |resource| %>
+    <li>
+      <a href="<%= resource.path %>"><i class="<%= resource.class.to_s.downcase %>-icon"></i> <%= resource.title %></a>
+    </li>
+  <% end %>
+  </ul>
+<% else %>
+  <p><em>No items are linked to by <%= @cycle.display_name.downcase %>'s active items.</em></p>
+<% end %>
+
+<h2>
+  <%= octicon 'people', height: 24 %>
+  Team
+</h2>
+<%= render 'team' %>

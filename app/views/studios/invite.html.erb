@@ -1,0 +1,16 @@
+<h4 style="margin:0;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / Invite
+</h4>
+<h1 style="margin-top:0;">Invite to Studio</h1>
+<p>
+  Share this link with your team to invite them to studio <strong><%= @current_studio.name %></strong>.
+  <br/>
+  Anyone with this link will be able to join.
+</p>
+<p>
+  <code><%= @invite.shareable_link %></code><br/>
+  <%= render 'shared/copy_to_clipboard', text: @invite.shareable_link %>
+</p>
+<p>
+  This link expires <%= timeago(@invite.expires_at) %>.
+</p>

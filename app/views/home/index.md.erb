@@ -1,0 +1,14 @@
+# <%= @current_tenant.name %>
+
+## Your Studios
+
+<% @studios.each do |studio| %>
+* [<%= studio.name %>](<%= studio.path %>)
+<% end %>
+
+## Actions
+
+* [Create a Note](/note)
+* [Create a Decision](/decide)
+* [Create a Commitment](/commit)
+* [Create a Studio](/studios/new)

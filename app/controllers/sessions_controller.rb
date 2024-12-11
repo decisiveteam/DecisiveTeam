@@ -18,8 +18,9 @@ class SessionsController < ApplicationController
       # user is not logged in and is currently on the auth domain
       # so we show the login page and display the original tenant subdomain
       @page_title = 'Login | Harmonic Team'
+      cookies[:redirect_to_subdomain] ||= ENV['PRIMARY_SUBDOMAIN']
       @original_tenant = Tenant.find_by(subdomain: cookies[:redirect_to_subdomain])
-      # TODO - handle case where tenant is not found
+      @original_tenant ||= Tenant.find_by(subdomain: ENV['PRIMARY_SUBDOMAIN'])
       @redirect_to_resource = cookies[:redirect_to_resource]
       @studio_invite_code = cookies[:studio_invite_code]
     else
@@ -131,16 +132,15 @@ class SessionsController < ApplicationController
       # This should not happen, so we raise an error.
       raise 'Unexpected error. Tenant mismatch.'
     end
-    user = User.find(user_id)
-    tenant_user = tenant.tenant_users.find_by(user: user)
+    @current_user = User.find(user_id)
+    tenant_user = tenant.tenant_users.find_by(user: @current_user)
     if tenant_user
-      session[:user_id] = user.id
+      session[:user_id] = @current_user.id
+      redirect_to_resource_or_invite_or_root
     else
       # user is not allowed to access this tenant
-      # TODO - handle this case more gracefully
-      raise 'Unexpected error. User not allowed to access tenant.'
+      render status: 403, layout: 'application', template: 'sessions/403_to_logout'
     end
-    redirect_to_resource_or_invite_or_root
   end
 
   def redirect_to_resource_or_invite_or_root

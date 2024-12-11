@@ -66,6 +66,24 @@
     <%= form.label :representation_only_representatives, 'Only designated representatives can represent the studio' %>
   </fieldset>
 
+  <% if @current_tenant.allow_file_uploads? %>
+    <h2>File Attachments</h2>
+    <p>
+      <%= form.check_box :allow_file_uploads, checked: @current_studio.allow_file_uploads? %>
+      Allow users to attach files to notes, decisions, and commitments
+    </p>
+    <p>
+      Current usage:
+      <%= @current_studio.file_storage_usage_in_human_size %> of <%= @current_studio.file_storage_limit_in_human_size %>
+      <% if ENV['SAAS_MODE'] == 'true' %>
+        <%= button_to 'Purchase more space', '/billing', method: :get %>
+      <% else %>
+        <br/>
+        Increase limit: <%= form.number_field :file_storage_limit, value: @current_studio.file_storage_limit / 1.megabyte, style: 'width: 100px;' %> MB
+      <% end %>
+    </p>
+  <% end %>
+
   <hr style="height:1px;" />
   <%= form.submit 'Save' %>
 <% end %>

@@ -9,12 +9,7 @@
   <div>
     <%= form.text_area :description, placeholder: 'Description (markdown supported)' %>
   </div>
-  <% if @current_tenant.allow_file_uploads? %>
-    <div>
-      <%= form.label :files, "Attach files" %>
-      <%= form.file_field :files, multiple: true %>
-    </div>
-  <% end %>
+  <%= render 'shared/multi_file_select', form: form %>
   <h2>Critical Mass</h2>
   <p>
     At least <%= form.number_field :critical_mass, value: 1, style: 'width:48px;' %> participant(s) required for this commitment to take effect.

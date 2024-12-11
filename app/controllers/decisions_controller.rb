@@ -24,7 +24,7 @@ class DecisionsController < ApplicationController
           ).end_date,
           created_by: current_user,
         )
-        if decision_params[:files] && @current_tenant.allow_file_uploads?
+        if decision_params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
           @decision.attach!(model_params[:files])
         end
         if current_representation_session

@@ -61,7 +61,20 @@ class Tenant < ApplicationRecord
       # auth_providers: ['github'],
       allow_file_uploads: false,
       api_enabled: false,
+      default_studio_settings: {
+        tempo: 'daily',
+        synchronization_mode: 'improv',
+        all_members_can_invite: false,
+        any_member_can_represent: false,
+        api_enabled: false,
+        allow_file_uploads: true,
+        file_upload_limit: 100.megabytes,
+      }
     }).merge(self.settings || {})
+  end
+
+  def default_studio_settings
+    self.settings['default_studio_settings'] || {}
   end
 
   def timezone=(value)

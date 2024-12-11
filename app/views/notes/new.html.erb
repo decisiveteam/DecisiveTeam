@@ -9,12 +9,7 @@
   <div>
     <%= form.text_area :text, placeholder: 'Text (markdown supported)', style: 'height:300px;', value: @note.text %>
   </div>
-  <% if @current_tenant.allow_file_uploads? %>
-    <div>
-      <%= form.label :files, "Attach files" %>
-      <%= form.file_field :files, multiple: true %>
-    </div>
-  <% end %>
+  <%= render 'shared/multi_file_select', form: form %>
   <h2>Relevance Duration</h2>
   <p>
     This note will be considered relevant until

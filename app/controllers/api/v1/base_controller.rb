@@ -1,7 +1,7 @@
 class Api::V1::BaseController < ApplicationController
   skip_before_action :verify_authenticity_token, if: :api_token_present?
   before_action :api_authorize!, if: :api_token_present?
-  before_action :validate_scope
+  before_action :validate_scope, :validate_api_enabled
 
   # Read actions are allowed by default
   def index
@@ -44,6 +44,14 @@ class Api::V1::BaseController < ApplicationController
     return true if @current_user && !@current_token # Allow all actions for logged in users
     unless @current_token.can?(request.method, current_resource_model)
       render json: { error: 'Unauthorized' }, status: 401
+    end
+  end
+
+  def validate_api_enabled
+    return true if @current_user && !@current_token # Allow all actions for logged in users
+    unless @current_tenant.api_enabled? && @current_studio.api_enabled?
+      studio_or_tenant = @current_tenant.api_enabled? ? 'studio' : 'tenant'
+      render json: { error: "API not enabled for this #{studio_or_tenant}" }, status: 403
     end
   end
 

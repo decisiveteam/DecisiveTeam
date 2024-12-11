@@ -57,18 +57,22 @@ class Studio < ApplicationRecord
   def set_defaults
     self.updated_by ||= self.created_by
     self.settings = {
-      'unlisted' => true,
-      'invite_only' => true,
-      'timezone' => 'UTC',
-      'all_members_can_invite' => false,
-      'any_member_can_represent' => false,
-      'tempo' => 'weekly',
-      'synchronization_mode' => 'improv',
-      'pages_enabled' => false,
-      'random_enabled' => false,
-      'api_enabled' => false,
-      'pinned' => {},
+      unlisted: true,
+      invite_only: true,
+      timezone: UTC,
+      all_members_can_invite: false,
+      any_member_can_represent: false,
+      tempo: weekly,
+      synchronization_mode: improv,
+      pages_enabled: false,
+      random_enabled: false,
+      api_enabled: false,
+      allow_file_uploads: true,
+      file_upload_limit: 100.megabytes,
+      pinned: {},
     }.merge(
+      self.tenant.default_studio_settings || {}
+    ).merge(
       self.settings || {}
     )
   end
@@ -154,6 +158,30 @@ class Studio < ApplicationRecord
   def disable_feature!(feature)
     self.settings["#{feature}_enabled"] = false
     save!
+  end
+
+  def file_storage_limit
+    self.settings['file_storage_limit'] || 100.megabytes
+  end
+
+  def file_storage_limit_in_human_size
+    ActiveSupport::NumberHelper.number_to_human_size(file_storage_limit)
+  end
+
+  def file_storage_usage
+    @byte_sum ||= Attachment.where(studio: self).sum(:byte_size)
+  end
+
+  def file_storage_usage_in_human_size
+    ActiveSupport::NumberHelper.number_to_human_size(file_storage_usage)
+  end
+
+  def within_file_upload_limit?
+    file_storage_usage < file_storage_limit
+  end
+
+  def allow_file_uploads?
+    self.settings['allow_file_uploads'].to_s == 'true'
   end
 
   def handle_is_valid

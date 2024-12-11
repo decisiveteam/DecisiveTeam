@@ -88,3 +88,5 @@ gem 'omniauth-rails_csrf_protection', '~> 1.0' # prevents forged authentication 
 
 gem 'redcarpet'
 gem 'octicons_helper'
+
+gem 'aws-sdk-s3', '~> 1.0'

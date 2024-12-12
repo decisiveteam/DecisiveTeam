@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'healthcheck' => 'healthcheck#healthcheck'
+
   get 'login' => 'sessions#new'
   get 'auth/:provider/callback' => 'sessions#oauth_callback'
   get 'login/return' => 'sessions#return'

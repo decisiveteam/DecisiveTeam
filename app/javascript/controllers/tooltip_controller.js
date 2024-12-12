@@ -35,7 +35,11 @@ export default class extends Controller {
     // reposition the tooltip
     const rect = this.element.getBoundingClientRect();
     const infoRect = this.infoTarget.getBoundingClientRect();
-    const top = rect.top - infoRect.height - 10;
+    // fix scroll bug
+    const top = Math.max(
+      15,
+      rect.top - infoRect.height + window.scrollY
+    )
     const left = Math.max(
       15,
       rect.left + rect.width / 2 - infoRect.width / 2

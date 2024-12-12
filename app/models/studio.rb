@@ -10,7 +10,10 @@ class Studio < ApplicationRecord
   tables = ActiveRecord::Base.connection.tables - [
     'tenants', 'users', 'tenant_users',
     'studios', 'api_tokens', 'oauth_identities',
-    'ar_internal_metadata', 'schema_migrations'
+    # Rails internal tables
+    'ar_internal_metadata', 'schema_migrations',
+    'active_storage_attachments', 'active_storage_blobs',
+    'active_storage_variant_records',
   ]
   tables.each do |table|
     has_many table.to_sym
@@ -121,6 +124,19 @@ class Studio < ApplicationRecord
 
   def tempo
     self.settings['tempo'] || 'weekly'
+  end
+
+  def tempo_unit
+    case tempo
+    when 'daily'
+      'day'
+    when 'weekly'
+      'week'
+    when 'monthly'
+      'month'
+    when 'yearly'
+      'year'
+    end
   end
 
   def synchronization_mode=(value)

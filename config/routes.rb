@@ -110,7 +110,7 @@ Rails.application.routes.draw do
       get '/history.html' => 'notes#history_log_partial'
       post '/confirm.html' => 'notes#confirm_and_return_partial'
       put '/pin' => 'notes#pin'
-      get '/attachments/:name' => 'attachments#show'
+      get '/attachments/:attachment_id' => 'attachments#show'
     end
 
     get "#{prefix}/decide" => 'decisions#new'
@@ -120,7 +120,7 @@ Rails.application.routes.draw do
       get '/options.html' => 'decisions#options_partial'
       post '/options.html' => 'decisions#create_option_and_return_options_partial'
       put '/pin' => 'decisions#pin'
-      get '/attachments/:name' => 'attachments#show'
+      get '/attachments/:attachment_id' => 'attachments#show'
     end
 
     get "#{prefix}/commit" => 'commitments#new'
@@ -130,7 +130,7 @@ Rails.application.routes.draw do
       get '/participants.html' => 'commitments#participants_list_items_partial'
       post '/join.html' => 'commitments#join_and_return_partial'
       put '/pin' => 'commitments#pin'
-      get '/attachments/:name' => 'attachments#show'
+      get '/attachments/:attachment_id' => 'attachments#show'
     end
 
     namespace :api, path: "#{prefix}/api" do

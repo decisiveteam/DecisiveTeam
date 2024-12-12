@@ -9,8 +9,10 @@ class Tenant < ApplicationRecord
 
   tables = ActiveRecord::Base.connection.tables - [
     'tenants', 'users', 'oauth_identities',
-    'ar_internal_metadata', 'schema_migrations'
-
+    # Rails internal tables
+    'ar_internal_metadata', 'schema_migrations',
+    'active_storage_attachments', 'active_storage_blobs',
+    'active_storage_variant_records',
   ]
   tables.each do |table|
     has_many table.to_sym

@@ -20,6 +20,7 @@
 <span data-commitment-target="statusSection" data-url="<%= @commitment.path + '/status.html' %>">
   <%= render 'status' %>
 </span>
+<%= render 'shared/attachments_section', resource: @commitment %>
 <% if @commitment.description && @commitment.description.length > 0 %>
   <h2>Description</h2>
   <div class="user-generated-markdown"><%= markdown(@commitment.description) %></div>

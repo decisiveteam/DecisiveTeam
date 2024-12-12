@@ -51,7 +51,7 @@ class Attachment < ApplicationRecord
   end
 
   def path
-    "#{attachable.path}/attachments/#{name}"
+    "#{attachable.path}/attachments/#{id}"
   end
 
   def blob_path

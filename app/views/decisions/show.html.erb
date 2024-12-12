@@ -17,6 +17,7 @@
   <% end %>
   <br/>
 </p>
+<%= render 'shared/attachments_section', resource: @decision %>
 <% if @decision.description && @decision.description.length > 0 %>
   <h2>Description</h2>
   <div class="user-generated-markdown"><%= markdown(@decision.description) %></div>

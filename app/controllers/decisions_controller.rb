@@ -24,8 +24,8 @@ class DecisionsController < ApplicationController
           ).end_date,
           created_by: current_user,
         )
-        if decision_params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
-          @decision.attach!(model_params[:files])
+        if params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
+          @decision.attach!(params[:files])
         end
         if current_representation_session
           current_representation_session.record_activity!(
@@ -118,7 +118,10 @@ class DecisionsController < ApplicationController
   private
 
   def decision_params
-    model_params.permit(:question, :description, :options_open, :duration, :duration_unit, :files)
+    model_params.permit(
+      :question, :description, :options_open,
+      :duration, :duration_unit, :files
+    )
   end
 
   def set_results_view_vars

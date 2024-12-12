@@ -86,4 +86,8 @@ class Note < ApplicationRecord
       event_type: 'read_confirmation'
     ).exists?
   end
+
+  def creator_can_skip_confirm?(user)
+    user == created_by && created_at == updated_at
+  end
 end

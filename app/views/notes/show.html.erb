@@ -18,10 +18,12 @@
     <p style="opacity:0.6;"><em>empty note</em></p>
   <% end %>
 </div>
-<h2>Confirm</h2>
-<div data-note-target="confirmSection">
-  <%= render 'confirm' %>
-</div>
+<% unless @note.creator_can_skip_confirm?(@current_user) %>
+  <h2>Confirm</h2>
+  <div data-note-target="confirmSection">
+    <%= render 'confirm' %>
+  </div>
+<% end %>
 <h2>History</h2>
 <%= render 'history' %>
 <%= backlinks(@note) %>

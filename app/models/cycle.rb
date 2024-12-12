@@ -246,10 +246,15 @@ class Cycle
 
   def sort_by
     return @sort_by if @sort_by
-    key, direction = (params[:sort_by] || 'deadline:desc').split('-')
-    key = 'deadline' unless %w[created_at updated_at deadline].include?(key)
+    key, direction = (params[:sort_by] || 'deadline-desc').split('-')
+    key = 'deadline' unless CycleDataRow.valid_sort_bys.include?(key)
     direction = 'desc' unless %w[asc desc].include?(direction)
     @sort_by = { key => direction }
+  end
+
+  def group_by
+    return @group_by if @group_by
+    @group_by = CycleDataRow.valid_group_bys.include?(params[:group_by]) ? params[:group_by] : 'item_type'
   end
 
   def filter_options
@@ -362,5 +367,28 @@ class Cycle
         .includes(:to_linkable)
         .map(&:to_linkable).uniq
   end
+
+  def data_rows
+    rows =  CycleDataRow.where(tenant_id: @tenant.id, studio_id: @studio.id)
+                        .where('created_at < ?', end_date)
+                        .where('deadline > ?', start_date)
+    if filters.present?
+      filters.each do |filter|
+        rows = rows.where(filter)
+      end
+    end
+    grouped_rows = {}
+    rows.order(sort_by).each do |row|
+      row.cycle = self
+      key = row.send(group_by)
+      grouped_rows[key] ||= []
+      grouped_rows[key] << row
+    end
+    groups = group_by == 'item_type' ? ['Note', 'Decision', 'Commitment'] : grouped_rows.keys.sort
+    groups.map do |key|
+      [key, grouped_rows[key] || []]
+    end
+  end
+
 
 end

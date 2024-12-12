@@ -35,6 +35,23 @@ class CyclesController < ApplicationController
     @filter_options = @cycle.filter_options
   end
 
+  def show_data
+    @cycle = Cycle.new(
+      name: params[:cycle],
+      tenant: @current_tenant,
+      studio: @current_studio,
+      current_user: @current_user,
+      params: {
+        filters: params[:filters] || params[:filter],
+        sort_by: params[:sort_by],
+        group_by: params[:group_by],
+      }
+    )
+    @current_resource = @cycle
+    @grouped_rows = @cycle.data_rows
+    @group_by = @cycle.group_by
+  end
+
   def redirect_to_show
     # If people go to /cycle/... instead of /cycles/...
     redirect_to "#{@current_studio.path}/cycles/#{params[:cycle]}"

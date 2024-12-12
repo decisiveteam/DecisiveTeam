@@ -24,8 +24,8 @@ class NotesController < ApplicationController
     begin
       ActiveRecord::Base.transaction do
         @note.save!
-        if model_params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
-          @note.attach!(model_params[:files])
+        if params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
+          @note.attach!(params[:files])
         end
         @current_note = @note
         if current_representation_session

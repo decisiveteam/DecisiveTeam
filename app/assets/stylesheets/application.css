@@ -267,6 +267,7 @@ select:focus {
   height: 1.5em;
   position: relative;
   bottom: -0.35em;
+  border-radius: 50%;
 }
 
 #scratchpad {

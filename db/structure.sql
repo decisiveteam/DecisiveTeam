@@ -258,6 +258,133 @@ CREATE TABLE public.custom_data_tables (
 
 
 --
+-- Name: cycle_data_commitments; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.cycle_data_commitments AS
+SELECT
+    NULL::uuid AS tenant_id,
+    NULL::uuid AS studio_id,
+    NULL::text AS item_type,
+    NULL::uuid AS item_id,
+    NULL::text AS title,
+    NULL::timestamp(6) without time zone AS created_at,
+    NULL::timestamp(6) without time zone AS updated_at,
+    NULL::uuid AS created_by_id,
+    NULL::uuid AS updated_by_id,
+    NULL::timestamp(6) without time zone AS deadline,
+    NULL::integer AS link_count,
+    NULL::integer AS backlink_count,
+    NULL::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count;
+
+
+--
+-- Name: cycle_data_decisions; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.cycle_data_decisions AS
+SELECT
+    NULL::uuid AS tenant_id,
+    NULL::uuid AS studio_id,
+    NULL::text AS item_type,
+    NULL::uuid AS item_id,
+    NULL::text AS title,
+    NULL::timestamp(6) without time zone AS created_at,
+    NULL::timestamp(6) without time zone AS updated_at,
+    NULL::uuid AS created_by_id,
+    NULL::uuid AS updated_by_id,
+    NULL::timestamp(6) without time zone AS deadline,
+    NULL::integer AS link_count,
+    NULL::integer AS backlink_count,
+    NULL::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count;
+
+
+--
+-- Name: cycle_data_notes; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.cycle_data_notes AS
+SELECT
+    NULL::uuid AS tenant_id,
+    NULL::uuid AS studio_id,
+    NULL::text AS item_type,
+    NULL::uuid AS item_id,
+    NULL::text AS title,
+    NULL::timestamp(6) without time zone AS created_at,
+    NULL::timestamp(6) without time zone AS updated_at,
+    NULL::uuid AS created_by_id,
+    NULL::uuid AS updated_by_id,
+    NULL::timestamp(6) without time zone AS deadline,
+    NULL::integer AS link_count,
+    NULL::integer AS backlink_count,
+    NULL::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count;
+
+
+--
+-- Name: cycle_data; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.cycle_data AS
+ SELECT n.tenant_id,
+    n.studio_id,
+    n.item_type,
+    n.item_id,
+    n.title,
+    n.created_at,
+    n.updated_at,
+    n.created_by_id,
+    n.updated_by_id,
+    n.deadline,
+    n.link_count,
+    n.backlink_count,
+    n.participant_count,
+    n.voter_count,
+    n.option_count
+   FROM public.cycle_data_notes n
+UNION ALL
+ SELECT cycle_data_decisions.tenant_id,
+    cycle_data_decisions.studio_id,
+    cycle_data_decisions.item_type,
+    cycle_data_decisions.item_id,
+    cycle_data_decisions.title,
+    cycle_data_decisions.created_at,
+    cycle_data_decisions.updated_at,
+    cycle_data_decisions.created_by_id,
+    cycle_data_decisions.updated_by_id,
+    cycle_data_decisions.deadline,
+    cycle_data_decisions.link_count,
+    cycle_data_decisions.backlink_count,
+    cycle_data_decisions.participant_count,
+    cycle_data_decisions.voter_count,
+    cycle_data_decisions.option_count
+   FROM public.cycle_data_decisions
+UNION ALL
+ SELECT cycle_data_commitments.tenant_id,
+    cycle_data_commitments.studio_id,
+    cycle_data_commitments.item_type,
+    cycle_data_commitments.item_id,
+    cycle_data_commitments.title,
+    cycle_data_commitments.created_at,
+    cycle_data_commitments.updated_at,
+    cycle_data_commitments.created_by_id,
+    cycle_data_commitments.updated_by_id,
+    cycle_data_commitments.deadline,
+    cycle_data_commitments.link_count,
+    cycle_data_commitments.backlink_count,
+    cycle_data_commitments.participant_count,
+    cycle_data_commitments.voter_count,
+    cycle_data_commitments.option_count
+   FROM public.cycle_data_commitments
+  ORDER BY 1, 2, 6 DESC;
+
+
+--
 -- Name: decision_participants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1718,6 +1845,91 @@ CREATE OR REPLACE VIEW public.decision_results AS
 
 
 --
+-- Name: cycle_data_notes _RETURN; Type: RULE; Schema: public; Owner: -
+--
+
+CREATE OR REPLACE VIEW public.cycle_data_notes AS
+ SELECT n.tenant_id,
+    n.studio_id,
+    'Note'::text AS item_type,
+    n.id AS item_id,
+    n.title,
+    n.created_at,
+    n.updated_at,
+    n.created_by_id,
+    n.updated_by_id,
+    n.deadline,
+    (count(DISTINCT nl.id))::integer AS link_count,
+    (count(DISTINCT nbl.id))::integer AS backlink_count,
+    (count(DISTINCT nhe.user_id))::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count
+   FROM (((public.notes n
+     JOIN public.note_history_events nhe ON (((n.id = nhe.note_id) AND ((nhe.event_type)::text = 'confirmed_read'::text))))
+     LEFT JOIN public.links nl ON (((n.id = nl.from_linkable_id) AND ((nl.from_linkable_type)::text = 'Note'::text))))
+     LEFT JOIN public.links nbl ON (((n.id = nbl.to_linkable_id) AND ((nbl.to_linkable_type)::text = 'Note'::text))))
+  GROUP BY n.tenant_id, n.studio_id, n.id
+  ORDER BY n.tenant_id, n.studio_id, n.created_at DESC;
+
+
+--
+-- Name: cycle_data_decisions _RETURN; Type: RULE; Schema: public; Owner: -
+--
+
+CREATE OR REPLACE VIEW public.cycle_data_decisions AS
+ SELECT d.tenant_id,
+    d.studio_id,
+    'Decision'::text AS item_type,
+    d.id AS item_id,
+    d.question AS title,
+    d.created_at,
+    d.updated_at,
+    d.created_by_id,
+    d.updated_by_id,
+    d.deadline,
+    (count(DISTINCT dl.id))::integer AS link_count,
+    (count(DISTINCT dbl.id))::integer AS backlink_count,
+    (count(DISTINCT a.decision_participant_id))::integer AS participant_count,
+    (count(DISTINCT a.decision_participant_id))::integer AS voter_count,
+    (count(DISTINCT o.id))::integer AS option_count
+   FROM ((((public.decisions d
+     LEFT JOIN public.approvals a ON ((d.id = a.decision_id)))
+     LEFT JOIN public.options o ON ((d.id = o.decision_id)))
+     LEFT JOIN public.links dl ON (((d.id = dl.from_linkable_id) AND ((dl.from_linkable_type)::text = 'Decision'::text))))
+     LEFT JOIN public.links dbl ON (((d.id = dbl.to_linkable_id) AND ((dbl.to_linkable_type)::text = 'Decision'::text))))
+  GROUP BY d.tenant_id, d.studio_id, d.id
+  ORDER BY d.tenant_id, d.studio_id, d.created_at DESC;
+
+
+--
+-- Name: cycle_data_commitments _RETURN; Type: RULE; Schema: public; Owner: -
+--
+
+CREATE OR REPLACE VIEW public.cycle_data_commitments AS
+ SELECT c.tenant_id,
+    c.studio_id,
+    'Commitment'::text AS item_type,
+    c.id AS item_id,
+    c.title,
+    c.created_at,
+    c.updated_at,
+    c.created_by_id,
+    c.updated_by_id,
+    c.deadline,
+    (count(DISTINCT cl.id))::integer AS link_count,
+    (count(DISTINCT cbl.id))::integer AS backlink_count,
+    (count(DISTINCT p.user_id))::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count
+   FROM (((public.commitments c
+     LEFT JOIN public.commitment_participants p ON ((c.id = p.commitment_id)))
+     LEFT JOIN public.links cl ON (((c.id = cl.from_linkable_id) AND ((cl.from_linkable_type)::text = 'Commitment'::text))))
+     LEFT JOIN public.links cbl ON (((c.id = cbl.to_linkable_id) AND ((cbl.to_linkable_type)::text = 'Commitment'::text))))
+  GROUP BY c.tenant_id, c.studio_id, c.id
+  ORDER BY c.tenant_id, c.studio_id, c.created_at DESC;
+
+
+--
 -- Name: studio_invites fk_rails_07e7bb098b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2503,6 +2715,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241206195305'),
 ('20241207193204'),
 ('20241209070422'),
-('20241209163149');
+('20241209163149'),
+('20241212161322');
 
 

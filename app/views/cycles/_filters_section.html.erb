@@ -1,23 +1,39 @@
 <span data-controller="cycle-filters">
 <%= form_with url: @cycle.path, method: :get, local: true, id: 'sort-filter-form' do |form| %>
-  <div>
-    <h4>Cycle</h4>
-    <%= form.select :cycle_id, options_for_select(@cycle.cycle_options, @cycle.name), {}, { id: 'cycle-select' } %>
-  </div>
-  <div>
-    <h4>Filter</h4>
-    <%= form.select :filter, options_for_select(@filter_options, @filters), {}, { id: 'filter-select' } %>
-  </div>
-  <div>
-    <h4>Sort By</h4>
-    <%= form.select :sort_by, options_for_select(@sort_by_options, @sort_by), {}, { id: 'sort-select' } %>
-  </div>
-  <div>
-    <h4>Group By</h4>
-    <%= form.select :group_by, options_for_select(@group_by_options, @group_by), {}, { id: 'group-select' } %>
-  </div>
-  <div>
-    <%= form.submit 'Apply' %>
-  </div>
+  <% if @current_studio.feature_enabled?('cycle_views_preview') %>
+    <div>
+      <h4>Cycle</h4>
+      <%= form.select :cycle_id, options_for_select(@cycle.cycle_options, @cycle.name), {}, { id: 'cycle-select' } %>
+    </div>
+    <div>
+      <h4>Filter</h4>
+      <%= form.select :filter, options_for_select(@filter_options, @filters), {}, { id: 'filter-select' } %>
+    </div>
+    <div>
+      <h4>Sort By</h4>
+      <%= form.select :sort_by, options_for_select(@sort_by_options, @sort_by), {}, { id: 'sort-select' } %>
+    </div>
+    <div>
+      <h4>Group By</h4>
+      <%= form.select :group_by, options_for_select(@group_by_options, @group_by), {}, { id: 'group-select' } %>
+    </div>
+    <div>
+      <%= form.submit 'Apply' %>
+    </div>
+  <% else %>
+    <div>
+      <h4>Filter</h4>
+      <%= form.select :filter, options_for_select(@filter_options, @filters), {}, { id: 'filter-select' } %>
+    </div>
+    <script>
+      document.getElementById('filter-select').addEventListener('change', function(event) {
+        if (event.target.value === 'none') {
+          window.location = '<%= @cycle.path %>';
+        } else {
+          document.getElementById('sort-filter-form').submit();
+        }
+      });
+    </script>
+  <% end %>
 <% end %>
 </span>

@@ -39,7 +39,7 @@
 <%= backlinks(@decision) %>
 </span>
 
-<h2>Voters</h2>
+<h2>Voters <%= octicon 'check-circle', height: 24 %> <%= @decision.voter_count %></h2>
 
 <% if @decision.voters.empty? %>
   <em>No voters yet.</em>

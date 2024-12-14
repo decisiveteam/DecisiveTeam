@@ -26,7 +26,9 @@
 
 <%= render 'filters_section' %>
 
-<%= render 'show_data' %>
+<% if @current_studio.feature_enabled?('cycle_views_preview') %>
+  <%= render 'show_data' %>
+<% end %>
 
 <%= render 'shared/collapseable_section', title: 'Notes', header_level: 2, hidden: false do %>
   <ul>

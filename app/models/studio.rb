@@ -73,6 +73,7 @@ class Studio < ApplicationRecord
       allow_file_uploads: true,
       file_upload_limit: 100.megabytes,
       pinned: {},
+      feature_flags: {},
     }.merge(
       self.tenant.default_studio_settings || {}
     ).merge(
@@ -101,6 +102,14 @@ class Studio < ApplicationRecord
   def enable_api!
     self.settings['api_enabled'] = true
     save!
+  end
+
+  def feature_enabled?(feature)
+    self.settings["#{feature}_enabled"].to_s == 'true' || (self.settings['feature_flags'] || {})[feature].to_s == 'true'
+  end
+
+  def sequences_enabled?
+    feature_enabled?('sequences')
   end
 
   def timezone=(value)

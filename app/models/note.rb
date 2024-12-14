@@ -11,6 +11,7 @@ class Note < ApplicationRecord
   before_validation :set_studio_id
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
+  belongs_to :sequence, optional: true
   has_many :note_history_events, dependent: :destroy
   validates :title, presence: true
 
@@ -32,6 +33,36 @@ class Note < ApplicationRecord
     )
   end
 
+  def self.create_from_sequence!(sequence, position)
+    Note.create!(
+      tenant_id: sequence.tenant_id,
+      studio_id: sequence.studio_id,
+      created_by_id: sequence.studio.trustee_user_id,
+      updated_by_id: sequence.studio.trustee_user_id,
+      title: sequence.title + ' #' + position.to_s,
+      text: sequence.description,
+      deadline: sequence.deadline_for_position(position),
+      sequence: sequence,
+      sequence_position: position
+    )
+  end
+
+  def confirmed_reads
+    @confirmed_reads ||= note_history_events.where(event_type: 'read_confirmation').select(:user_id).distinct.count
+  end
+
+  def metric_name
+    'readers'
+  end
+
+  def metric_value
+    confirmed_reads
+  end
+
+  def octicon_metric_icon_name
+    'book'
+  end
+
   def api_json(include: [])
     response = {
       id: id,
@@ -39,7 +70,7 @@ class Note < ApplicationRecord
       title: title,
       text: text,
       deadline: deadline,
-      confirmed_reads: note_history_events.where(event_type: 'read_confirmation').count,
+      confirmed_reads: confirmed_reads,
       created_at: created_at,
       updated_at: updated_at,
       created_by_id: created_by_id,
@@ -60,6 +91,10 @@ class Note < ApplicationRecord
 
   def history_events
     note_history_events
+  end
+
+  def interaction_count
+    note_history_events.count - 1 # subtract the create event
   end
 
   def confirm_read!(user)

@@ -5,6 +5,9 @@
   <span style="white-space:nowrap;">
     <i class="note-icon"></i> Note <code><%= @note.truncated_id %></code>
   </span>
+  <span style="white-space:nowrap;" title="<%= @note.confirmed_reads %> reader<%= 's' if @note.confirmed_reads != 1 %>">
+    <%= octicon 'book' %> <%= @note.confirmed_reads %>
+  </span>
 </h4>
 <h1 style="margin-top:0;"><%= @note.title %></h1>
 <p style="font-size:0.8em;">

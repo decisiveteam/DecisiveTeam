@@ -14,7 +14,7 @@ module ApplicationHelper
       data-countdown-end-time-value='#{datetime.iso8601}'
       data-countdown-base-unit-value='#{base_unit}'
       >
-      <span data-countdown-target='time' style='font-family:monospace;'>...</span>
+      <span data-countdown-target='time' style='font-family:monospace;white-space:nowrap;'>...</span>
     </time>".html_safe
   end
 

@@ -1,0 +1,9 @@
+<h1>Queue: <%= @queue.name %></h1>
+
+<ul>
+  <% @queue.each do |job| %>
+    <li>
+      <%= link_to job.jid, "/admin/sidekiq/jobs/#{job.jid}" %> (Enqueued At: <%= job.enqueued_at %>)
+    </li>
+  <% end %>
+</ul>

@@ -59,6 +59,36 @@ class AdminController < ApplicationController
     @page_title = @showing_tenant.name
   end
 
+  def sidekiq
+    return render status: 403, plain: '403 Unauthorized' unless is_main_tenant?
+    @queues = Sidekiq::Queue.all
+    @retries = Sidekiq::RetrySet.new
+    @scheduled = Sidekiq::ScheduledSet.new
+    @dead = Sidekiq::DeadSet.new
+  end
+
+  def sidekiq_show_queue
+    return render status: 403, plain: '403 Unauthorized' unless is_main_tenant?
+    @queue = Sidekiq::Queue.new(params[:name])
+  end
+
+  def sidekiq_show_job
+    return render status: 403, plain: '403 Unauthorized' unless is_main_tenant?
+    @job = find_job(params[:jid])
+  end
+
+  def sidekiq_retry_job
+    return render status: 403, plain: '403 Unauthorized' unless is_main_tenant?
+    job = find_job(params[:jid])
+    if job
+      job.retry
+      flash[:notice] = 'Job retried'
+    else
+      flash[:alert] = 'Job not found'
+    end
+    redirect_to '/admin/sidekiq'
+  end
+
   private
 
   def ensure_admin_user
@@ -77,6 +107,28 @@ class AdminController < ApplicationController
 
   def current_resource
     @current_tenant
+  end
+
+  def find_job(jid)
+    jid = jid.to_s
+    job = Sidekiq::Workers.new.find { |_, _, work| work["payload"]["jid"].to_s == jid }
+    return job if job
+
+    job = Sidekiq::RetrySet.new.find { |job| job.jid.to_s == jid }
+    return job if job
+
+    job = Sidekiq::ScheduledSet.new.find { |job| job.jid.to_s == jid }
+    return job if job
+
+    job = Sidekiq::DeadSet.new.find { |job| job.jid.to_s == jid }
+    return job if job
+
+    Sidekiq::Queue.all.each do |queue|
+      job = queue.find { |job| job.jid.to_s == jid }
+      return job if job
+    end
+
+    nil
   end
 
 end

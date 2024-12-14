@@ -1,0 +1,40 @@
+<h1>Sidekiq Dashboard</h1>
+
+<h2>Queues</h2>
+<ul>
+  <% @queues.each do |queue| %>
+    <li>
+      <%= link_to queue.name, "/admin/sidekiq/queues/#{queue.name}" %> (Size: <%= queue.size %>)
+    </li>
+  <% end %>
+</ul>
+
+<h2>Retries</h2>
+<ul>
+  <% @retries.each do |job| %>
+    <li>
+      <%= link_to job.jid, "/admin/sidekiq/jobs/#{job.jid}" %> (Retry Count: <%= job.retry_count %>)
+    </li>
+  <% end %>
+</ul>
+
+<h2>Scheduled</h2>
+<ul>
+  <% @scheduled.each do |job| %>
+    <li>
+      <span style="display:inline-block;width:250px;">
+        <%= link_to job.jid, "/admin/sidekiq/jobs/#{job.jid}" %>
+      </span>
+      <%= countdown(job.at) %>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Dead</h2>
+<ul>
+  <% @dead.each do |job| %>
+    <li>
+      <%= link_to job.jid, "/admin/sidekiq/jobs/#{job.jid}" %> (Failed <%= timeago(job.at) %>)
+    </li>
+  <% end %>
+</ul>

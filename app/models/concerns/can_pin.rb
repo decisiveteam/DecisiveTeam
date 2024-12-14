@@ -36,11 +36,12 @@ module CanPin
   def pinned_items
     migrate_pinned_array_to_hash
     settings['pinned'].map do |id, item|
-      {
+      resource = item['type'].constantize.find_by(id: id)
+      resource ? {
         item: item['type'].constantize.find_by(id: id),
         pinned_at: item['pinned_at'] || Time.at(0)
-      }
-    end.sort_by {|p| p[:pinned_at] }
+      } : nil
+    end.compact.sort_by {|p| p[:pinned_at] }
   end
 
   def has_pinned?(item)

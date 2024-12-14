@@ -1,0 +1,18 @@
+<h4>
+  <a href="/admin">Admin</a>
+  / <a href="/admin/sidekiq">Sidekiq</a>
+  / Job <code><%= @job["jid"] %></code>
+</h4>
+
+<% if @job["error_message"] %>
+  <h2>
+    <%= octicon 'alert', height: 24 %>
+    <%= @job["error_class"] %>
+  </h2>
+  <pre><%= @job["error_message"] %></pre>
+
+  <%= button_to "Retry", "/admin/sidekiq/jobs/#{@job['jid']}/retry", method: :post %>
+<% end %>
+
+<h2>Arguments</h2>
+<pre><%= JSON.pretty_generate(@job["args"]) %></pre>

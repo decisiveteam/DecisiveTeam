@@ -53,11 +53,23 @@ class Commitment < ApplicationRecord
   end
 
   def committed_participants
-    participants.where.not(committed_at: nil)
+    @committed_participants ||= participants.where.not(committed_at: nil)
   end
 
   def participant_count
     committed_participants.count
+  end
+
+  def metric_name
+    'participants'
+  end
+
+  def metric_value
+    participant_count
+  end
+
+  def octicon_metric_icon_name
+    'person'
   end
 
   def remaining_needed_for_critical_mass

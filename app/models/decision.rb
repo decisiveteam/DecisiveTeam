@@ -11,6 +11,7 @@ class Decision < ApplicationRecord
   before_validation :set_studio_id
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
+  belongs_to :sequence, optional: true
   has_many :decision_participants, dependent: :destroy
   has_many :options, dependent: :destroy
   has_many :approvals # dependent: :destroy through options
@@ -19,6 +20,21 @@ class Decision < ApplicationRecord
 
   def self.api_json
     map { |decision| decision.api_json }
+  end
+
+  def self.create_from_sequence!(sequence, position)
+    Decision.create!(
+      tenant_id: sequence.tenant_id,
+      studio_id: sequence.studio_id,
+      created_by_id: sequence.studio.trustee_user_id,
+      updated_by_id: sequence.studio.trustee_user_id,
+      question: sequence.title + ' #' + position.to_s,
+      description: sequence.description,
+      options_open: sequence.options_open,
+      deadline: sequence.deadline_for_position(position),
+      sequence: sequence,
+      sequence_position: position
+    )
   end
 
   def api_json(include: [])
@@ -31,6 +47,7 @@ class Decision < ApplicationRecord
       deadline: deadline,
       created_at: created_at,
       updated_at: updated_at,
+      voter_count: voter_count,
       # participants: decision_participants.map(&:api_json),
       # options: options.map(&:api_json),
       # approvals: approvals.map(&:api_json),
@@ -115,6 +132,18 @@ class Decision < ApplicationRecord
     ).includes(:user).map do |dp|
       dp.user
     end
+  end
+
+  def metric_name
+    'voters'
+  end
+
+  def metric_value
+    voter_count
+  end
+
+  def octicon_metric_icon_name
+    'check-circle'
   end
 
   def path_prefix

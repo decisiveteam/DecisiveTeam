@@ -5,6 +5,9 @@
   <span style="white-space:nowrap;">
     <i class="commitment-icon"></i> Commitment <code><%= @commitment.truncated_id %></code>
   </span>
+  <span style="white-space:nowrap;" title="<%= @commitment.participant_count %> participant<%= 's' if @commitment.participant_count != 1 %>">
+    <%= octicon 'person' %> <%= @commitment.participant_count %>
+  </span>
 </h4>
 <h1 style="margin-top:0;"><%= @commitment.title %></h1>
 <p style="font-size:0.8em;">

@@ -41,4 +41,12 @@ class NoteHistoryEvent < ApplicationRecord
       raise 'Unknown event type'
     end
   end
+
+  def creator
+    if event_type == 'create' && note.sequence_id && user.trustee?
+      note.sequence
+    else
+      user
+    end
+  end
 end

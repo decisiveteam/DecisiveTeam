@@ -244,6 +244,16 @@ class ApplicationController < ActionController::Base
     @current_resource
   end
 
+  def current_sequence
+    return @current_sequence if defined?(@current_sequence)
+    if current_resource_model == Sequence
+      sequence_id = params[:id] || params[:sequence_id]
+    else
+      sequence_id = params[:sequence_id]
+    end
+    return @current_sequence = nil unless sequence_id
+    @current_sequence = Sequence.find(sequence_id)
+  end
 
   def current_decision
     return @current_decision if defined?(@current_decision)

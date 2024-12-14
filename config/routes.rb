@@ -68,6 +68,11 @@ Rails.application.routes.draw do
   post 'admin/tenants' => 'admin#create_tenant'
   get 'admin/tenants/:subdomain/complete' => 'admin#complete_tenant_creation'
   get 'admin/tenants/:subdomain' => 'admin#show_tenant'
+  get 'admin/sidekiq' => 'admin#sidekiq'
+  get 'admin/sidekiq/queues/:name' => 'admin#sidekiq_show_queue'
+  get 'admin/sidekiq/jobs/:jid' => 'admin#sidekiq_show_job'
+  post 'admin/sidekiq/jobs/:jid/retry' => 'admin#sidekiq_retry_job'
+
 
   resources :users, path: 'u', param: :handle, only: [:show] do
     get 'scratchpad' => 'users#scratchpad', on: :member
@@ -134,6 +139,14 @@ Rails.application.routes.draw do
       post '/join.html' => 'commitments#join_and_return_partial'
       put '/pin' => 'commitments#pin'
       get '/attachments/:attachment_id' => 'attachments#show'
+    end
+
+    get "#{prefix}/sequence" => 'sequences#new'
+    post "#{prefix}/sequence" => 'sequences#create'
+    resources :sequences, only: [:show], path: "#{prefix}/sq" do
+      get '/edit' => 'sequences#edit'
+      post '/edit' => 'sequences#update'
+      put '/pin' => 'sequences#pin'
     end
 
     namespace :api, path: "#{prefix}/api" do

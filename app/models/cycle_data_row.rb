@@ -8,14 +8,18 @@ class CycleDataRow < ApplicationRecord
   belongs_to :updated_by, class_name: 'User'
 
   def self.valid_group_bys
-    self.column_names + [
+    self.valid_sort_bys + [
       'status', 'created_within_cycle', 'updated_within_cycle',
-      'deadline_within_cycle', 'days_until_deadline'
+      'deadline_within_cycle', 'days_until_deadline',
+      'date_created', 'date_updated', 'date_deadline',
+      'week_created', 'week_updated', 'week_deadline',
+      'month_created', 'month_updated', 'month_deadline',
+      'year_created', 'year_updated', 'year_deadline',
     ]
   end
 
   def self.valid_sort_bys
-    self.column_names
+    self.column_names - ['tenant_id', 'studio_id', 'item_id']
   end
 
   def cycle=(cycle)
@@ -48,6 +52,62 @@ class CycleDataRow < ApplicationRecord
 
   def days_until_deadline
     (deadline.to_date - Time.now.to_date).to_i
+  end
+
+  def timezone=(timezone)
+    @timezone = timezone
+  end
+
+  def timezone
+    @timezone ||= studio.timezone
+  end
+
+  def date_created
+    created_at.in_time_zone(timezone).to_date
+  end
+
+  def date_updated
+    updated_at.in_time_zone(timezone).to_date
+  end
+
+  def date_deadline
+    deadline.in_time_zone(timezone).to_date
+  end
+
+  def week_created
+    created_at.in_time_zone(timezone).strftime('%Y-%W')
+  end
+
+  def week_updated
+    updated_at.in_time_zone(timezone).strftime('%Y-%W')
+  end
+
+  def week_deadline
+    deadline.in_time_zone(timezone).strftime('%Y-%W')
+  end
+
+  def month_created
+    created_at.in_time_zone(timezone).strftime('%Y-%m')
+  end
+
+  def month_updated
+    updated_at.in_time_zone(timezone).strftime('%Y-%m')
+  end
+
+  def month_deadline
+    deadline.in_time_zone(timezone).strftime('%Y-%m')
+  end
+
+  def year_created
+    created_at.in_time_zone(timezone).strftime('%Y')
+  end
+
+  def year_updated
+    updated_at.in_time_zone(timezone).strftime('%Y')
+  end
+
+  def year_deadline
+    deadline.in_time_zone(timezone).strftime('%Y')
   end
 
   def api_json

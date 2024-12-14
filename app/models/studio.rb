@@ -67,13 +67,15 @@ class Studio < ApplicationRecord
       any_member_can_represent: false,
       tempo: 'weekly',
       synchronization_mode: 'improv',
-      pages_enabled: false,
-      random_enabled: false,
-      api_enabled: false,
       allow_file_uploads: true,
       file_upload_limit: 100.megabytes,
       pinned: {},
-      feature_flags: {},
+      feature_flags: {
+        api: false,
+        sequences: false,
+        pages: false,
+        random: false,
+      },
     }.merge(
       self.tenant.default_studio_settings || {}
     ).merge(
@@ -91,21 +93,23 @@ class Studio < ApplicationRecord
       name: name,
       handle: handle,
       timezone: timezone.name,
+      tempo: tempo,
       # settings: settings, # if current_user is admin
     }
   end
 
   def api_enabled?
-    self.settings['api_enabled'].to_s == 'true'
+    feature_enabled?('api')
   end
 
   def enable_api!
-    self.settings['api_enabled'] = true
+    enable_feature!('api')
     save!
   end
 
   def feature_enabled?(feature)
-    self.settings["#{feature}_enabled"].to_s == 'true' || (self.settings['feature_flags'] || {})[feature].to_s == 'true'
+    feature_flags = self.settings['feature_flags'] || {}
+    feature_flags[feature].to_s == 'true' || self.settings["#{feature}_enabled"].to_s == 'true'
   end
 
   def sequences_enabled?
@@ -168,20 +172,23 @@ class Studio < ApplicationRecord
   end
 
   def pages_enabled?
-    self.settings['pages_enabled']
+    feature_enabled?('pages')
   end
 
   def random_enabled?
-    self.settings['random_enabled']
+    feature_enabled?('random')
   end
 
   def enable_feature!(feature)
-    self.settings["#{feature}_enabled"] = true
+    self.settings["feature_flags"] ||= {}
+    self.settings["feature_flags"][feature] = true
     save!
   end
 
   def disable_feature!(feature)
     self.settings["#{feature}_enabled"] = false
+    self.settings["feature_flags"] ||= {}
+    self.settings["feature_flags"][feature] = false
     save!
   end
 

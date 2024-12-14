@@ -12,21 +12,11 @@ class Cycle
       'end of this year',
       'end of next year',
     ]
-    case tempo
-    when 'daily'
-      full_list
-    when 'weekly'
-      full_list - ['end of day today', 'end of day tomorrow']
-    when 'monthly'
-      full_list - ['end of day today', 'end of day tomorrow', 'end of this week', 'end of next week']
-    else
-      raise 'Invalid tempo'
-    end
   end
 
   def self.new_from_end_of_cycle_option(end_of_cycle:, tenant:, studio:)
-    cycle = end_of_cycle.downcase.gsub(' ', '-').split(/end-of-(?:day-)?/).last
-    new(name: cycle, tenant: tenant, studio: studio)
+    name = end_of_cycle.downcase.gsub(' ', '-').split(/end-of-(?:day-)?/).last
+    new(name: name, tenant: tenant, studio: studio)
   end
 
   def self.new_from_tempo(tenant:, studio:)

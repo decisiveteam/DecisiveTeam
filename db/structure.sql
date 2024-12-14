@@ -2009,34 +2009,6 @@ CREATE OR REPLACE VIEW public.decision_results AS
 
 
 --
--- Name: cycle_data_notes _RETURN; Type: RULE; Schema: public; Owner: -
---
-
-CREATE OR REPLACE VIEW public.cycle_data_notes AS
- SELECT n.tenant_id,
-    n.studio_id,
-    'Note'::text AS item_type,
-    n.id AS item_id,
-    n.title,
-    n.created_at,
-    n.updated_at,
-    n.created_by_id,
-    n.updated_by_id,
-    n.deadline,
-    (count(DISTINCT nl.id))::integer AS link_count,
-    (count(DISTINCT nbl.id))::integer AS backlink_count,
-    (count(DISTINCT nhe.user_id))::integer AS participant_count,
-    NULL::integer AS voter_count,
-    NULL::integer AS option_count
-   FROM (((public.notes n
-     JOIN public.note_history_events nhe ON (((n.id = nhe.note_id) AND ((nhe.event_type)::text = 'confirmed_read'::text))))
-     LEFT JOIN public.links nl ON (((n.id = nl.from_linkable_id) AND ((nl.from_linkable_type)::text = 'Note'::text))))
-     LEFT JOIN public.links nbl ON (((n.id = nbl.to_linkable_id) AND ((nbl.to_linkable_type)::text = 'Note'::text))))
-  GROUP BY n.tenant_id, n.studio_id, n.id
-  ORDER BY n.tenant_id, n.studio_id, n.created_at DESC;
-
-
---
 -- Name: cycle_data_decisions _RETURN; Type: RULE; Schema: public; Owner: -
 --
 
@@ -2091,6 +2063,34 @@ CREATE OR REPLACE VIEW public.cycle_data_commitments AS
      LEFT JOIN public.links cbl ON (((c.id = cbl.to_linkable_id) AND ((cbl.to_linkable_type)::text = 'Commitment'::text))))
   GROUP BY c.tenant_id, c.studio_id, c.id
   ORDER BY c.tenant_id, c.studio_id, c.created_at DESC;
+
+
+--
+-- Name: cycle_data_notes _RETURN; Type: RULE; Schema: public; Owner: -
+--
+
+CREATE OR REPLACE VIEW public.cycle_data_notes AS
+ SELECT n.tenant_id,
+    n.studio_id,
+    'Note'::text AS item_type,
+    n.id AS item_id,
+    n.title,
+    n.created_at,
+    n.updated_at,
+    n.created_by_id,
+    n.updated_by_id,
+    n.deadline,
+    (count(DISTINCT nl.id))::integer AS link_count,
+    (count(DISTINCT nbl.id))::integer AS backlink_count,
+    (count(DISTINCT nhe.user_id))::integer AS participant_count,
+    NULL::integer AS voter_count,
+    NULL::integer AS option_count
+   FROM (((public.notes n
+     LEFT JOIN public.note_history_events nhe ON (((n.id = nhe.note_id) AND ((nhe.event_type)::text = 'confirmed_read'::text))))
+     LEFT JOIN public.links nl ON (((n.id = nl.from_linkable_id) AND ((nl.from_linkable_type)::text = 'Note'::text))))
+     LEFT JOIN public.links nbl ON (((n.id = nbl.to_linkable_id) AND ((nbl.to_linkable_type)::text = 'Note'::text))))
+  GROUP BY n.tenant_id, n.studio_id, n.id
+  ORDER BY n.tenant_id, n.studio_id, n.created_at DESC;
 
 
 --
@@ -2961,6 +2961,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241209070422'),
 ('20241209163149'),
 ('20241212161322'),
-('20241212193700');
+('20241212193700'),
+('20241214222145');
 
 

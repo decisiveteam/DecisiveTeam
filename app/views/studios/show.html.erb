@@ -16,10 +16,11 @@
 <h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
 <h1 style="margin-top:0;"><%= @current_studio.name %></h1>
 
-<h4>
-  Current Cycle:
-  <a href="<%= @cycle.path %>"><%= @cycle.display_window %></a>
-</h4>
+<h2>
+  <%= octicon 'telescope', height: 24 %>
+  Explore
+</h2>
+<%= render 'explore' %>
 
 <h2><%= octicon 'pin', height: 24 %> Pinned</h2>
 <%= render 'pinned' %>

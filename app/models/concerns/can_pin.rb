@@ -41,7 +41,7 @@ module CanPin
         item: item['type'].constantize.find_by(id: id),
         pinned_at: item['pinned_at'] || Time.at(0)
       } : nil
-    end.compact.sort_by {|p| p[:pinned_at] }
+    end.compact.sort_by {|p| p[:pinned_at] }.reverse
   end
 
   def has_pinned?(item)

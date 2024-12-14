@@ -27,7 +27,7 @@
     <%= render 'confirm' %>
   </div>
 <% end %>
-<h2>History</h2>
+<h2>Readers <%= octicon 'book', height: 24 %> <%= @note.confirmed_reads %></h2>
 <%= render 'history' %>
 <%= backlinks(@note) %>
 </span>

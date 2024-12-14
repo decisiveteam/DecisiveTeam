@@ -20,7 +20,7 @@ class Sequence < ApplicationRecord
   before_validation :set_defaults
 
   after_create do
-    CreateSequenceItemJob.set(wait_until: next_item_scheduled_at).perform_later(self)
+    create_next_item_and_schedule!
   end
 
   def set_tenant_id
@@ -196,18 +196,34 @@ class Sequence < ApplicationRecord
   end
 
   def create_next_item_and_schedule!
-    if last_item&.interaction_count == 0
-      # # pause
-      # self.paused_at = Time.current
-      # self.paused_by_id ||= studio.trustee_user_id
-    else
-      create_next_item! if time_for_next_item?
-      schedule_next_item!
+    ActiveRecord::Base.transaction do
+      if last_item&.interaction_count == 0
+        self.paused_at = Time.current
+        self.paused_by_id = studio.trustee_user_id
+        save!
+        SequenceHistoryEvent.create!(
+          sequence: self,
+          user: studio.trustee_user,
+          event_type: 'pause',
+          happened_at: Time.current,
+          data: {
+            paused_at: paused_at,
+            paused_by_id: paused_by_id,
+            reason: 'Last item had 0 interactions',
+          }
+        )
+      else
+        create_next_item! if time_for_next_item?
+        schedule_next_item!
+      end
     end
   end
 
   def time_for_next_item?
-    !completed_or_paused? && deadline_for_position(last_item.sequence_position) < Time.current
+    return false if completed_or_paused?
+    return false if starts_at > Time.current
+    return true if last_item.nil?
+    deadline_for_position(last_item.sequence_position) < Time.current
   end
 
   def deadline_for_position(position)
@@ -221,13 +237,17 @@ class Sequence < ApplicationRecord
 
   def create_next_item!
     return unless can_create_next_item?
-    @last_item = case item_type
-    when 'Note'
-      Note.create_from_sequence!(self, next_item_position)
-    when 'Decision'
-      Decision.create_from_sequence!(self, next_item_position)
-    when 'Commitment'
-      Commitment.create_from_sequence!(self, next_item_position)
+    ActiveRecord::Base.transaction do
+      @last_item = item_type.constantize.create_from_sequence!(self, next_item_position)
+      SequenceHistoryEvent.create!(
+        sequence: self,
+        user: studio.trustee_user,
+        event_type: 'item_create',
+        happened_at: Time.current,
+        data: {
+          item_id: @last_item.id,
+        }
+      )
     end
     items! # refresh items
     @last_item

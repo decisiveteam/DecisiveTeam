@@ -5,6 +5,10 @@
     <%= octicon 'iterations' %>
     Sequence <code><%= @sequence.truncated_id %></code>
   </span>
+  <span style="white-space:nowrap;" title="<%= @sequence.metric_value %> item<%= @sequence.metric_value != 1 ? 's' : '' %>">
+    <%= octicon @sequence.octicon_metric_icon_name %>
+    <%= @sequence.metric_value %>
+  </span>
 </h4>
 <h1 style="margin-top:0;"><%= @sequence.title %></h1>
 <p style="font-size:0.8em;">

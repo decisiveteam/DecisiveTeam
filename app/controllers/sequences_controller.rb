@@ -3,9 +3,8 @@ class SequencesController < ApplicationController
   def new
     @page_title = "Sequence"
     @page_description = "Start a sequence of notes, decisions, or commitments"
-    @tempo = current_studio.tempo
     @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
-    @sequence = Sequence.new(tempo: @tempo)
+    @sequence = Sequence.new
   end
 
   def create

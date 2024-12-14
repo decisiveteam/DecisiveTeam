@@ -93,7 +93,6 @@ Rails.application.routes.draw do
   get 's/:studio_handle' => 'studios#show'
   get "s/:studio_handle/cycles" => 'cycles#index'
   get "s/:studio_handle/cycles/:cycle" => 'cycles#show'
-  get "s/:studio_handle/cycles/:cycle/data" => 'cycles#show_data'
   get "s/:studio_handle/cycle/:cycle" => 'cycles#redirect_to_show'
   get "s/:studio_handle/team" => 'studios#team'
   get "s/:studio_handle/settings" => 'studios#settings'

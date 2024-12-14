@@ -34,7 +34,7 @@
     <%= render 'join' %>
   </div>
 <% end %>
-<h2>Participants</h2>
+<h2>Participants <%= octicon 'person', height: 24 %> <%= @commitment.participant_count %></h2>
 <%= render 'participants' %>
 <%= backlinks(@commitment) %>
 </span>

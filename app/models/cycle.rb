@@ -233,6 +233,23 @@ class Cycle
     @params
   end
 
+  def cycle_options
+    [
+      ['Today', 'today'],
+      ['Yesterday', 'yesterday'],
+      ['Tomorrow', 'tomorrow'],
+      ['This week', 'this-week'],
+      ['Last week', 'last-week'],
+      ['Next week', 'next-week'],
+      ['This month', 'this-month'],
+      ['Last month', 'last-month'],
+      ['Next month', 'next-month'],
+      ['This year', 'this-year'],
+      ['Last year', 'last-year'],
+      ['Next year', 'next-year'],
+    ]
+  end
+
   def sort_by_options
     [
       ['Deadline (earliest first)', 'deadline-asc'],
@@ -242,6 +259,19 @@ class Cycle
       ['Updated (oldest first)', 'updated_at-asc'],
       ['Updated (most recent first)', 'updated_at-desc'],
     ]
+  end
+
+  def group_by_options
+    # [
+    #   ['Item type', 'item_type'],
+    #   ['Created by', 'created_by'],
+    #   ['Deadline', 'deadline'],
+    #   ['Updated', 'updated_at'],
+    # ]
+    CycleDataRow.valid_group_bys.map do |group_by|
+      # [CycleDataRow.group_by_display_name(group_by), group_by]
+      [group_by.titleize, group_by]
+    end
   end
 
   def sort_by

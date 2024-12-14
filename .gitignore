@@ -39,3 +39,6 @@
 
 # Ignore .env file
 .env
+
+# Ignore Caddyfile
+Caddyfile

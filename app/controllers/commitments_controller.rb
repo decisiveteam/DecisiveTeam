@@ -28,6 +28,9 @@ class CommitmentsController < ApplicationController
         if params[:files] && @current_tenant.allow_file_uploads? && @current_studio.allow_file_uploads?
           @commitment.attach!(params[:files])
         end
+        if params[:pinned] == '1' && current_studio.id != current_tenant.main_studio_id
+          current_studio.pin_item!(@commitment)
+        end
         @current_commitment = @commitment
         if current_representation_session
           current_representation_session.record_activity!(

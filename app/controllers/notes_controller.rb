@@ -28,6 +28,9 @@ class NotesController < ApplicationController
           @note.attach!(params[:files])
         end
         @current_note = @note
+        if params[:pinned] == '1' && current_studio.id != current_tenant.main_studio_id
+          current_studio.pin_item!(@note)
+        end
         if current_representation_session
           current_representation_session.record_activity!(
             request: request,

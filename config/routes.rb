@@ -91,6 +91,8 @@ Rails.application.routes.draw do
   get 'studios/available' => 'studios#handle_available'
   post 'studios' => 'studios#create'
   get 's/:studio_handle' => 'studios#show'
+  get 's/:studio_handle/pinned.html' => 'studios#pinned_items_partial'
+  get 's/:studio_handle/team.html' => 'studios#team_partial'
   get "s/:studio_handle/cycles" => 'cycles#index'
   get "s/:studio_handle/cycles/:cycle" => 'cycles#show'
   get "s/:studio_handle/cycle/:cycle" => 'cycles#redirect_to_show'

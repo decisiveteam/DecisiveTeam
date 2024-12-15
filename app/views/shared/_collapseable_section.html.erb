@@ -1,11 +1,14 @@
 <% header_level ||= 1 %>
 <% hidden ||= false %>
-<% lazy_load ||= false %>
+<% lazy_load ||= nil %>
+<% octicon ||= nil %>
 <span
   data-controller="collapseable-section"
-  <%= lazy_load ? "data-collapseable-section-lazy-url='#{lazy_load}'" : '' %>
   >
   <h<%= header_level %> data-collapseable-section-target="header">
+    <% if octicon %>
+      <%= octicon octicon, height: header_level < 3 ? 24 : 16 %>
+    <% end %>
     <%= title %>
     <span data-collapseable-section-target="triangleRight" style="display:<%= hidden ? 'inline' : 'none' %>;">
       <%= octicon 'triangle-right', height: 20 %>
@@ -16,5 +19,6 @@
   </h<%= header_level %>>
   <div data-collapseable-section-target="body" style="display:<%= hidden ? 'none' : 'block' %>;">
     <%= yield %>
+    <div data-collapseable-section-target="lazyLoad" data-url="<%= lazy_load %>"></div>
   </div>
 </span>

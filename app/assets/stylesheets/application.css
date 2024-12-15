@@ -27,6 +27,22 @@ body {
   min-height: calc(100vh - 46px);
 }
 
+.homepage .markdown-body {
+  background-color: unset;
+  border: none;
+}
+
+.homepage .homepage-studio-section {
+  background-color: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.homepage .homepage-studio-section h3 {
+  margin-top: 0;
+}
+
 body .octicon {
   display: inline-block;
   fill: currentColor;

@@ -34,6 +34,10 @@ class Cycle
     end
   end
 
+  def self.new_from_studio(studio)
+    self.new_from_tempo(tenant: studio.tenant, studio: studio)
+  end
+
   def initialize(name:, tenant:, studio:, params: {}, current_user: nil)
     @name = name
     @tenant = tenant
@@ -79,6 +83,7 @@ class Cycle
 
   def path_with_params
     p = {}
+    # TODO - group_by, selections, cycle_name
     if params[:filters].present? && params[:filters] != 'none'
       p[:filters] = params[:filters]
     end
@@ -221,6 +226,12 @@ class Cycle
 
   def params
     @params
+  end
+
+  def selections
+    @selections ||= params[:selections].present? ? params[:selections].split(',') : [
+      'title', 'created_at', 'created_by', 'deadline', 'backlink_count',
+    ]
   end
 
   def cycle_options
@@ -412,7 +423,9 @@ class Cycle
       row.cycle = self
       key = row.send(group_by)
       grouped_rows[key] ||= []
-      grouped_rows[key] << row
+      grouped_rows[key] << selections.map do |selection|
+        row.send(selection)
+      end
     end
     groups = group_by == 'item_type' ? ['Note', 'Decision', 'Commitment'] : grouped_rows.keys.sort
     groups.map do |key|

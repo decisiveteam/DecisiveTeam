@@ -124,5 +124,14 @@ class StudiosController < ApplicationController
   def leave
   end
 
+  def pinned_items_partial
+    @pinned_items = @current_studio.pinned_items
+    render partial: 'pinned'
+  end
+
+  def team_partial
+    @team = @current_studio.team
+    render partial: 'team'
+  end
 
 end

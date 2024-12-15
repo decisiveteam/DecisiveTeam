@@ -128,4 +128,64 @@ class CycleDataRow < ApplicationRecord
       status: status,
     }
   end
+
+  def item
+    item_type.constantize.unscoped.find(item_id)
+  end
+
+  def item_path(studio: self.studio)
+    # Allow passing in studio to avoid reloading it
+    # Would be ideal to load the item and call path on it, but that causes N + 1 queries
+    "#{studio.path}/#{item_type.downcase[0]}/#{item_id[0..7]}"
+  end
+
+  def metric_name
+    case item_type
+    when 'Note'
+      'readers'
+    when 'Decision'
+      'voters'
+    when 'Commitment'
+      'participants'
+    end
+  end
+
+  def metric_value
+    case item_type
+    when 'Note'
+      # TODO: Change this to readers
+      participant_count
+    when 'Decision'
+      voter_count
+    when 'Commitment'
+      participant_count
+    end
+  end
+
+  def octicon_metric_icon_name
+    case item_type
+    when 'Note'
+      'book'
+    when 'Decision'
+      'check-circle'
+    when 'Commitment'
+      'person'
+    end
+  end
+
+  def item_data_for_inline_display(studio: self.studio)
+    # Allow passing in studio to avoid reloading it
+    {
+      type: item_type,
+      path: item_path(studio: studio),
+      title: title,
+      metric_name: metric_name,
+      metric_value: metric_value,
+      octicon_metric_icon_name: octicon_metric_icon_name,
+    }
+  end
+
+  def path
+    item_path
+  end
 end

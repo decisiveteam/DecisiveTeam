@@ -358,4 +358,8 @@ class Studio < ApplicationRecord
     self.settings['any_member_can_represent']
   end
 
+  def current_cycle
+    Cycle.new_from_studio(self)
+  end
+
 end

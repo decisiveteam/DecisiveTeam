@@ -1,10 +1,17 @@
 <span data-controller="cycle-filters">
 <%= form_with url: @cycle.path, method: :get, local: true, id: 'sort-filter-form' do |form| %>
   <% if @current_studio.feature_enabled?('cycle_views_preview') %>
-    <div>
+    <div style="display:inline-block;width:fit-content;">
       <h4>Cycle</h4>
       <%= form.select :cycle_id, options_for_select(@cycle.cycle_options, @cycle.name), {}, { id: 'cycle-select' } %>
     </div>
+    <!-- <div>
+      <h4>Select</h4>
+      <% CycleDataRow.valid_group_bys.each do |group_by| %>
+        <%= form.check_box group_by, checked: @cycle.selections.include?(group_by) %>
+        <%= form.label group_by, group_by.titleize %>
+      <% end %>
+    </div> -->
     <div>
       <h4>Filter</h4>
       <%= form.select :filter, options_for_select(@filter_options, @filters), {}, { id: 'filter-select' } %>

@@ -38,7 +38,7 @@ module CanPin
     settings['pinned'].map do |id, item|
       resource = item['type'].constantize.find_by(id: id)
       resource ? {
-        item: item['type'].constantize.find_by(id: id),
+        item: resource,
         pinned_at: item['pinned_at'] || Time.at(0)
       } : nil
     end.compact.sort_by {|p| p[:pinned_at] }.reverse

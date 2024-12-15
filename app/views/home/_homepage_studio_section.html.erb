@@ -1,0 +1,11 @@
+<div class="homepage-studio-section">
+  <h3>
+    <a href="<%= studio.path %>"><%= studio.name %></a>
+  </h3>
+  <%= render 'shared/collapseable_section', title: 'Explore', header_level: 4, octicon: 'telescope', hidden: true do %>
+    <% cycle = studio.current_cycle %>
+    <a href="<%= cycle.path %>">Current cycle</a>
+  <% end %>
+  <%= render 'shared/collapseable_section', title: 'Pinned', header_level: 4, octicon: 'pin', hidden: true, lazy_load: "#{studio.path}/pinned.html" %>
+  <%= render 'shared/collapseable_section', title: 'Team', header_level: 4, octicon: 'people', hidden: true, lazy_load: "#{studio.path}/team.html" %>
+</div>

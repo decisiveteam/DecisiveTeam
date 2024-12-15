@@ -60,8 +60,9 @@ class Tenant < ApplicationRecord
       timezone: 'UTC',
       require_login: true,
       require_invite: true,
-      # auth_providers: ['github'],
+      auth_providers: ['github'],
       allow_file_uploads: false,
+      allow_main_studio_items: false,
       api_enabled: false,
       default_studio_settings: {
         tempo: 'daily',
@@ -91,6 +92,10 @@ class Tenant < ApplicationRecord
 
   def timezone
     @timezone ||= self.settings['timezone'] ? ActiveSupport::TimeZone[self.settings['timezone']] : ActiveSupport::TimeZone['UTC']
+  end
+
+  def allow_main_studio_items?
+    settings['allow_main_studio_items'].to_s == 'true'
   end
 
   def allow_file_uploads?

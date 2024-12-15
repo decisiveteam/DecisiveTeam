@@ -1,31 +1,18 @@
+<% selections = @cycle.selections %>
 <% @grouped_rows.each do |group_rows| %>
   <% group, rows = group_rows %>
   <%= render 'shared/collapseable_section', title: group, header_level: 2, hidden: false do %>
     <table>
       <tr>
-        <th>item_type</th>
-        <th>title</th>
-        <th>created_at</th>
-        <th>updated_at</th>
-        <th>deadline</th>
-        <th>link_count</th>
-        <th>backlink_count</th>
-        <th>participant_count</th>
-        <th>voter_count</th>
-        <th>option_count</th>
+        <% selections.each do |selection| %>
+          <th><%= selection.titleize %></th>
+        <% end %>
       </tr>
       <% rows.each do |row| %>
         <tr>
-          <td><%= row.item_type %></td>
-          <td><%= row.title %></td>
-          <td><%= row.created_at %></td>
-          <td><%= row.updated_at %></td>
-          <td><%= row.deadline %></td>
-          <td><%= row.link_count %></td>
-          <td><%= row.backlink_count %></td>
-          <td><%= row.participant_count %></td>
-          <td><%= row.voter_count %></td>
-          <td><%= row.option_count %></td>
+          <% row.each do |cell| %>
+            <td><%= cell %></td>
+          <% end %>
         </tr>
       <% end %>
     </table>

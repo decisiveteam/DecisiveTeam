@@ -1,36 +1,113 @@
+<% if @current_studio != @current_tenant.main_studio %>
+  <h4 style="display:inline-block;margin:0;">
+    <%= link_to @current_studio.name, @current_studio.path || '/' %> / Team / <%= @showing_user.display_name %>
+  </h4>
+<% end %>
 <img src="<%= @showing_user.image_url %>" style="height:64px;float:left;margin-right:12px;" />
 <h1><%= @showing_user.display_name %><%= @showing_user.archived? ? ' (Archived)' : '' %></h1>
-<p><%= @showing_user.handle %></p>
-<% if @showing_user.id == @current_user.id %>
-  <p><a href="<%= @current_user.path %>/settings">Settings</a></p>
-<% end %>
+<p>
+  <a href="<%= @showing_user.path %>">
+    <code><%= @showing_user.handle %></code>
+  </a>
+</p>
 
-<h2>Pinned</h2>
-<%= render 'pinned' %>
-
-<% if @showing_user.id == @current_user.id %>
-  <hr/>
-  <p>Items below are only visible to you.</p>
-  <h2>Notes</h2>
-
-  <h3>Confirmed Read</h3>
-  <%= render 'confirmed_read_notes' %>
-
-  <h2>Decisions</h2>
-  <ul>
-  <% @decision_participants.each do |p| %>
-    <li>
-      <a href="<%= p.decision.path %>"><i class="decision-icon"></i> <%= p.decision.question %></a>
-    </li>
+<% if @showing_user != @current_user && @current_studio.id == @current_tenant.main_studio_id %>
+  <h2>Common Studios</h2>
+  <% if @common_studios.empty? %>
+    <p><em>You and <%= @showing_user.display_name %> do not have any studios in common.</em></p>
+  <% else %>
+    <p>
+      You and <%= @showing_user.display_name %> have <%= @common_studios.count %> studio<%= 's' if @common_studios.count != 1 %> in common.
+    </p>
   <% end %>
+<% elsif @current_studio.id == @current_tenant.main_studio_id %>
+  Others can also see your activity here, but only in the studios that you have in common.
+  <h2>Your Studios</h2>
+<% end %>
+<% if @additional_common_studio_count > 0 && @showing_user != @current_user %>
+  <p>
+    You and <%= @showing_user.display_name %> also have
+    <a href="<%= @showing_user.path %>">
+      <%= @additional_common_studio_count %> other studio<%= 's' if @additional_common_studio_count != 1 %>
+    </a>
+    in common.
+  </p>
+<% end %>
+<% @common_studios.each do |studio| %>
+  <% next if studio == @current_tenant.main_studio %>
+  <% Studio.scope_thread_to_studio(subdomain: @current_tenant.subdomain, handle: studio.handle) %>
+  <% if @current_studio.id == @current_tenant.main_studio_id %>
+    <div class="homepage-studio-section">
+    <h2><a href="<%= studio.path %>"><%= studio.name %></a></h2>
+  <% end %>
+  <% su = @showing_user.studio_users.find_by(studio: studio) %>
+  <h3>
+    <%= octicon 'book' %>
+    Read Notes
+  </h3>
+  <ul>
+    <% lnr = su.latest_note_reads %>
+    <% lnr.each do |note_read| %>
+      <li>
+        <%= render 'shared/inline_resource_item', resource: note_read[:note] %>
+        <span>
+          read
+          <%= timeago(note_read[:read_at]) %>
+        </span>
+      </li>
+    <% end %>
+    <% if lnr.empty? %>
+      <li>
+        <em>No confirmed reads yet.</em>
+      </li>
+    <% end %>
   </ul>
 
-  <h2>Commitments</h2>
+  <h3>
+    <%= octicon 'check-circle' %>
+    Voted On Decisions
+  </h3>
   <ul>
-  <% @commitment_participants.each do |p| %>
-    <li>
-      <a href="<%= p.commitment.path %>"><i class="commitment-icon"></i> <%= p.commitment.title %></a>
-    </li>
-  <% end %>
+    <% lv = su.latest_votes %>
+    <% lv.each do |vote| %>
+      <li>
+        <%= render 'shared/inline_resource_item', resource: vote[:decision] %>
+        <span>
+          voted
+          <%= timeago(vote[:voted_at]) %>
+        </span>
+      </li>
+    <% end %>
+    <% if lv.empty? %>
+      <li>
+        <em>No votes yet.</em>
+      </li>
+    <% end %>
   </ul>
+
+  <h3>
+    <%= octicon 'person' %>
+    Joined Commitments
+  </h3>
+  <ul>
+    <% lcj = su.latest_commitment_joins %>
+    <% lcj.each do |commitment| %>
+      <li>
+        <%= render 'shared/inline_resource_item', resource: commitment[:commitment] %>
+        <span>
+          joined
+          <%= timeago(commitment[:joined_at]) %>
+        </span>
+      </li>
+    <% end %>
+    <% if lcj.empty? %>
+      <li>
+        <em>No commitments yet.</em>
+      </li>
+    <% end %>
+  </ul>
+  <% if @current_studio.id == @current_tenant.main_studio_id %>
+    </div>
+  <% end %>
 <% end %>
+<% Studio.scope_thread_to_studio(subdomain: @current_tenant.subdomain, handle: @current_studio.handle) %>

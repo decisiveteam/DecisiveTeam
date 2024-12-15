@@ -82,7 +82,7 @@ class RepresentationSession < ApplicationRecord
     # }
     valid_keys = [:timestamp, :event_type, :studio_id, :main_resource, :sub_resources].sort
     raise "Invalid semantic event keys #{semantic_event.keys}" unless semantic_event.keys.sort == valid_keys
-    valid_event_types = %w(create update confirm add_option vote commit).sort
+    valid_event_types = %w(create update confirm add_option vote commit pin unpin).sort
     raise "Invalid event type #{semantic_event[:event_type]}" unless valid_event_types.include?(semantic_event[:event_type])
     valid_main_resource_types = %w(Note Decision Commitment Sequence).sort
     raise "Invalid main resource type #{semantic_event[:main_resource][:type]}" unless valid_main_resource_types.include?(semantic_event[:main_resource][:type])

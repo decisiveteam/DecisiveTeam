@@ -1,8 +1,8 @@
 <ul>
 <% @confirmed_read_note_events.each do |event| %>
   <li>
-    <a href="<%= event.note.path %>"><i class="note-icon"></i> <%= event.note.title %></a>
-    read <%= time_ago_in_words(event.happened_at) %> ago
+    <%= render 'shared/inline_resource_item', resource: event.note %>
+    read <%= timeago(event.happened_at) %> ago
   </li>
 <% end %>
 </ul>

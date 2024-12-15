@@ -8,10 +8,20 @@ class UsersController < ApplicationController
     return render '404' if tu.nil?
     @showing_user = tu.user
     @showing_user.tenant_user = tu
-    @pinned_items = @showing_user.pinned_items
-    @confirmed_read_note_events = @showing_user.confirmed_read_note_events
-    @decision_participants = @showing_user.decision_participants.includes(:decision).order(created_at: :desc)
-    @commitment_participants = @showing_user.commitment_participants.includes(:commitment).order(created_at: :desc)
+    if params[:studio_handle]
+      # Showing user in a specific studio
+      su = @showing_user.studio_users.where(studio: current_studio).first
+      return render '404' if su.nil?
+      @showing_user.studio_user = su
+      @common_studios = [current_studio]
+      @additional_common_studio_count = (
+        current_user.studios & @showing_user.studios - [current_tenant.main_studio]
+      ).count - 1
+    else
+      # Showing user at the tenant level, so we want to show all common studios between the current user and the showing user
+      @common_studios = current_user.studios & @showing_user.studios - [current_tenant.main_studio]
+      @additional_common_studio_count = 0
+    end
   end
 
   def settings

@@ -126,12 +126,12 @@ class StudiosController < ApplicationController
 
   def pinned_items_partial
     @pinned_items = @current_studio.pinned_items
-    render partial: 'pinned'
+    render partial: 'shared/pinned', locals: { pinned_items: @pinned_items }
   end
 
   def team_partial
     @team = @current_studio.team
-    render partial: 'team'
+    render partial: 'shared/team', locals: { team: @team }
   end
 
 end

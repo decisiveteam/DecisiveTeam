@@ -150,7 +150,7 @@ class ApplicationController < ActionController::Base
       end
     else
       # TODO Add last_seen_at to StudioUser instead of touch
-      su.touch if controller_name != 'sessions'
+      su.touch if controller_name != 'sessions' && controller_name != 'studios'
       @current_user.studio_user = su
     end
   end

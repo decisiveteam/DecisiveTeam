@@ -43,12 +43,68 @@ class StudioUser < ApplicationRecord
     ).includes(:note).order(happened_at: :desc).limit(limit)
   end
 
+  def latest_note_reads(limit: 10)
+    NoteHistoryEvent.where(
+      tenant_id: tenant_id,
+      studio_id: studio_id,
+      user_id: user_id,
+      event_type: 'read_confirmation',
+    ).includes(:note)
+    .distinct(:note_id)
+    .order(happened_at: :desc)
+    .limit(limit)
+    .map do |nhe|
+      {
+        note: nhe.note,
+        read_at: nhe.happened_at,
+      }
+    end
+  end
+
+  def latest_votes(limit: 10)
+    DecisionParticipant.where(
+      tenant_id: tenant_id,
+      studio_id: studio_id,
+      user_id: user_id,
+    ).includes(:approvals)
+    .where.not(approvals: {id: nil})
+    .includes(:decision)
+    .order(created_at: :desc)
+    .limit(limit)
+    .map do |dp|
+      {
+        decision: dp.decision,
+        voted_at: dp.approvals.max_by(&:updated_at).updated_at,
+      }
+    end
+  end
+
+  def latest_commitment_joins(limit: 10)
+    CommitmentParticipant.where(
+      tenant_id: tenant_id,
+      studio_id: studio_id,
+      user_id: user_id,
+    ).includes(:commitment)
+    .order(created_at: :desc)
+    .limit(limit)
+    .map do |cp|
+      {
+        commitment: cp.commitment,
+        joined_at: cp.created_at,
+      }
+    end
+  end
+
   def can_invite?
     has_role?('admin') || studio.allow_invites?
   end
 
   def can_represent?
     has_role?('representative') || studio.any_member_can_represent?
+  end
+
+  def path
+    "#{studio.path}/u/#{user.handle}"
   end
 
 end

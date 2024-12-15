@@ -23,7 +23,7 @@
 <%= render 'explore' %>
 
 <h2><%= octicon 'pin', height: 24 %> Pinned</h2>
-<%= render 'pinned' %>
+<%= render 'shared/pinned', pinned_items: @pinned_items %>
 
 <% if @current_studio.sequences_enabled? %>
   <h2><%= octicon 'iterations', height: 24 %> Sequences</h2>
@@ -34,4 +34,4 @@
   <%= octicon 'people', height: 24 %>
   Team
 </h2>
-<%= render 'team' %>
+<%= render 'shared/team', team: @team %>

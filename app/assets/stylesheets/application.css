@@ -39,7 +39,7 @@ body {
   margin-bottom: 16px;
 }
 
-.homepage .homepage-studio-section h3 {
+.homepage .homepage-studio-section h2, .homepage .homepage-studio-section h3 {
   margin-top: 0;
 }
 

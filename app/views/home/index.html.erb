@@ -1,11 +1,13 @@
 <h1><%= octicon "home", height: 32, style: 'padding-bottom:3px;' %> <%= @current_tenant.domain %></h1>
 
 <% if @current_user %>
-  <a href="/studios/new"><button style="float:right;margin-top:8px;">New Studio</button></a>
+  <% unless @current_representation_session %>
+    <a href="/studios/new"><button style="float:right;margin-top:8px;">New Studio</button></a>
+  <% end %>
   <h2>Your Studios</h2>
   <% if @studios.any? %>
-    <% @studios.each do |studio| %>
-      <%= render 'homepage_studio_section', studio: studio %>
+    <% @studios.each.with_index do |studio, index| %>
+      <%= render 'homepage_studio_section', studio: studio, expanded: index == 0 %>
     <% end %>
   <% else %>
     <p>No studios yet.</p>

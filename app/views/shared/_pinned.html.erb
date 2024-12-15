@@ -1,6 +1,6 @@
-<% if @pinned_items.length > 0 %>
+<% if pinned_items.length > 0 %>
   <ul>
-    <% @pinned_items.each do |item| %>
+    <% pinned_items.each do |item| %>
       <li>
         <%= render 'shared/inline_resource_item', resource: item[:item] %>
         pinned <%= timeago(item[:pinned_at]) %>

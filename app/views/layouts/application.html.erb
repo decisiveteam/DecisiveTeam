@@ -28,7 +28,11 @@
   <body <%= @current_studio.id == @current_tenant.main_studio_id ? 'class="homepage"'.html_safe : '' %>>
     <% if controller_name != 'sessions' %>
       <nav style="display:block;min-height:16px;">
-        <%= render 'layouts/top_left_menu' %>
+        <% if false # %>
+          <%= render 'layouts/top_left_menu' %>
+        <% else %>
+          <%= render 'layouts/top_left_home_button' %>
+        <% end %>
         <% unless @current_representation_session %>
           <%= render 'layouts/top_right_menu' %>
         <% end %>

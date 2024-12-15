@@ -8,6 +8,9 @@ export default class extends Controller {
     this.headerTarget.addEventListener("click", this.toggle.bind(this));
     this.headerTarget.style.cursor = "pointer";
     this.lazyLoadCompleted = !this.lazyLoadTarget.dataset.url;
+    if (!this.hidden) {
+      this.show()
+    }
   }
 
   get csrfToken() {
@@ -54,7 +57,7 @@ export default class extends Controller {
 
   showLoading() {
     // TODO: show a spinner
-    this.lazyLoadTarget.innerHTML = "..."
+    this.lazyLoadTarget.innerHTML = "<ul><li>...</li></ul>"
   }
 
 }

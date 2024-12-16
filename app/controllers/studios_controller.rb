@@ -144,4 +144,18 @@ class StudiosController < ApplicationController
     .map { |k, v| [k, v.count] }
   end
 
+  def update_image
+    if @current_user.studio_user.is_admin?
+      if params[:image].present?
+        @current_studio.image = params[:image]
+      elsif params[:cropped_image_data].present?
+        @current_studio.cropped_image_data = params[:cropped_image_data]
+      else
+        return render status: 400, plain: '400 Bad Request'
+      end
+      @current_studio.save!
+    end
+    redirect_to request.referrer
+  end
+
 end

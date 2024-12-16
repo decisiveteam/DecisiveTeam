@@ -5,7 +5,7 @@ class RepresentationSession < ApplicationRecord
   belongs_to :studio
   belongs_to :representative_user, class_name: 'User'
   belongs_to :trustee_user, class_name: 'User'
-  has_many :representation_session_associations
+  has_many :representation_session_associations, dependent: :destroy
 
   validates :began_at, presence: true
   validates :confirmed_understanding, inclusion: { in: [true] }

@@ -104,7 +104,12 @@ class StudioUser < ApplicationRecord
   end
 
   def path
-    "#{studio.path}/u/#{user.handle}"
+    if user.trustee?
+      s = Studio.where(trustee_user: user).first
+      s&.path
+    else
+      "#{studio.path}/u/#{user.handle}"
+    end
   end
 
 end

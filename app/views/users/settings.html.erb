@@ -1,4 +1,8 @@
 <h1>Your Settings</h1>
+
+<h2>Profile Image</h2>
+<%= render 'shared/profile_image_upload', resource: @current_user, size: 64 %>
+
 <h2>Connected Accounts</h2>
 <ul>
 <% @current_user.oauth_identities.each do |identity| %>

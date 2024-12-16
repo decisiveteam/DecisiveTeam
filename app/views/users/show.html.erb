@@ -3,7 +3,7 @@
     <%= link_to @current_studio.name, @current_studio.path || '/' %> / Team / <%= @showing_user.display_name %>
   </h4>
 <% end %>
-<img src="<%= @showing_user.image_url %>" style="height:64px;float:left;margin-right:12px;" />
+<img src="<%= @showing_user.image_url %>" style="height:64px;float:left;margin-right:12px;border-radius:50%;" />
 <h1><%= @showing_user.display_name %><%= @showing_user.archived? ? ' (Archived)' : '' %></h1>
 <p>
   <a href="<%= @showing_user.path %>">

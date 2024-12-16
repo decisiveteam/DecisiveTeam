@@ -3,6 +3,10 @@
   / Settings
 </h4>
 <h1 style="margin-top:0;">Settings</h1>
+
+<h2>Studio Image</h2>
+<%= render 'shared/profile_image_upload', resource: @current_studio, size: 83 %>
+
 <%= form_with(url: "#{@current_studio.path}/settings") do |form| %>
   <h2>Studio Name</h2>
   <p>

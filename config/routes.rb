@@ -79,6 +79,7 @@ Rails.application.routes.draw do
     put 'scratchpad' => 'users#scratchpad', on: :member
     post 'scratchpad/append' => 'users#append_to_scratchpad', on: :member
     get 'settings', on: :member
+    patch 'image' => 'users#update_image', on: :member
     resources :api_tokens,
               path: 'settings/tokens',
               only: [:new, :create, :show, :destroy]
@@ -99,6 +100,7 @@ Rails.application.routes.draw do
   get "s/:studio_handle/team" => 'studios#team'
   get "s/:studio_handle/settings" => 'studios#settings'
   post "s/:studio_handle/settings" => 'studios#update_settings'
+  patch "s/:studio_handle/image" => 'studios#update_image'
   get "s/:studio_handle/invite" => 'studios#invite'
   get "s/:studio_handle/join" => 'studios#join'
   post "s/:studio_handle/join" => 'studios#accept_invite'

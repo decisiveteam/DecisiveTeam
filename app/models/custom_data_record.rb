@@ -7,9 +7,9 @@ class CustomDataRecord < ApplicationRecord
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by_id'
   belongs_to :table, class_name: 'CustomDataTable', foreign_key: 'table_id'
-  has_many :custom_data_associations, foreign_key: 'child_record_id'
+  has_many :custom_data_associations, foreign_key: 'child_record_id', dependent: :destroy
   has_many :parent_records, through: :custom_data_associations, source: :parent_record, class_name: 'CustomDataRecord'
-  has_many :history_events, class_name: 'CustomDataHistoryEvent'
+  has_many :history_events, class_name: 'CustomDataHistoryEvent', dependent: :destroy
 
   def self.create_with_history_event!(attributes:, request_context:, user:)
     ActiveRecord::Base.transaction do

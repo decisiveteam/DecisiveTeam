@@ -13,8 +13,15 @@
 <% options << 'manage_team' if @current_user.studio_user.is_admin? %>
 <%= render 'shared/more_button', resource: @current_studio, options: options %>
 
-<h4 style="margin-top:0px;margin-bottom:0;">Studio</h4>
-<h1 style="margin-top:0;"><%= @current_studio.name %></h1>
+<div>
+  <img src="<%= @current_studio.image_path %>" id="studio-image" style="margin-top:3px; height:83px; min-width:50px; border-radius:10%;float:left;"/>
+  <div style="padding-top:30px;">
+    <h4 style="padding-left:92px;margin-top:0px;margin-bottom:0;">Studio</h4>
+    <h1 style="padding-left:92px;margin-top:0;">
+      <%= @current_studio.name %>
+    </h1>
+  </div>
+</div>
 
 <h2>
   <%= octicon 'telescope', height: 24 %>

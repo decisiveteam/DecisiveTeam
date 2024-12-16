@@ -76,4 +76,19 @@ class UsersController < ApplicationController
     redirect_to request.referrer
   end
 
+  def update_image
+    tu = current_tenant.tenant_users.find_by(handle: params[:handle])
+    return render '404' if tu.nil?
+    return render plain: '403 Unauthorized' unless tu.user == current_user
+    if params[:image].present?
+      current_user.image = params[:image]
+    elsif params[:cropped_image_data].present?
+      current_user.cropped_image_data = params[:cropped_image_data]
+    else
+      return render status: 400, plain: '400 Bad Request'
+    end
+    current_user.save!
+    redirect_to request.referrer
+  end
+
 end

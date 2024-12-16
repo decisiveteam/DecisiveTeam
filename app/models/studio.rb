@@ -1,5 +1,6 @@
 class Studio < ApplicationRecord
   include CanPin
+  include HasImage
   self.implicit_order_column = "created_at"
   belongs_to :tenant
   belongs_to :created_by, class_name: 'User'

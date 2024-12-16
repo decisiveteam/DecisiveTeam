@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include HasImage
   self.implicit_order_column = "created_at"
   has_many :oauth_identities
   has_many :decision_participants
@@ -29,6 +30,14 @@ class User < ApplicationRecord
       updated_at: updated_at,
       archived_at: archived_at,
     }
+  end
+
+  def image_url
+    if trustee?
+      Studio.where(trustee_user: self).first.image_path
+    else
+      image_path_no_placeholder || super || image_path
+    end
   end
 
   def simulated_user_must_have_parent

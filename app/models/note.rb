@@ -123,6 +123,6 @@ class Note < ApplicationRecord
   end
 
   def creator_can_skip_confirm?(user)
-    user == created_by && created_at == updated_at
+    user == created_by && created_at == updated_at || user == updated_by
   end
 end

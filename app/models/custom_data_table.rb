@@ -5,7 +5,7 @@ class CustomDataTable < ApplicationRecord
   belongs_to :studio
   before_validation :set_studio_id
   before_validation :set_defaults
-  has_many :records, class_name: 'CustomDataRecord', foreign_key: 'table_id'
+  has_many :records, class_name: 'CustomDataRecord', foreign_key: 'table_id', dependent: :destroy
 
   validate :name_is_valid
 

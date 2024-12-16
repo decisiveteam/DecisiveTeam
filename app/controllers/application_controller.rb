@@ -354,6 +354,13 @@ class ApplicationController < ActionController::Base
     @current_cycle = Cycle.new_from_tempo(tenant: current_tenant, studio: current_studio)
   end
 
+  def metric
+    render json: {
+      metric_title: current_resource.metric_title,
+      metric_value: current_resource.metric_value,
+    }
+  end
+
   def duration_param
     duration = model_params[:duration].to_i
     duration_unit = model_params[:duration_unit] || 'hour(s)'

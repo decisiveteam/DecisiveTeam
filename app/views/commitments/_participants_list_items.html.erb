@@ -1,3 +1,5 @@
+<h2>Participants <%= octicon 'person', height: 24 %> <%= @commitment.participant_count %></h2>
+<ul>
 <% @commitment.committed_participants.order(committed_at: :desc).limit(@participants_list_limit).each do |participant| %>
   <li><strong><%= participant.name || 'Anonymous' %></strong> committed <%= timeago(participant.committed_at) %></li>
 <% end %>
@@ -12,3 +14,4 @@
 <% elsif @commitment.participant_count == 0 %>
   <li>No participants yet.</li>
 <% end %>
+</ul>

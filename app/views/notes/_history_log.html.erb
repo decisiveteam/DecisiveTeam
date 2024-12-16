@@ -1,3 +1,5 @@
+<h2>Readers <%= octicon 'book', height: 24 %> <%= @note.confirmed_reads %></h2>
+<ul>
 <% @note.history_events.includes(:user).order(happened_at: :desc).each do |event| %>
   <li>
     <% if event.creator.is_a?(User) %>
@@ -8,3 +10,4 @@
     <%= event.description %> <strong><%= timeago(event.happened_at) %></strong>
   </li>
 <% end %>
+</ul>

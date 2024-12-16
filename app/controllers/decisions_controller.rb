@@ -118,6 +118,11 @@ class DecisionsController < ApplicationController
     render partial: 'results'
   end
 
+  def voters_partial
+    @decision = current_decision
+    render partial: 'voters'
+  end
+
   private
 
   def decision_params

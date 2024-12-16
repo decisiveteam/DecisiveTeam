@@ -1,0 +1,11 @@
+<span
+  data-controller="metric"
+  data-metric-url-value="<%= resource.path %>/metric"
+  title="<%= resource.metric_title %>"
+  style="white-space:nowrap;"
+  >
+  <%= octicon resource.octicon_metric_icon_name %>
+  <span data-metric-target="valueDisplay">
+    <%= resource.metric_value %>
+  </span>
+</span>

@@ -36,6 +36,8 @@ export default class extends Controller {
       this.confirmButtonTarget.remove();
       this.confirmSectionTarget.innerHTML = html;
       this.refreshHistoryLog(event);
+      const mc = new Event('metricChange');
+      document.dispatchEvent(mc);
     } catch (error) {
       console.error("Error confirming read:", error);
       this.confirmSectionTarget.innerHTML = "Something went wrong. Please refresh the page and try again.";

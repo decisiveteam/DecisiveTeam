@@ -75,4 +75,8 @@ class ApplicationRecord < ActiveRecord::Base
     "https://#{fulldomain}#{path}"
   end
 
+  def metric_title
+    "#{metric_value} #{metric_name}"
+  end
+
 end

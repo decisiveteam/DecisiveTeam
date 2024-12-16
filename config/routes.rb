@@ -116,6 +116,7 @@ Rails.application.routes.draw do
     get "#{prefix}/note" => 'notes#new'
     post "#{prefix}/note" => 'notes#create'
     resources :notes, only: [:show], path: "#{prefix}/n" do
+      get '/metric' => 'notes#metric'
       get '/edit' => 'notes#edit'
       post '/edit' => 'notes#update'
       get '/history.html' => 'notes#history_log_partial'
@@ -127,9 +128,11 @@ Rails.application.routes.draw do
     get "#{prefix}/decide" => 'decisions#new'
     post "#{prefix}/decide" => 'decisions#create'
     resources :decisions, only: [:show], path: "#{prefix}/d" do
+      get '/metric' => 'decisions#metric'
       get '/results.html' => 'decisions#results_partial'
       get '/options.html' => 'decisions#options_partial'
       post '/options.html' => 'decisions#create_option_and_return_options_partial'
+      get '/voters.html' => 'decisions#voters_partial'
       put '/pin' => 'decisions#pin'
       get '/attachments/:attachment_id' => 'attachments#show'
     end
@@ -137,6 +140,7 @@ Rails.application.routes.draw do
     get "#{prefix}/commit" => 'commitments#new'
     post "#{prefix}/commit" => 'commitments#create'
     resources :commitments, only: [:show], path: "#{prefix}/c" do
+      get '/metric' => 'commitments#metric'
       get '/status.html' => 'commitments#status_partial'
       get '/participants.html' => 'commitments#participants_list_items_partial'
       post '/join.html' => 'commitments#join_and_return_partial'

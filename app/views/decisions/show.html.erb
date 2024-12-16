@@ -5,9 +5,7 @@
   <span style="white-space:nowrap;">
     <i class="decision-icon"></i> Decision <code><%= @decision.truncated_id %></code>
   </span>
-  <span style="white-space:nowrap;" title="<%= @decision.voter_count %> voter<%= 's' if @decision.voter_count != 1 %>">
-    <%= octicon 'check-circle' %> <%= @decision.voter_count %>
-  </span>
+  <%= render 'shared/main_metric_display', resource: @decision %>
 </h4>
 <h1 style="margin-top:0;"><%= @decision.question %></h1>
 <p style="font-size:0.8em;">
@@ -39,17 +37,9 @@
 <%= backlinks(@decision) %>
 </span>
 
-<h2>Voters <%= octicon 'check-circle', height: 24 %> <%= @decision.voter_count %></h2>
-
-<% if @decision.voters.empty? %>
-  <em>No voters yet.</em>
-<% end %>
-
-<ul>
-  <% @decision.voters.each do |voter| %>
-    <li>
-      <%= profile_pic(voter) %>
-      <%= voter.display_name %>
-    </li>
-  <% end %>
-</ul>
+<span
+  data-controller="decision-voters"
+  data-decision-voters-url-value="<%= @decision.path %>/voters.html"
+  >
+  <%= render 'voters' %>
+</span>

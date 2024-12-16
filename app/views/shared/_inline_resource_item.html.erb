@@ -10,8 +10,9 @@
   <span>
     <i class="<%= resource.class.to_s.downcase %>-icon"></i>
     <a href="<%= resource.path %>"><%= resource.title %></a>
-    <span title="<%= resource.metric_value %> <%= resource.metric_name %>" style="white-space:nowrap;opacity:0.6;">
-      <%= octicon resource.octicon_metric_icon_name %> <%= resource.metric_value %>
+    <span title="<%= resource.metric_title %>" style="white-space:nowrap;opacity:0.6;">
+      <%= octicon resource.octicon_metric_icon_name %>
+      <%= resource.metric_value %>
     </span>
   </span>
 <% else %>

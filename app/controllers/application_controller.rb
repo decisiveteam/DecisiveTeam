@@ -121,12 +121,32 @@ class ApplicationController < ActionController::Base
     @current_user
   end
 
+  def current_studio_invite
+    return @current_studio_invite if defined?(@current_studio_invite)
+    if params[:code] || cookies[:studio_invite_code]
+      @current_studio_invite = StudioInvite.find_by(
+        studio: current_studio,
+        code: params[:code] || cookies[:studio_invite_code]
+      )
+    else
+      @current_studio_invite = nil
+    end
+    @current_studio_invite
+  end
+
   def validate_authenticated_access
-    tu = current_tenant.tenant_users.find_by(user: @current_user)
+    tu = @current_tenant.tenant_users.find_by(user: @current_user)
     if tu.nil?
-      # Sessions controller should have already handled this case.
-      if @current_tenant.require_login? && controller_name != 'sessions'
+      accepting_invite = current_studio_invite && current_studio_invite.studio == @current_studio
+      if @current_tenant.require_login? && controller_name != 'sessions' && !accepting_invite
         render status: 403, layout: 'application', template: 'sessions/403_to_logout'
+      elsif accepting_invite && current_studio_invite.is_acceptable_by_user?(@current_user)
+        # The user still has to click "accept" to accept the invite to the studio,
+        # but they need to access the tenant to do so.
+        # Not sure how to handle the case where the user does not accept the invite.
+        # Should we remove the tenant_user record somehow?
+        # Should we require that all tenant users be a member of at least one (non-main) studio?
+        @current_tenant.add_user!(@current_user)
       end
     else
       # This assignment prevents unnecessary reloading.

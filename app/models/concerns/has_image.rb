@@ -22,7 +22,11 @@ module HasImage
   end
 
   def image_url=(url)
-    self.image.attach(io: open(url), filename: File.basename(URI.parse(url).path))
+    downloaded_image = URI.open(url)
+    if downloaded_image.content_type.start_with?('image/')
+      filename = File.basename(URI.parse(url).path)
+      self.image.attach(io: downloaded_image, filename: filename)
+    end
   end
 
   def cropped_image_data=(cropped_image_data)

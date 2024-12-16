@@ -134,7 +134,8 @@ class SessionsController < ApplicationController
     end
     @current_user = User.find(user_id)
     tenant_user = tenant.tenant_users.find_by(user: @current_user)
-    if tenant_user
+    is_accepting_invite = cookies[:studio_invite_code].present?
+    if tenant_user || is_accepting_invite
       session[:user_id] = @current_user.id
       redirect_to_resource_or_invite_or_root
     else
@@ -165,9 +166,19 @@ class SessionsController < ApplicationController
   end
 
   def redirect_to_invite_if_allowed
-    invite = StudioInvite.find_by(code: cookies[:studio_invite_code])
+    raise 'Unexpected subdomain.' if request.subdomain == auth_subdomain
+    # Query needs to be unscoped because current_studio
+    # will be different than the invite studio.
+    invite = StudioInvite.unscoped.find_by(
+      tenant_id: current_tenant.id,
+      code: cookies[:studio_invite_code]
+    )
     delete_studio_invite_cookie
-    if invite && invite.studio.tenant_id == current_tenant.id
+    if invite && invite.is_acceptable_by_user?(@current_user)
+      tu = current_tenant.tenant_users.find_by(user: @current_user)
+      unless tu
+        current_tenant.add_user!(@current_user)
+      end
       redirect_to "#{invite.studio.path}/join?code=#{invite.code}"
     else
       redirect_to root_path

@@ -24,4 +24,16 @@ class StudioInvite < ApplicationRecord
     end
   end
 
+  def expired?
+    return false if expires_at.nil?
+    expires_at < Time.now
+  end
+
+  def is_acceptable_by_user?(user)
+    return false if invited_user && invited_user != user
+    return false if user.studios.include?(studio)
+    return false if expired?
+    return true
+  end
+
 end

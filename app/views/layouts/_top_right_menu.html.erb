@@ -18,6 +18,13 @@
           <%= octicon 'gear' %>
           <a href="<%= @current_user.path %>/settings">Settings</a>
         </li>
+        <% if @current_tenant.is_admin?(@current_user) %>
+          <li>
+            <a href="/admin">
+              <%= octicon 'tools' %> Admin
+            </a>
+          </li>
+        <% end %>
         <li>
           <hr style="height:0;margin:0;border:none;border-top:1px solid var(--color-border-default);" />
         </li>

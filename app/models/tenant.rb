@@ -80,6 +80,19 @@ class Tenant < ApplicationRecord
     self.settings['default_studio_settings'] || {}
   end
 
+  def auth_providers
+    settings['auth_providers'] || ['github']
+  end
+
+  def auth_providers=(providers)
+    self.settings['auth_providers'] = providers
+  end
+
+  def add_auth_provider!(provider)
+    self.settings['auth_providers'] = (self.settings['auth_providers'] || []) + [provider]
+    save!
+  end
+
   def timezone=(value)
     if value.present?
       @timezone = ActiveSupport::TimeZone[value]

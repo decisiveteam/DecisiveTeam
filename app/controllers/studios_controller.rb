@@ -134,4 +134,14 @@ class StudiosController < ApplicationController
     render partial: 'shared/team', locals: { team: @team }
   end
 
+  def backlinks
+    # TODO - make this more efficient
+    @backlinks = Link.where(
+      tenant_id: @current_tenant.id,
+      studio_id: @current_studio.id,
+    ).includes(:to_linkable).group_by(&:to_linkable)
+    .sort_by { |k, v| -v.count }
+    .map { |k, v| [k, v.count] }
+  end
+
 end

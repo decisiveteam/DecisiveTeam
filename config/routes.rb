@@ -110,6 +110,7 @@ Rails.application.routes.draw do
   get 's/:studio_handle/representation' => 'representation_sessions#index'
   get 's/:studio_handle/r/:id' => 'representation_sessions#show'
   get 's/:studio_handle/u/:handle' => 'users#show'
+  get 's/:studio_handle/backlinks' => 'studios#backlinks'
 
   ['', 's/:studio_handle'].each do |prefix|
     get "#{prefix}/note" => 'notes#new'

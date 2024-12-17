@@ -22,6 +22,10 @@ module HasImage
   end
 
   def image_url=(url)
+    unless url.present? && url.start_with?('http')
+      self.image.purge
+      return
+    end
     downloaded_image = URI.open(url)
     if downloaded_image.content_type.start_with?('image/')
       filename = File.basename(URI.parse(url).path)

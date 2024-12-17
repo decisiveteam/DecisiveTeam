@@ -1,19 +1,17 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["button","menu","plus","plusMenu"]
+  static targets = ["button","menu","quickAppendInput"]
 
   connect() {
     this.menuTarget.style.display = 'none'
     document.addEventListener('click', (event) => {
-      const isClickInside = this.menuTarget.contains(event.target) || this.buttonTarget.contains(event.target) //||
-                            // this.plusMenuTarget.contains(event.target) || this.plusTarget.contains(event.target)
-      const isClickOn = event.target === this.buttonTarget || event.target === this.menuTarget //||
-                        // event.target === this.plusTarget || event.target === this.plusMenuTarget
-      const isMenuVisible = this.menuTarget.style.display === 'block' //|| this.plusMenuTarget.style.display === 'block'
+      const isClickInside = this.menuTarget.contains(event.target) || this.buttonTarget.contains(event.target)
+      const isClickOn = event.target === this.buttonTarget || event.target === this.menuTarget
+      const isMenuVisible = this.menuTarget.style.display === 'block'
       if (!isClickInside && !isClickOn && isMenuVisible) {
         this.menuTarget.style.display = 'none'
-        // this.plusMenuTarget.style.display = 'none'
+        this.quickAppendInputTarget.value = ''
       }
     })
   }
@@ -24,31 +22,41 @@ export default class extends Controller {
     this.menuTarget.style.top = `${rect.bottom}px`
     this.menuTarget.style.right = `${window.innerWidth - rect.right}px`
     this.menuTarget.style.display = this.menuTarget.style.display === 'none' ? 'block' : 'none'
-    // this.plusMenuTarget.style.display = 'none'
+    this.quickAppendInputTarget.focus()
   }
 
   get csrfToken() {
     return document.querySelector("meta[name='csrf-token']").content;
   }
 
-  togglePin() {
-    const url = this.pinButtonTarget.dataset.pinUrl
-    fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": this.csrfToken,
-      },
-      body: JSON.stringify({
-        pinned: !this.isPinned,
-      }),
-    }).then(response => {
-      if (response.ok) return response.json()
-      throw new Error("Network response was not ok.")
-    }).then(responseBody => {
-      this.isPinned = responseBody.pinned
-      this.pinButtonTarget.style.opacity = this.isPinned ? '1' : '0.2'
-      this.pinButtonTarget.title = responseBody.click_title
-    })
+  handleQuickAppendKeydown(event) {
+    if (event.key === 'Enter' && this.quickAppendInputTarget.value.trim().length > 0) {
+      const url = this.quickAppendInputTarget.dataset.url
+      const value = this.quickAppendInputTarget.value
+      this.quickAppendInputTarget.value = ''
+      this.quickAppendInputTarget.placeholder = 'appending...'
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": this.csrfToken,
+        },
+        body: JSON.stringify({ text: value }),
+      }).then(response => {
+        if (response.ok) {
+          this.quickAppendInputTarget.placeholder = 'appended!'
+          setTimeout(() => {
+            this.quickAppendInputTarget.placeholder = 'quick append'
+          }, 2000)
+        } else {
+          console.error("Error creating option:", response);
+        }
+      }).catch(error => {
+        console.error("Error creating option:", error);
+      })
+    } else if (event.key === 'Escape') {
+      this.menuTarget.style.display = 'none'
+      this.quickAppendInputTarget.value = ''
+    }
   }
 }

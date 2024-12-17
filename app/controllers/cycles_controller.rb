@@ -1,14 +1,13 @@
 class CyclesController < ApplicationController
 
   def index
-    # TODO - Make these queries more efficient
-    @current_cycles = ['today', 'this-week', 'this-month', 'this-year'].map do |name|
+    @daily_cycles = ['yesterday', 'today', 'tomorrow'].map do |name|
       Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
     end
-    @recent_cycles = ['yesterday', 'last-week', 'last-month', 'last-year'].map do |name|
+    @weekly_cycles = ['last-week', 'this-week', 'next-week'].map do |name|
       Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
     end
-    @future_cycles = ['tomorrow', 'next-week', 'next-month', 'next-year'].map do |name|
+    @monthly_cycles = ['last-month', 'this-month', 'next-month'].map do |name|
       Cycle.new(name: name, tenant: @current_tenant, studio: @current_studio)
     end
   end

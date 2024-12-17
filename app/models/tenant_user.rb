@@ -75,6 +75,7 @@ class TenantUser < ApplicationRecord
         url: resource.shareable_link,
         title: resource.title,
         type: resource.class.name,
+        resource: resource,
       }
     end
     links

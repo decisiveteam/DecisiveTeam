@@ -2,12 +2,14 @@
   <%= link_to @current_studio.name, @current_studio.path || '/' %> / Cycles
 </h4>
 <h1 style="margin-top:0;">Cycles</h1>
+<p>Items are counted in a cycle if their time window (creation date to deadline) has any overlap with the cycle. Items can span multiple cycles.</p>
+<p>Click on the cycle names to view the counted items.</p>
 
-<h2>Current</h2>
-<%= render 'shared/cycle_count_table', cycles: @current_cycles %>
+<h2>Daily</h2>
+<%= render 'shared/cycle_count_table', cycles: @daily_cycles %>
 
-<h2>Recent</h2>
-<%= render 'shared/cycle_count_table', cycles: @recent_cycles %>
+<h2>Weekly</h2>
+<%= render 'shared/cycle_count_table', cycles: @weekly_cycles %>
 
-<h2>Future</h2>
-<%= render 'shared/cycle_count_table', cycles: @future_cycles %>
+<h2>Monthly</h2>
+<%= render 'shared/cycle_count_table', cycles: @monthly_cycles %>

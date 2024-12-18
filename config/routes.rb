@@ -60,6 +60,9 @@ Rails.application.routes.draw do
   get 'learn/acceptance-voting' => 'learn#acceptance_voting'
   get 'learn/reciprocal-commitment' => 'learn#reciprocal_commitment'
 
+  # get 'games' => 'games#index'
+  # get 'games/chess' => 'games#chess'
+
   get 'admin' => 'admin#admin'
   get 'admin/settings' => 'admin#tenant_settings'
   post 'admin/settings' => 'admin#update_tenant_settings'
@@ -98,6 +101,7 @@ Rails.application.routes.draw do
   get "s/:studio_handle/cycles/:cycle" => 'cycles#show'
   get "s/:studio_handle/cycle/:cycle" => 'cycles#redirect_to_show'
   get "s/:studio_handle/views" => 'studios#views'
+  get "s/:studio_handle/view" => 'studios#view'
   get "s/:studio_handle/team" => 'studios#team'
   get "s/:studio_handle/settings" => 'studios#settings'
   post "s/:studio_handle/settings" => 'studios#update_settings'
@@ -138,6 +142,9 @@ Rails.application.routes.draw do
       get '/voters.html' => 'decisions#voters_partial'
       put '/pin' => 'decisions#pin'
       get '/attachments/:attachment_id' => 'attachments#show'
+      post '/duplicate' => 'decisions#duplicate'
+      get '/settings' => 'decisions#settings'
+      post '/settings' => 'decisions#update_settings'
     end
 
     get "#{prefix}/commit" => 'commitments#new'

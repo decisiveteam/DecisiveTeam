@@ -169,4 +169,26 @@ class StudiosController < ApplicationController
     @page_title = 'Views'
   end
 
+  def view
+    @cycle = Cycle.new(
+      name: params[:cycle] || 'today',
+      tenant: @current_tenant,
+      studio: @current_studio,
+      current_user: @current_user,
+      params: {
+        filters: params[:filters] || params[:filter],
+        sort_by: params[:sort_by],
+        group_by: params[:group_by],
+      }
+    )
+    @current_resource = @cycle
+    @grouped_rows = @cycle.data_rows
+    @filters = params[:filters] || params[:filter]
+    @sort_by = params[:sort_by]
+    @group_by = params[:group_by]
+    @sort_by_options = @cycle.sort_by_options
+    @group_by_options = @cycle.group_by_options
+    @filter_options = @cycle.filter_options
+  end
+
 end

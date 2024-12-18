@@ -24,17 +24,11 @@
   </script>
 </p>
 
-<%= render 'filters_section' %>
-
-<% if @current_studio.feature_enabled?('cycle_views_preview') %>
-  <%= render 'show_data' %>
-<% end %>
-
 <%= render 'shared/collapseable_section', title: 'Notes', header_level: 2, hidden: false do %>
   <ul>
   <% @notes.each do |note| %>
     <li>
-      <a href="<%= note.path %>"><i class="note-icon"></i> <%= note.title %></a>
+      <%= render 'shared/inline_resource_item', resource: note %>
     </li>
   <% end %>
   </ul>
@@ -44,7 +38,7 @@
   <ul>
   <% @decisions.each do |decision| %>
     <li>
-      <a href="<%= decision.path %>"><i class="decision-icon"></i> <%= decision.question %></a>
+      <%= render 'shared/inline_resource_item', resource: decision %>
     </li>
   <% end %>
   </ul>
@@ -54,18 +48,8 @@
   <ul>
   <% @commitments.each do |commitment| %>
     <li>
-      <a href="<%= commitment.path %>"><i class="commitment-icon"></i> <%= commitment.title %></a>
+      <%= render 'shared/inline_resource_item', resource: commitment %>
     </li>
   <% end %>
   </ul>
 <% end %>
-
-<h2>Backlinks</h2>
-<p>Items that are linked to by the items above.</p>
-<ul>
-<% @backlinks.each do |resource| %>
-  <li>
-    <a href="<%= resource.path %>"><i class="<%= resource.class.to_s.downcase %>-icon"></i> <%= resource.title %></a>
-  </li>
-<% end %>
-</ul>

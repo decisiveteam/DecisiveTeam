@@ -61,6 +61,59 @@ class DecisionsController < ApplicationController
     end
   end
 
+  def duplicate
+    @decision = current_decision
+    return render '404', status: 404 unless @decision
+    @new_decision = Decision.new(
+      tenant_id: @decision.tenant_id,
+      studio_id: @decision.studio_id,
+      question: @decision.question,
+      description: @decision.description,
+      options_open: @decision.options_open,
+      deadline: Time.current + (@decision.deadline - @decision.created_at),
+      created_by: current_user,
+    )
+    ActiveRecord::Base.transaction do
+      @new_decision.save!
+      dp = DecisionParticipantManager.new(
+        decision: @new_decision,
+        user: current_user
+      ).find_or_create_participant
+      options = @decision.options.map do |option|
+        Option.create!(
+          tenant_id: option.tenant_id,
+          studio_id: option.studio_id,
+          decision_id: @new_decision.id,
+          decision_participant_id: dp.id,
+          title: option.title,
+        )
+      end
+      if current_representation_session
+        current_representation_session.record_activity!(
+          request: request,
+          semantic_event: {
+            timestamp: Time.current,
+            event_type: 'create',
+            studio_id: current_studio.id,
+            main_resource: {
+              type: 'Decision',
+              id: @decision.id,
+              truncated_id: @decision.truncated_id,
+            },
+            sub_resources: options.map do |option|
+              {
+                type: 'Option',
+                id: option.id,
+              }
+            end,
+          }
+        )
+      end
+    end
+    redirect_to @new_decision.path
+  end
+
+
   def show
     @decision = current_decision
     return render '404', status: 404 unless @decision
@@ -71,6 +124,44 @@ class DecisionsController < ApplicationController
     @approvals = current_approvals
     set_results_view_vars
     set_pin_vars
+  end
+
+  def settings
+    @decision = current_decision
+    return render '404', status: 404 unless @decision
+    @page_title = "Decision Settings"
+    @page_description = "Change settings for this decision"
+    @scratchpad_links = current_user.scratchpad_links(tenant: current_tenant, studio: current_studio)
+  end
+
+  def update_settings
+    @decision = current_decision
+    return render '404', status: 404 unless @decision
+    @decision.question = decision_params[:question] if decision_params[:question].present?
+    @decision.description = decision_params[:description] if decision_params[:description].present?
+    @decision.options_open = decision_params[:options_open] if decision_params[:options_open].present?
+    # The datetime select is in the studio timezone, so we need to convert it to UTC
+    # @decision.deadline = Time.zone.parse("#{params[:deadline]} #{params[:deadline_time]}").utc
+    ActiveRecord::Base.transaction do
+      @decision.save!
+      if current_representation_session
+        current_representation_session.record_activity!(
+          request: request,
+          semantic_event: {
+            timestamp: Time.current,
+            event_type: 'update',
+            studio_id: current_studio.id,
+            main_resource: {
+              type: 'Decision',
+              id: @decision.id,
+              truncated_id: @decision.truncated_id,
+            },
+            sub_resources: [],
+          }
+        )
+      end
+    end
+    redirect_to @decision.path
   end
 
   def options_partial

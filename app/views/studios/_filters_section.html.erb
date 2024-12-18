@@ -1,9 +1,9 @@
 <span data-controller="cycle-filters">
-<%= form_with url: @cycle.path, method: :get, local: true, id: 'sort-filter-form' do |form| %>
+<%= form_with url: "#{@current_studio.path}/view", method: :get, local: true, id: 'sort-filter-form' do |form| %>
   <% if @current_studio.feature_enabled?('cycle_views_preview') %>
     <div style="display:inline-block;width:fit-content;">
       <h4>Cycle</h4>
-      <%= form.select :cycle_id, options_for_select(@cycle.cycle_options, @cycle.name), {}, { id: 'cycle-select' } %>
+      <%= form.select :cycle, options_for_select(@cycle.cycle_options, @cycle.name), {}, { id: 'cycle-select' } %>
     </div>
     <!-- <div>
       <h4>Select</h4>

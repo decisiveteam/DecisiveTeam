@@ -18,24 +18,11 @@ class CyclesController < ApplicationController
       tenant: @current_tenant,
       studio: @current_studio,
       current_user: @current_user,
-      params: {
-        filters: params[:filters] || params[:filter],
-        sort_by: params[:sort_by],
-        group_by: params[:group_by],
-      }
     )
     @current_resource = @cycle
-    @grouped_rows = @cycle.data_rows
     @notes = @cycle.notes
     @decisions = @cycle.decisions
     @commitments = @cycle.commitments
-    @backlinks = @cycle.backlinks
-    @filters = params[:filters] || params[:filter]
-    @sort_by = params[:sort_by]
-    @group_by = params[:group_by]
-    @sort_by_options = @cycle.sort_by_options
-    @group_by_options = @cycle.group_by_options
-    @filter_options = @cycle.filter_options
   end
 
   def show_data

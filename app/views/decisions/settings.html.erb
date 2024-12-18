@@ -1,0 +1,24 @@
+<h4 style="display:inline-block;">
+  <%= link_to @current_studio.name, @current_studio.path || '/' %> / <i class="decision-icon"></i> Decision
+</h4>
+<%= render 'shared/scratchpad_links' %>
+<%= form_with url: "#{@decision.path}/settings" do |form| %>
+  <div>
+    <%= form.text_field :question, placeholder: 'Question that this decision will answer', value: @decision.question %>
+  </div>
+  <div style="margin-top:8px;">
+    <%= form.text_area :description, placeholder: 'Description (optional)', value: @decision.description %>
+  </div>
+  <h3>Options</h3>
+  <p>
+    <%= form.select :options_open, options_for_select([['Everyone', true], ['Just you', false]], selected: 'Everyone') %>
+    can add options.
+  </p>
+  <!-- <h3>Deadline</h3>
+  <p>
+    Voting closes at
+    <%= form.datetime_select :deadline, value: @decision.deadline %> <%= @current_studio.timezone %>
+  </p> -->
+  <hr style="height:1px;" />
+  <%= form.submit 'Save' %>
+<% end %>

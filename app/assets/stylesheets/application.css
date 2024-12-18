@@ -508,6 +508,10 @@ ul.attachments-list {
   padding: 8px;
 }
 
+.inline-form-container form {
+  display: inline-block;
+}
+
 /* Mobile-only styles */
 @media only screen and (max-width: 768px) {
   .option-item {

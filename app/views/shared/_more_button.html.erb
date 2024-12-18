@@ -75,6 +75,13 @@
               <%= option[:label] %>
             </span>
           </li>
+        <% elsif option == 'duplicate' %>
+          <li>
+            <%= octicon 'duplicate' %>
+            <span class="inline-form-container">
+              <%= button_to 'Duplicate', "#{resource.path}/duplicate", method: :post, style: 'display:inline;float:none;' %>
+            </span>
+          </li>
         <% elsif option == 'edit' %>
           <% option = { link_to: "#{resource.path}/edit", icon: 'pencil', label: 'Edit' } %>
           <li>

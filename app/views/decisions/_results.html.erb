@@ -1,5 +1,4 @@
-<h2><%= @decision.closed? ? "Final" : "Current" %> Results</h2>
-<span id="results">
+<span id="results" data-header="<%= @results_header %>">
   <table class="results-table">
     <thead>
       <tr>

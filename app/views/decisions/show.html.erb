@@ -25,16 +25,20 @@
 <% end %>
 
 <% unless @decision.closed? %>
-  <%= render 'options_section' %>
+  <%= render 'shared/collapseable_section', title: @options_header, hidden: false, header_level: 2 do %>
+    <%= render 'options_section' %>
+  <% end %>
 <% end %>
 
 <span
   data-controller="decision-results"
   data-decision-results-url-value="<%= @decision.path %>/results.html"
   >
-  <%= render 'results' %>
-</span>
-<%= backlinks(@decision) %>
+  <%= render 'shared/collapseable_section', target: {'decision-results' => 'header'}, title: @results_header, hidden: !@decision.closed?, header_level: 2 do %>
+    <span data-decision-results-target="content">
+      <%= render 'results' %>
+    </span>
+  <% end %>
 </span>
 
 <span
@@ -42,4 +46,7 @@
   data-decision-voters-url-value="<%= @decision.path %>/voters.html"
   >
   <%= render 'voters' %>
+</span>
+
+<%= backlinks(@decision) %>
 </span>

@@ -120,6 +120,7 @@ class DecisionsController < ApplicationController
     @participant = current_decision_participant
     @page_title = @decision.question
     @page_description = "Decide as a group with Harmonic Team"
+    @options_header = @decision.can_add_options?(@participant) ? 'Add Options & Vote' : 'Vote'
 
     @approvals = current_approvals
     set_results_view_vars
@@ -224,9 +225,7 @@ class DecisionsController < ApplicationController
   end
 
   def set_results_view_vars
-    @view_count = @decision.view_count
-    @option_contributor_count = @decision.option_contributor_count
-    @voter_count = @decision.voter_count
+    @results_header = @decision.closed? ? 'Final Results' : 'Current Results'
   end
 
   def current_app

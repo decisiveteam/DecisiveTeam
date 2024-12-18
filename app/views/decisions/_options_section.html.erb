@@ -1,30 +1,25 @@
 <span data-decision-target="optionsSection" data-url="<%= @decision.path %>/options.html" data-deadline="<%= @decision.deadline_iso8601 %>">
-<% if @decision.can_add_options?(@participant) %>
-  <h2>Add Options & Vote</h2>
-<% else %>
-  <h2>Vote</h2>
-<% end %>
-<% if !@participant.authenticated? %>
-  <div class="auth-required-message">
-    <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @decision.path } %> to participate.
-  </div>
-<% else %>
-  <span>Check all options you would accept. Star options you prefer.</span>
-  <%= render 'acceptance_voting_tooltip' %>
+  <% if !@participant.authenticated? %>
+    <div class="auth-required-message">
+      <%= button_to 'Log in', '/login', method: :get, data: { redirect_to_resource: @decision.path } %> to participate.
+    </div>
+  <% else %>
+    <span>Check all options you would accept. Star options you prefer.</span>
+    <%= render 'acceptance_voting_tooltip' %>
 
-  <ul class="options-list">
-    <span data-decision-target="list">
-      <%= render 'options_list_items' %>
-    </span>
-    <li style="display:<%= @decision.can_add_options?(@participant) ? 'block': 'none' %>;">
-      <input type="checkbox"/>
-      <input type="checkbox" class="star-button"/>
-      <label class="star-button"></label>
-      <form style="display:inline;" data-action="submit->decision#add">
-        <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option" style="width:66%;">
-        <button type="submit">Add</button>
-      </form>
-    </li>
-  </ul>
-<% end %>
+    <ul class="options-list">
+      <span data-decision-target="list">
+        <%= render 'options_list_items' %>
+      </span>
+      <li style="display:<%= @decision.can_add_options?(@participant) ? 'block': 'none' %>;">
+        <input type="checkbox"/>
+        <input type="checkbox" class="star-button"/>
+        <label class="star-button"></label>
+        <form style="display:inline;" data-action="submit->decision#add">
+          <input type="text" data-decision-target="input" data-decision-id="<%= @decision.id %>" placeholder="Add an option" style="width:66%;">
+          <button type="submit">Add</button>
+        </form>
+      </li>
+    </ul>
+  <% end %>
 </span>

@@ -2,6 +2,7 @@
 <% hidden ||= false %>
 <% lazy_load ||= nil %>
 <% octicon ||= nil %>
+<% target ||= nil %>
 <span
   data-controller="collapseable-section"
   >
@@ -9,7 +10,9 @@
     <% if octicon %>
       <%= octicon octicon, height: header_level < 3 ? 24 : 16 %>
     <% end %>
-    <%= title %>
+    <span <%= target ? target.map { |k, v| "data-#{k}-target='#{v}'" }.join(' ').html_safe : '' %>>
+      <%= title %>
+    </span>
     <span data-collapseable-section-target="triangleRight" style="display:<%= hidden ? 'inline' : 'none' %>;">
       <%= octicon 'triangle-right', height: 20 %>
     </span>

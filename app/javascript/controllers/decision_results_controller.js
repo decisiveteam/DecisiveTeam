@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = []
+  static targets = ['header', 'content']
   static values = { url: String }
 
   get csrfToken() {
@@ -27,8 +27,10 @@ export default class extends Controller {
     if (response.ok) {
       const html = await response.text();
       if (html !== this.previousHtml) {
-        this.element.innerHTML = html;
+        this.contentTarget.innerHTML = html;
         this.previousHtml = html;
+        const newHeaderText = this.contentTarget.children[0].dataset.header;
+        this.headerTarget.textContent = newHeaderText;
       }
       this.refreshing = false;
     } else {

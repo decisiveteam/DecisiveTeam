@@ -299,6 +299,10 @@ class Studio < ApplicationRecord
     su.add_roles!(roles)
   end
 
+  def user_is_member?(user)
+    studio_users.where(user: user).count > 0
+  end
+
   def team(limit: 100)
     studio_users
       .where(archived_at: nil)

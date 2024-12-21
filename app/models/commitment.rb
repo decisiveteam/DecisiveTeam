@@ -84,4 +84,10 @@ class Commitment < ApplicationRecord
     return 100 if critical_mass_achieved?
     [(participant_count.to_f / critical_mass.to_f * 100).round, 100].min
   end
+
+  def join_commitment!(user)
+    participant = CommitmentParticipantManager.new(commitment: self, user: user).find_or_create_participant
+    participant.committed = true
+    participant.save!
+  end
 end

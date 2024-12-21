@@ -60,8 +60,13 @@ Rails.application.routes.draw do
   get 'learn/acceptance-voting' => 'learn#acceptance_voting'
   get 'learn/reciprocal-commitment' => 'learn#reciprocal_commitment'
 
-  # get 'games' => 'games#index'
-  # get 'games/chess' => 'games#chess'
+  get 'games' => 'games#index'
+  post 'games/chess' => 'games#create_chess_match'
+  get 'games/chess/:id' => 'games#show_chess_match'
+  post 'games/chess/:id/join' => 'games#join_chess_match'
+  post 'games/chess/:id/vote' => 'games#vote_on_chess_move'
+  post 'games/chess/:id/commit' => 'games#commit_to_chess_move'
+  get 'games/chess/:id/poll' => 'games#poll_chess_match'
 
   get 'admin' => 'admin#admin'
   get 'admin/settings' => 'admin#tenant_settings'

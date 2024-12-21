@@ -8,6 +8,51 @@ module ApplicationHelper
     >#{time_ago_in_words(datetime)} #{ago_or_from_now}</time>".html_safe
   end
 
+  def duration_in_words(duration)
+    seconds = duration.to_i
+    minutes = seconds / 60
+    hours = minutes / 60
+    days = hours / 24
+    weeks = days / 7
+    # months = days / 30
+    years = days / 365
+    significant_unit = if years > 0
+      "#{years} year".pluralize(years)
+    # elsif months > 0
+    #   "#{months} month".pluralize(months)
+    elsif weeks > 0
+      "#{weeks} week".pluralize(weeks)
+    elsif days > 0
+      "#{days} day".pluralize(days)
+    elsif hours > 0
+      "#{hours} hour".pluralize(hours)
+    elsif minutes > 0
+      "#{minutes} minute".pluralize(minutes)
+    else
+      "#{seconds} second".pluralize(seconds)
+    end
+    next_unit = if years > 0
+      months = months % 12
+      "#{months} month".pluralize(months)
+    # elsif months > 0
+    #   days = days % 30
+    #   "#{days} day".pluralize(days)
+    elsif weeks > 0
+      days = days % 7
+      "#{days} day".pluralize(days)
+    elsif days > 0
+      hours = hours % 24
+      "#{hours} hour".pluralize(hours)
+    elsif hours > 0
+      minutes = minutes % 60
+      "#{minutes} minute".pluralize(minutes)
+    else
+      seconds = seconds % 60
+      "#{seconds} second".pluralize(seconds)
+    end
+    "#{significant_unit} + #{next_unit}"
+  end
+
   def countdown(datetime, base_unit: 'seconds')
     "<time
       data-controller='countdown'

@@ -24,32 +24,34 @@
   </script>
 </p>
 
-<%= render 'shared/collapseable_section', title: 'Notes', header_level: 2, hidden: false do %>
-  <ul>
-  <% @notes.each do |note| %>
-    <li>
-      <%= render 'shared/inline_resource_item', resource: note %>
-    </li>
+<% ['Notes', 'Decisions', 'Commitments'].each do |resource_type| %>
+  <% resources = instance_variable_get("@#{resource_type.downcase.underscore}") %>
+  <%= render 'shared/collapseable_section', title: resource_type, header_level: 2, hidden: false do %>
+    <ul class="cycle-page-list">
+    <% resources.each do |resource| %>
+      <li>
+        <span class="item">
+          <%= render 'shared/inline_resource_item', resource: resource %>
+        </span>
+        <span class="item-time-section">
+          <div>
+            <span class="item-time-column-label">created</span>
+            <br/>
+            <%= timeago(resource.created_at) %>
+          </div>
+          <div>
+            <span class="item-time-column-label">deadline</span>
+            <br/>
+            <%= timeago(resource.deadline) %>
+          </div>
+          <div>
+            <span class="item-time-column-label">duration</span>
+            <br/>
+            <%= duration_in_words(resource.deadline - resource.created_at) %>
+          </div>
+        </span>
+      </li>
+    <% end %>
+    </ul>
   <% end %>
-  </ul>
-<% end %>
-
-<%= render 'shared/collapseable_section', title: 'Decisions', header_level: 2, hidden: false do %>
-  <ul>
-  <% @decisions.each do |decision| %>
-    <li>
-      <%= render 'shared/inline_resource_item', resource: decision %>
-    </li>
-  <% end %>
-  </ul>
-<% end %>
-
-<%= render 'shared/collapseable_section', title: 'Commitments', header_level: 2, hidden: false do %>
-  <ul>
-  <% @commitments.each do |commitment| %>
-    <li>
-      <%= render 'shared/inline_resource_item', resource: commitment %>
-    </li>
-  <% end %>
-  </ul>
 <% end %>

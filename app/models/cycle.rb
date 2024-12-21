@@ -277,8 +277,8 @@ class Cycle
 
   def sort_by
     return @sort_by if @sort_by
-    key, direction = (params[:sort_by] || 'deadline-desc').split('-')
-    key = 'deadline' unless CycleDataRow.valid_sort_bys.include?(key)
+    key, direction = (params[:sort_by] || 'created_at-desc').split('-')
+    key = 'created_at' unless CycleDataRow.valid_sort_bys.include?(key)
     direction = 'desc' unless %w[asc desc].include?(direction)
     @sort_by = { key => direction }
   end

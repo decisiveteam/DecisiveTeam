@@ -1,0 +1,43 @@
+.cycle-page-list li {
+  padding: 4px 0 8px 0;
+  margin: 0;
+}
+.cycle-page-list li:hover {
+  background: var(--color-canvas-subtle);
+}
+.cycle-page-list li .item {
+  float: left;
+  display: block;
+  max-width: 444px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cycle-page-list li .item-time-section {
+  font-size: 0.8em;
+  line-height: 1;
+  float: right;
+}
+.cycle-page-list li .item-time-section div {
+  display: inline-block;
+  text-align: left;
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-time-column-label {
+  opacity: 0.6;
+}
+@media (max-width: 888px) {
+  .cycle-page-list li .item-time-section {
+    display: none;
+  }
+  .cycle-page-list li .item {
+    max-width: unset;
+    white-space: unset;
+    overflow: unset;
+    text-overflow: unset;
+    float: none;
+  }
+}
